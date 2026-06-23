@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NPC Admin Panel</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0A0C10; --bg-2:#0E1117; --surface:#12161D; --surface-2:#161B24;
+  --border:#232934; --border-soft:#1A1F28;
+  --ink:#E7EBF1; --ink-dim:#8993A4; --ink-faint:#545D6E;
+  --signal:#5EEAD4; --signal-dim:#2D6F66; --signal-glow:rgba(94,234,212,0.18);
+  --amber:#F5A623; --amber-dim:#5C4419; --amber-glow:rgba(245,166,35,0.16);
+  --coral:#FF6B6B; --coral-dim:#5C2A2A; --coral-glow:rgba(255,107,107,0.16);
+  --violet:#8B8FF7; --violet-dim:#38398C; --violet-glow:rgba(139,143,247,0.16);
+  --font-display:'Inter',sans-serif; --font-mono:'JetBrains Mono',monospace;
+  --r-sm:6px; --r-md:10px; --r-lg:14px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--ink);font-family:var(--font-display);min-height:100vh;-webkit-font-smoothing:antialiased;}
+
+/* BG GRID */
+.bg-field{position:fixed;inset:0;z-index:-2;background:var(--bg);}
+.bg-field::before{content:'';position:absolute;inset:0;background-image:linear-gradient(var(--border-soft) 1px,transparent 1px),linear-gradient(90deg,var(--border-soft) 1px,transparent 1px);background-size:64px 64px;-webkit-mask-image:radial-gradient(ellipse 70% 50% at 50% 0%,black 30%,transparent 75%);mask-image:radial-gradient(ellipse 70% 50% at 50% 0%,black 30%,transparent 75%);}
+
+/* LOGIN */
+.login-wrap{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px;}
+.login-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);padding:36px;width:100%;max-width:380px;}
+.login-logo{display:flex;align-items:center;gap:10px;margin-bottom:28px;}
+.login-logo .ico{width:36px;height:36px;background:var(--signal-glow);border:1px solid var(--signal-dim);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;}
+.login-logo span{font-weight:800;font-size:17px;letter-spacing:.01em;}
+.login-logo small{display:block;font-size:11px;color:var(--ink-faint);font-weight:400;}
+.field-label{font-family:var(--font-mono);font-size:10px;font-weight:600;color:var(--ink-faint);letter-spacing:.1em;text-transform:uppercase;margin-bottom:5px;display:block;}
+.field-input{width:100%;background:var(--bg-2,#0E1117);border:1px solid var(--border);border-radius:var(--r-sm);color:var(--ink);font-size:13px;font-family:var(--font-mono);padding:10px 13px;outline:none;transition:border-color .15s;margin-bottom:14px;}
+.field-input:focus{border-color:var(--signal);}
+.btn-primary{background:var(--signal);color:#0A0C10;border:none;border-radius:var(--r-sm);font-size:13px;font-weight:700;padding:11px;width:100%;cursor:pointer;transition:opacity .15s;letter-spacing:.02em;}
+.btn-primary:hover{opacity:.85;}
+.btn-primary:disabled{opacity:.5;cursor:not-allowed;}
+.login-err{background:var(--coral-glow);border:1px solid var(--coral-dim);color:var(--coral);border-radius:var(--r-sm);padding:9px 12px;font-size:12px;margin-bottom:12px;display:none;}
+.login-status{text-align:center;margin-top:16px;font-size:11px;color:var(--ink-faint);display:flex;align-items:center;justify-content:center;gap:6px;}
+.dot-live{width:6px;height:6px;border-radius:50%;background:var(--signal);animation:blink 1.5s infinite;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:.3;}}
+
+/* APP */
+.app{display:none;flex-direction:column;min-height:100vh;}
+.app.visible{display:flex;}
+
+/* TOPBAR */
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:0 20px;height:52px;background:var(--bg-2,#0E1117);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:50;}
+.topbar-left{display:flex;align-items:center;gap:10px;font-weight:700;font-size:14px;}
+.topbar-right{display:flex;align-items:center;gap:10px;}
+.badge{font-family:var(--font-mono);font-size:10px;padding:2px 8px;border-radius:4px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;}
+.badge-admin{background:var(--coral-glow);color:var(--coral);border:1px solid var(--coral-dim);}
+.badge-signal{background:var(--signal-glow);color:var(--signal);border:1px solid var(--signal-dim);}
+.btn-ghost{background:var(--surface-2);border:1px solid var(--border);color:var(--ink-dim);border-radius:var(--r-sm);font-size:12px;padding:6px 12px;cursor:pointer;transition:color .15s;}
+.btn-ghost:hover{color:var(--ink);}
+
+/* TABS */
+.tabs{display:flex;gap:2px;padding:14px 20px 0;border-bottom:1px solid var(--border);background:var(--bg-2,#0E1117);}
+.tab{padding:9px 16px;font-size:13px;font-weight:500;color:var(--ink-dim);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:color .15s,border-color .15s;}
+.tab:hover{color:var(--ink);}
+.tab.active{color:var(--signal);border-bottom-color:var(--signal);}
+
+/* SHELL */
+.shell{padding:20px;max-width:900px;margin:0 auto;width:100%;}
+
+/* STATS */
+.stat-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;margin-bottom:20px;}
+.stat-card{background:var(--surface);border:1px solid var(--border-soft);border-radius:var(--r-md);padding:14px 16px;}
+.stat-label{font-family:var(--font-mono);font-size:10px;font-weight:600;color:var(--ink-faint);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px;display:flex;align-items:center;gap:5px;}
+.stat-val{font-size:26px;font-weight:700;font-family:var(--font-mono);line-height:1;}
+.dot{width:6px;height:6px;border-radius:50%;}
+.dot-signal{background:var(--signal);}
+.dot-coral{background:var(--coral);}
+.dot-amber{background:var(--amber);}
+.dot-violet{background:var(--violet);}
+.dot-dim{background:var(--ink-faint);}
+
+/* PANEL */
+.panel{background:var(--surface);border:1px solid var(--border-soft);border-radius:var(--r-md);overflow:hidden;margin-bottom:16px;}
+.panel-head{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--border-soft);}
+.panel-title{font-size:13px;font-weight:600;display:flex;align-items:center;gap:8px;color:var(--ink);}
+.panel-actions{display:flex;gap:8px;align-items:center;}
+
+/* SEARCH */
+.search-box{display:flex;align-items:center;gap:6px;background:var(--bg-2,#0E1117);border:1px solid var(--border);border-radius:var(--r-sm);padding:5px 10px;}
+.search-box input{background:none;border:none;outline:none;color:var(--ink);font-size:12px;font-family:var(--font-display);width:160px;}
+.search-box input::placeholder{color:var(--ink-faint);}
+
+/* TABLE */
+table{width:100%;border-collapse:collapse;}
+th{font-family:var(--font-mono);font-size:10px;font-weight:600;color:var(--ink-faint);letter-spacing:.1em;text-transform:uppercase;text-align:left;padding:9px 14px;background:var(--surface-2);border-bottom:1px solid var(--border);}
+td{padding:10px 14px;font-size:13px;border-bottom:1px solid var(--border-soft);vertical-align:middle;}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:rgba(255,255,255,.015);}
+
+/* PILLS */
+.pill{display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:4px;font-family:var(--font-mono);font-size:10px;font-weight:600;letter-spacing:.04em;}
+.pill-signal{background:var(--signal-glow);color:var(--signal);}
+.pill-coral{background:var(--coral-glow);color:var(--coral);}
+.pill-amber{background:var(--amber-glow);color:var(--amber);}
+.pill-violet{background:var(--violet-glow);color:var(--violet);}
+.pill-neutral{background:var(--surface-2);color:var(--ink-dim);}
+
+/* ACTION BUTTONS */
+.btn-sm{padding:4px 10px;border-radius:5px;font-size:11px;font-weight:600;cursor:pointer;border:none;transition:opacity .15s;}
+.btn-sm:hover{opacity:.8;}
+.btn-danger{background:var(--coral-glow);color:var(--coral);border:1px solid var(--coral-dim);}
+.btn-warn{background:var(--amber-glow);color:var(--amber);border:1px solid var(--amber-dim);}
+.btn-info{background:var(--signal-glow);color:var(--signal);border:1px solid var(--signal-dim);}
+.btn-violet{background:var(--violet-glow);color:var(--violet);border:1px solid var(--violet-dim);}
+
+/* KEY FORM */
+.key-form{padding:16px;display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.key-form .full{grid-column:1/-1;}
+.form-actions{grid-column:1/-1;display:flex;gap:10px;margin-top:4px;}
+
+/* EMPTY */
+.empty-state{text-align:center;padding:40px 20px;color:var(--ink-faint);font-size:13px;}
+.empty-state .ic{font-size:28px;display:block;margin-bottom:8px;opacity:.5;}
+
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:200;align-items:center;justify-content:center;}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);padding:26px;width:400px;max-width:95vw;}
+.modal h3{font-size:15px;margin-bottom:6px;}
+.modal p{font-size:13px;color:var(--ink-dim);margin-bottom:20px;}
+.modal-footer{display:flex;gap:10px;justify-content:flex-end;}
+
+/* TOAST */
+#toast{position:fixed;bottom:20px;right:20px;background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r-md);padding:10px 16px;font-size:13px;display:none;z-index:300;box-shadow:0 8px 24px rgba(0,0,0,.4);max-width:300px;}
+#toast.show{display:block;}
+
+/* LOADING */
+.loading{text-align:center;padding:30px;color:var(--ink-dim);font-size:13px;}
+.spin{display:inline-block;width:16px;height:16px;border:2px solid var(--border);border-top-color:var(--signal);border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:8px;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+@media(max-width:600px){
+  .stat-row{grid-template-columns:1fr 1fr;}
+  .key-form{grid-template-columns:1fr;}
+  .key-form .full{grid-column:1;}
+  .form-actions{flex-direction:column;}
+  th:nth-child(3),td:nth-child(3){display:none;}
+}
+</style>
+</head>
+<body>
+<div class="bg-field"></div>
+
+<!-- LOGIN -->
+<div class="login-wrap" id="loginWrap">
+  <div class="login-card">
+    <div class="login-logo">
+      <div class="ico">🔐</div>
+      <div>
+        <span>NPC Admin</span>
+        <small>Access Management Panel</small>
+      </div>
+    </div>
+    <div class="login-err" id="loginErr"></div>
+    <label class="field-label">Username</label>
+    <input class="field-input" type="text" id="loginUser" placeholder="your-username" autocomplete="username" onkeydown="if(event.key==='Enter')doLogin()">
+    <label class="field-label">Password</label>
+    <input class="field-input" type="password" id="loginPass" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()">
+    <button class="btn-primary" id="loginBtn" onclick="doLogin()">Log in</button>
+    <div class="login-status"><span class="dot-live dot"></span> vxnpc-667e4 · realtime link active</div>
+  </div>
+</div>
+
+<!-- APP -->
+<div class="app" id="app">
+  <div class="topbar">
+    <div class="topbar-left">
+      <span>🔐</span>
+      <span>NPC Admin <span style="color:var(--ink-faint);font-weight:400;">·</span> <span id="topUsername" style="color:var(--signal);"></span></span>
+    </div>
+    <div class="topbar-right">
+      <span class="badge badge-admin">ADMIN</span>
+      <span class="badge badge-signal" id="liveIndicator">● LIVE</span>
+      <button class="btn-ghost" onclick="doLogout()">Log out</button>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <div class="tab active" onclick="switchTab('keys')">🗝 Keys</div>
+    <div class="tab" onclick="switchTab('users')">👥 Users</div>
+    <div class="tab" onclick="switchTab('generate')">➕ Generate Key</div>
+  </div>
+
+  <div class="shell">
+
+    <!-- STATS -->
+    <div class="stat-row" id="statsRow">
+      <div class="stat-card"><div class="stat-label"><span class="dot dot-signal"></span>Total Keys</div><div class="stat-val" id="sTotalKeys">—</div></div>
+      <div class="stat-card"><div class="stat-label"><span class="dot dot-signal"></span>Valid</div><div class="stat-val" id="sValid">—</div></div>
+      <div class="stat-card"><div class="stat-label"><span class="dot dot-coral"></span>Expired</div><div class="stat-val" id="sExpired">—</div></div>
+      <div class="stat-card"><div class="stat-label"><span class="dot dot-amber"></span>At Capacity</div><div class="stat-val" id="sFull">—</div></div>
+      <div class="stat-card"><div class="stat-label"><span class="dot dot-dim"></span>Total Users</div><div class="stat-val" id="sTotalUsers">—</div></div>
+      <div class="stat-card"><div class="stat-label"><span class="dot dot-signal"></span>Approved</div><div class="stat-val" id="sApproved">—</div></div>
+    </div>
+
+    <!-- KEYS TAB -->
+    <div id="tab-keys">
+      <div class="panel">
+        <div class="panel-head">
+          <div class="panel-title">🗝 License Keys</div>
+          <div class="panel-actions">
+            <div class="search-box">
+              <span>🔍</span>
+              <input type="text" id="keySearch" placeholder="Search key..." oninput="filterKeys()">
+            </div>
+            <button class="btn-sm btn-info" onclick="loadKeys()">↻ Refresh</button>
+          </div>
+        </div>
+        <div id="keysBody"><div class="loading"><span class="spin"></span>Loading keys...</div></div>
+      </div>
+    </div>
+
+    <!-- USERS TAB -->
+    <div id="tab-users" style="display:none;">
+      <div class="panel">
+        <div class="panel-head">
+          <div class="panel-title">👥 Users</div>
+          <div class="panel-actions">
+            <div class="search-box">
+              <span>🔍</span>
+              <input type="text" id="userSearch" placeholder="Search user..." oninput="filterUsers()">
+            </div>
+            <button class="btn-sm btn-info" onclick="loadUsers()">↻ Refresh</button>
+          </div>
+        </div>
+        <div id="usersBody"><div class="loading"><span class="spin"></span>Loading users...</div></div>
+      </div>
+    </div>
+
+    <!-- GENERATE TAB -->
+    <div id="tab-generate" style="display:none;">
+      <div class="panel">
+        <div class="panel-head">
+          <div class="panel-title">➕ Generate New Key</div>
+        </div>
+        <div class="key-form">
+          <div>
+            <label class="field-label">Key Name / ID</label>
+            <input class="field-input" type="text" id="genKey" placeholder="e.g. USER-2025-001">
+          </div>
+          <div>
+            <label class="field-label">Expiry Date</label>
+            <input class="field-input" type="date" id="genExpiry">
+          </div>
+          <div>
+            <label class="field-label">Max Devices</label>
+            <input class="field-input" type="number" id="genMaxDev" value="1" min="1">
+          </div>
+          <div>
+            <label class="field-label">Created By</label>
+            <input class="field-input" type="text" id="genCreatedBy" placeholder="admin">
+          </div>
+          <div class="full form-actions">
+            <button class="btn-primary" style="width:auto;padding:10px 28px;" onclick="generateKey()">Generate Key</button>
+            <button class="btn-ghost" onclick="genAutoKey()">⚡ Auto-generate ID</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- CONFIRM MODAL -->
+<div class="modal-overlay" id="confirmModal">
+  <div class="modal">
+    <h3 id="modalTitle">Confirm</h3>
+    <p id="modalBody">Are you sure?</p>
+    <div class="modal-footer">
+      <button class="btn-ghost" onclick="closeModal()">Cancel</button>
+      <button class="btn-sm btn-danger" id="modalConfirmBtn">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+const DB_URL = "https://vxnpc-667e4-default-rtdb.firebaseio.com";
+const FIREBASE_API_KEY = "AIzaSyA37DP87axf_GCxLUyjQdCIyxfbiBH1rTo";
+const SESSION_KEY = "npc_admin_session";
+
+let dbToken = null;
+let currentSession = null;
+let allKeys = [];
+let allUsers = [];
+let modalCb = null;
+
+// ── AUTH TOKEN ──
+async function getDbToken() {
+  if (dbToken) return dbToken;
+  const saved = localStorage.getItem("npc_fb_refresh");
+  if (saved) {
+    try {
+      const r = await fetch(`https://securetoken.googleapis.com/v1/token?key=${FIREBASE_API_KEY}`, {
+        method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: `grant_type=refresh_token&refresh_token=${saved}`
+      });
+      const data = await r.json();
+      if (data.id_token) { dbToken = data.id_token; return dbToken; }
+    } catch(e) {}
+  }
+  // Anonymous sign-in fallback
+  try {
+    const r2 = await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${FIREBASE_API_KEY}`, {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ returnSecureToken: true })
+    });
+    const data2 = await r2.json();
+    if (data2.idToken) {
+      dbToken = data2.idToken;
+      if (data2.refreshToken) localStorage.setItem("npc_fb_refresh", data2.refreshToken);
+      return dbToken;
+    }
+  } catch(e) {}
+  return null;
+}
+
+async function withAuth(url) {
+  const token = await getDbToken();
+  if (!token) return url;
+  const sep = url.includes("?") ? "&" : "?";
+  return `${url}${sep}auth=${token}`;
+}
+
+// ── LOGIN ──
+function safeKey(str) { return str.toLowerCase().replace(/[.#$\[\]/]/g, "_"); }
+
+async function doLogin() {
+  const username = document.getElementById("loginUser").value.trim();
+  const password = document.getElementById("loginPass").value;
+  const errEl = document.getElementById("loginErr");
+  const btn = document.getElementById("loginBtn");
+
+  if (!username || !password) { showLoginErr("Fill in both fields."); return; }
+
+  btn.disabled = true; btn.textContent = "Logging in...";
+  errEl.style.display = "none";
+
+  try {
+    const key = safeKey(username);
+    const r = await fetch(await withAuth(`${DB_URL}/users/${key}.json`));
+    const data = await r.json();
+
+    if (!data) { showLoginErr("User not found."); btn.disabled=false; btn.textContent="Log in"; return; }
+    if (data.status === "disabled") { showLoginErr("Account disabled."); btn.disabled=false; btn.textContent="Log in"; return; }
+    if (data.role !== "admin") { showLoginErr("Admin access required."); btn.disabled=false; btn.textContent="Log in"; return; }
+
+    // Check password (hashed or plain)
+    const inputHash = await hashStr(password);
+    const storedPass = data.password || "";
+    const match = (storedPass === inputHash) || (storedPass === password);
+
+    if (!match) { showLoginErr("Wrong password."); btn.disabled=false; btn.textContent="Log in"; return; }
+
+    currentSession = { username: data.username || username, role: data.role, key };
+    sessionStorage.setItem(SESSION_KEY, JSON.stringify(currentSession));
+
+    document.getElementById("loginWrap").style.display = "none";
+    document.getElementById("app").classList.add("visible");
+    document.getElementById("topUsername").textContent = currentSession.username;
+    document.getElementById("genCreatedBy").value = currentSession.username;
+
+    loadKeys();
+    loadUsers();
+
+  } catch(e) {
+    showLoginErr("Connection error. Check network.");
+    btn.disabled=false; btn.textContent="Log in";
+  }
+}
+
+function showLoginErr(msg) {
+  const el = document.getElementById("loginErr");
+  el.textContent = msg; el.style.display = "block";
+  document.getElementById("loginBtn").disabled = false;
+  document.getElementById("loginBtn").textContent = "Log in";
+}
+
+async function hashStr(str) {
+  const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(str));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,"0")).join("");
+}
+
+function doLogout() {
+  sessionStorage.removeItem(SESSION_KEY);
+  currentSession = null; dbToken = null; allKeys = []; allUsers = [];
+  document.getElementById("app").classList.remove("visible");
+  document.getElementById("loginWrap").style.display = "flex";
+  document.getElementById("loginPass").value = "";
+}
+
+// ── TABS ──
+function switchTab(name) {
+  ["keys","users","generate"].forEach(t => {
+    document.getElementById("tab-"+t).style.display = t===name ? "block" : "none";
+  });
+  document.querySelectorAll(".tab").forEach((el,i) => {
+    el.classList.toggle("active", ["keys","users","generate"][i]===name);
+  });
+}
+
+// ── KEYS ──
+async function loadKeys() {
+  document.getElementById("keysBody").innerHTML = '<div class="loading"><span class="spin"></span>Loading...</div>';
+  try {
+    const r = await fetch(await withAuth(`${DB_URL}/keys.json`));
+    const data = await r.json() || {};
+    allKeys = Object.entries(data).map(([k,v]) => {
+      let devices = [];
+      if (v.devices) {
+        if (Array.isArray(v.devices)) devices = v.devices.filter(Boolean);
+        else if (typeof v.devices === "object") devices = Object.values(v.devices).filter(Boolean);
+      }
+      return { key: k, expire: v.expire || v.expiry || "", max_devices: parseInt(v.max_devices||1), devices, created_by: v.created_by||"", note: v.note||"" };
+    });
+    updateStats();
+    renderKeys(allKeys);
+  } catch(e) {
+    document.getElementById("keysBody").innerHTML = '<div class="empty-state"><span class="ic">⚠️</span>Failed to load keys.</div>';
+  }
+}
+
+function isExpired(exp) {
+  if (!exp) return false;
+  return exp < new Date().toISOString().split("T")[0];
+}
+
+function renderKeys(keys) {
+  if (!keys.length) {
+    document.getElementById("keysBody").innerHTML = '<div class="empty-state"><span class="ic">🗝</span>No keys found.</div>';
+    return;
+  }
+  let html = `<table><thead><tr><th>Key</th><th>Expiry</th><th>Devices</th><th>Status</th><th>Actions</th></tr></thead><tbody>`;
+  for (const k of keys) {
+    const exp = isExpired(k.expire);
+    const full = k.devices.length >= k.max_devices && k.max_devices < 999;
+    const status = exp ? `<span class="pill pill-coral">Expired</span>` : full ? `<span class="pill pill-amber">Full</span>` : `<span class="pill pill-signal">Valid</span>`;
+    const devLabel = k.max_devices >= 999 ? `${k.devices.length}/Unli` : `${k.devices.length}/${k.max_devices}`;
+    html += `<tr>
+      <td><code style="font-family:var(--font-mono);font-size:12px;">${esc(k.key)}</code></td>
+      <td style="font-family:var(--font-mono);font-size:12px;color:var(--ink-dim);">${k.expire||"—"}</td>
+      <td style="font-family:var(--font-mono);font-size:12px;">${devLabel}</td>
+      <td>${status}</td>
+      <td style="display:flex;gap:4px;flex-wrap:wrap;">
+        <button class="btn-sm btn-warn" onclick="clearDevices('${esc(k.key)}')">Clear Dev</button>
+        <button class="btn-sm btn-danger" onclick="confirmDeleteKey('${esc(k.key)}')">Delete</button>
+      </td>
+    </tr>`;
+  }
+  html += `</tbody></table>`;
+  document.getElementById("keysBody").innerHTML = html;
+}
+
+function filterKeys() {
+  const q = document.getElementById("keySearch").value.toLowerCase();
+  renderKeys(allKeys.filter(k => k.key.toLowerCase().includes(q)));
+}
+
+async function clearDevices(key) {
+  await fetch(await withAuth(`${DB_URL}/keys/${key}/devices.json`), { method: "PUT", headers: {"Content-Type":"application/json"}, body: "null" });
+  showToast("✅ Devices cleared for " + key);
+  loadKeys();
+}
+
+function confirmDeleteKey(key) {
+  openModal(`Delete key "${key}"?`, "This cannot be undone.", async () => {
+    await fetch(await withAuth(`${DB_URL}/keys/${key}.json`), { method: "DELETE" });
+    showToast("🗑 Key deleted");
+    loadKeys();
+  });
+}
+
+// ── USERS ──
+async function loadUsers() {
+  document.getElementById("usersBody").innerHTML = '<div class="loading"><span class="spin"></span>Loading...</div>';
+  try {
+    const r = await fetch(await withAuth(`${DB_URL}/users.json`));
+    const data = await r.json() || {};
+    allUsers = Object.entries(data).map(([k,v]) => ({ key: k, username: v.username||k, role: v.role||"user", status: v.status||"approved", created_at: v.created_at||"" }));
+    updateStats();
+    renderUsers(allUsers);
+  } catch(e) {
+    document.getElementById("usersBody").innerHTML = '<div class="empty-state"><span class="ic">⚠️</span>Failed to load users.</div>';
+  }
+}
+
+function renderUsers(users) {
+  if (!users.length) {
+    document.getElementById("usersBody").innerHTML = '<div class="empty-state"><span class="ic">👤</span>No users found.</div>';
+    return;
+  }
+  let html = `<table><thead><tr><th>Username</th><th>Role</th><th>Status</th><th>Actions</th></tr></thead><tbody>`;
+  for (const u of users) {
+    const rolePill = `<span class="pill pill-${u.role==='admin'?'coral':u.role==='reseller'?'violet':'neutral'}">${u.role}</span>`;
+    const statusPill = u.status==='approved' ? `<span class="pill pill-signal">Active</span>` : u.status==='pending' ? `<span class="pill pill-amber">Pending</span>` : `<span class="pill pill-coral">Disabled</span>`;
+    let actions = `<div style="display:flex;gap:4px;flex-wrap:wrap;">`;
+    if (u.status==='pending') {
+      actions += `<button class="btn-sm btn-info" onclick="approveUser('${u.key}')">Approve</button>`;
+      actions += `<button class="btn-sm btn-danger" onclick="rejectUser('${u.key}')">Reject</button>`;
+    } else if (u.status==='approved') {
+      actions += `<button class="btn-sm btn-warn" onclick="disableUser('${u.key}')">Disable</button>`;
+    } else {
+      actions += `<button class="btn-sm btn-info" onclick="approveUser('${u.key}')">Enable</button>`;
+    }
+    if (u.role !== 'admin') {
+      actions += `<button class="btn-sm btn-violet" onclick="toggleReseller('${u.key}','${u.role}')">${u.role==='reseller'?'→ User':'→ Reseller'}</button>`;
+    }
+    actions += `<button class="btn-sm btn-danger" onclick="confirmDeleteUser('${u.key}','${u.username}')">Delete</button>`;
+    actions += `</div>`;
+    html += `<tr><td><strong>${esc(u.username)}</strong></td><td>${rolePill}</td><td>${statusPill}</td><td>${actions}</td></tr>`;
+  }
+  html += `</tbody></table>`;
+  document.getElementById("usersBody").innerHTML = html;
+}
+
+function filterUsers() {
+  const q = document.getElementById("userSearch").value.toLowerCase();
+  renderUsers(allUsers.filter(u => u.username.toLowerCase().includes(q)));
+}
+
+async function approveUser(key) {
+  await fetch(await withAuth(`${DB_URL}/users/${key}/status.json`), { method:"PUT", headers:{"Content-Type":"application/json"}, body: JSON.stringify("approved") });
+  showToast("✅ User approved"); loadUsers();
+}
+
+async function rejectUser(key) {
+  await fetch(await withAuth(`${DB_URL}/users/${key}/status.json`), { method:"PUT", headers:{"Content-Type":"application/json"}, body: JSON.stringify("rejected") });
+  showToast("🚫 User rejected"); loadUsers();
+}
+
+async function disableUser(key) {
+  await fetch(await withAuth(`${DB_URL}/users/${key}/status.json`), { method:"PUT", headers:{"Content-Type":"application/json"}, body: JSON.stringify("disabled") });
+  showToast("⛔ User disabled"); loadUsers();
+}
+
+async function toggleReseller(key, currentRole) {
+  const newRole = currentRole === "reseller" ? "user" : "reseller";
+  await fetch(await withAuth(`${DB_URL}/users/${key}/role.json`), { method:"PUT", headers:{"Content-Type":"application/json"}, body: JSON.stringify(newRole) });
+  showToast(`✅ Role changed to ${newRole}`); loadUsers();
+}
+
+function confirmDeleteUser(key, username) {
+  openModal(`Delete user "${username}"?`, "This will permanently remove the user.", async () => {
+    await fetch(await withAuth(`${DB_URL}/users/${key}.json`), { method: "DELETE" });
+    showToast("🗑 User deleted"); loadUsers();
+  });
+}
+
+// ── GENERATE KEY ──
+function genAutoKey() {
+  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+  const seg = (n) => Array.from({length:n}, () => chars[Math.floor(Math.random()*chars.length)]).join("");
+  document.getElementById("genKey").value = `${seg(4)}-${seg(4)}-${seg(4)}`;
+}
+
+async function generateKey() {
+  const key = document.getElementById("genKey").value.trim();
+  const expiry = document.getElementById("genExpiry").value;
+  const maxDev = parseInt(document.getElementById("genMaxDev").value) || 1;
+  const createdBy = document.getElementById("genCreatedBy").value || currentSession?.username || "admin";
+
+  if (!key) { showToast("⚠️ Enter a key name"); return; }
+  if (!expiry) { showToast("⚠️ Select an expiry date"); return; }
+
+  const body = { expire: expiry, max_devices: maxDev, devices: null, created_by: createdBy, created_at: new Date().toISOString().split("T")[0] };
+
+  await fetch(await withAuth(`${DB_URL}/keys/${key}.json`), {
+    method: "PUT", headers: {"Content-Type":"application/json"}, body: JSON.stringify(body)
+  });
+
+  showToast(`✅ Key "${key}" created!`);
+  document.getElementById("genKey").value = "";
+  loadKeys();
+  switchTab("keys");
+}
+
+// ── STATS ──
+function updateStats() {
+  const today = new Date().toISOString().split("T")[0];
+  const valid = allKeys.filter(k => !isExpired(k.expire)).length;
+  const expired = allKeys.filter(k => isExpired(k.expire)).length;
+  const full = allKeys.filter(k => k.devices.length >= k.max_devices && k.max_devices < 999).length;
+  const approved = allUsers.filter(u => u.status === "approved").length;
+
+  document.getElementById("sTotalKeys").textContent = allKeys.length;
+  document.getElementById("sValid").textContent = valid;
+  document.getElementById("sExpired").textContent = expired;
+  document.getElementById("sFull").textContent = full;
+  document.getElementById("sTotalUsers").textContent = allUsers.length;
+  document.getElementById("sApproved").textContent = approved;
+}
+
+// ── MODAL ──
+function openModal(title, body, cb) {
+  document.getElementById("modalTitle").textContent = title;
+  document.getElementById("modalBody").textContent = body;
+  modalCb = cb;
+  document.getElementById("confirmModal").classList.add("open");
+}
+function closeModal() { document.getElementById("confirmModal").classList.remove("open"); modalCb = null; }
+document.getElementById("modalConfirmBtn").onclick = async () => { closeModal(); if(modalCb) await modalCb(); };
+document.getElementById("confirmModal").addEventListener("click", e => { if(e.target===e.currentTarget) closeModal(); });
+
+// ── TOAST ──
+let toastT;
+function showToast(msg) {
+  const t = document.getElementById("toast");
+  t.textContent = msg; t.classList.add("show");
+  clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove("show"), 2800);
+}
+
+// ── UTILS ──
+function esc(str) { return String(str||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+
+// ── INIT ──
+(function(){
+  const saved = sessionStorage.getItem(SESSION_KEY);
+  if (saved) {
+    currentSession = JSON.parse(saved);
+    document.getElementById("loginWrap").style.display = "none";
+    document.getElementById("app").classList.add("visible");
+    document.getElementById("topUsername").textContent = currentSession.username;
+    document.getElementById("genCreatedBy").value = currentSession.username;
+    loadKeys(); loadUsers();
+  }
+  // Set default expiry to 1 month from now
+  const d = new Date(); d.setMonth(d.getMonth()+1);
+  document.getElementById("genExpiry").value = d.toISOString().split("T")[0];
+})();
+</script>
+</body>
+</html>
