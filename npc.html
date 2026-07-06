@@ -253,7 +253,8 @@
                     output += `HexPatches.MemoryPatch("${lib}", ${offset}, "h00 00 80 D2 C0 03 5F D6", 32);\n`;
                 } 
                 else if (currentMode === "Offsets → MemoryPatch") {
-                    output += `MemoryPatch::createWithHex("${lib}", ${offset}, "000080D2C0035FD6").Modify();\n`;
+                    // With spaces as requested
+                    output += `MemoryPatch::createWithHex("${lib}", ${offset}, "00 00 80 D2 C0 03 5F D6").Modify();\n`;
                 }
             });
 
