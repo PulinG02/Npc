@@ -3,533 +3,284 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>NPC BYPASS CONVERTER</title>
+    <title>NPC OFFSET CONVERTER TERMINAL</title>
     <style>
         :root {
-            --bg: #000000;
-            --accent: #FFD700;
-            --glow: #FFC300;
-            --text: #FFE082;
-            --surface: #0d0b00;
-            --input-bg: #000000;
-            --border: #665200;
+            --primary: #00ff9d;
+            --accent: #00cc7a;
+            --bg: #0f0f0f;
+            --card: #1a1a1a;
         }
-
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             background: var(--bg);
-            color: var(--text);
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            color: #e0e0e0;
+            font-family: 'Segoe UI', system-ui, sans-serif;
             min-height: 100vh;
-            padding: 16px;
-            position: relative;
+            padding: 15px 10px;
         }
 
-        #bg-canvas {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            z-index: 0;
-            pointer-events: none;
-        }
-
-        .container {
-            max-width: 920px;
+        .container { 
+            max-width: 960px; 
             margin: 0 auto;
-            position: relative;
-            z-index: 1;
-        }
-
-        header {
-            text-align: center;
-            margin-bottom: 28px;
         }
 
         h1 {
-            font-size: 32px;
-            font-weight: 900;
-            color: var(--accent);
+            text-align: center;
+            color: var(--primary);
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 25px;
             text-transform: uppercase;
-            letter-spacing: 3px;
-            text-shadow: 
-                0 0 15px var(--glow),
-                0 0 30px var(--glow),
-                0 0 50px var(--accent);
-        }
-
-        .subtitle {
-            color: #ff6666;
-            font-size: 15px;
-            letter-spacing: 2px;
-            margin-top: 6px;
+            letter-spacing: 4px;
+            text-shadow: 0 0 15px var(--primary);
         }
 
         .card {
-            background: var(--surface);
-            border: 2px solid var(--border);
-            border-radius: 14px;
+            background: var(--card);
+            border: 1px solid rgba(0, 255, 157, 0.3);
+            border-radius: 16px;
             padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 0 25px rgba(255, 30, 30, 0.25);
+            margin-bottom: 18px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
         }
 
         label {
+            color: var(--primary);
+            font-size: 14px;
+            font-weight: 600;
             display: block;
-            font-size: 13px;
-            font-weight: 700;
-            color: var(--accent);
             margin-bottom: 8px;
-            letter-spacing: 1.5px;
             text-transform: uppercase;
         }
 
-        input[type="text"], textarea {
+        input, textarea {
             width: 100%;
-            background: var(--input-bg);
-            border: 2px solid var(--border);
-            border-radius: 10px;
+            background: #111;
+            border: 1px solid #333;
+            color: #00ff9d;
             padding: 14px 16px;
-            color: var(--text);
-            font-family: "JetBrains Mono", monospace;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
             font-size: 15px;
-            box-shadow: inset 0 3px 10px rgba(0,0,0,0.7);
         }
-
-        textarea {
-            min-height: 180px;
+        input:focus, textarea:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(0, 255, 157, 0.2);
+            outline: none;
+        }
+        textarea { 
+            min-height: 170px; 
             resize: vertical;
-            line-height: 1.7;
         }
 
-        .input-group {
-            margin-bottom: 24px;
-        }
-
-        .btn-container {
+        .mode-selector {
+            background: #111;
+            border: 1px solid var(--primary);
+            padding: 16px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
             display: flex;
-            gap: 12px;
-            margin-top: 10px;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s;
+        }
+        .mode-selector:hover {
+            background: #1f1f1f;
+            border-color: var(--accent);
         }
 
         button {
-            height: 56px;
+            padding: 14px 20px;
             border: none;
-            border-radius: 12px;
-            font-weight: 700;
-            font-size: 16px;
-            letter-spacing: 1px;
+            border-radius: 10px;
+            font-weight: bold;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.3s;
+            font-size: 15px;
+        }
+        button.red { 
+            background: var(--primary); 
+            color: #000;
+            width: 100%;
+            margin-top: 12px;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0, 255, 157, 0.3);
         }
 
-        .btn-primary {
-            background: linear-gradient(90deg, #ff1a1a, #ff4d4d);
-            color: white;
-            flex: 1;
-            box-shadow: 0 0 20px var(--glow);
-        }
-
-        .btn-primary:active { transform: scale(0.96); }
-
-        .btn-icon {
-            width: 56px;
-            background: #1a0000;
-            border: 2px solid var(--border);
-            color: var(--accent);
-            font-size: 22px;
-        }
-
-        .hint {
-            font-size: 12px;
-            color: #aa4444;
-            margin-top: 8px;
-        }
-
-        /* Results */
-        #results-area {
-            display: none;
-            flex-direction: column;
-            gap: 16px;
-        }
-        #results-area.active { display: flex; }
-
-        .result-card {
-            background: #0a0000;
-            border: 2px solid var(--border);
-            border-radius: 12px;
-            overflow: hidden;
-        }
-
-        .result-header {
-            background: #1f0000;
-            padding: 14px 18px;
-            font-weight: 700;
-            color: var(--accent);
-            border-bottom: 2px solid var(--border);
-        }
-
-        .code-preview {
-            background: #000000;
-            color: #ff9999;
+        .results {
+            background: #0a0a0a;
+            border: 1px solid var(--primary);
             padding: 18px;
-            font-family: "JetBrains Mono", monospace;
-            font-size: 14px;
+            min-height: 190px;
+            font-family: 'Courier New', monospace;
+            color: #00ff9d;
             white-space: pre-wrap;
-            max-height: 220px;
-            overflow-y: auto;
+            border-radius: 10px;
+            overflow-x: auto;
+            line-height: 1.5;
         }
 
-        .result-actions {
-            padding: 12px;
+        .btn-group {
             display: flex;
             gap: 10px;
+            margin-top: 12px;
         }
-
-        .result-actions button {
+        .btn-group button {
             flex: 1;
-            height: 44px;
-            font-size: 14px;
-            background: #1a0000;
-            color: var(--accent);
-            border: 2px solid var(--border);
-            border-radius: 10px;
         }
 
-        .global-bar {
-            display: none;
-            background: #1a0000;
-            border: 2px solid var(--accent);
-            padding: 16px;
-            border-radius: 12px;
-            margin: 20px 0;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .global-bar.visible { display: flex; }
-
-        .global-bar button {
-            height: 44px;
-            font-size: 14px;
-            background: #1a0000;
-            color: var(--accent);
-            border: 2px solid var(--border);
-            border-radius: 10px;
-            padding: 0 20px;
-            margin-left: 10px;
-        }
-
-        .toast {
+        #toast {
             position: fixed;
             bottom: 30px;
             left: 50%;
             transform: translateX(-50%);
-            background: #1a0000;
-            color: var(--accent);
-            border: 2px solid var(--accent);
-            padding: 14px 26px;
-            border-radius: 50px;
-            font-weight: 600;
-            box-shadow: 0 0 20px var(--glow);
-            opacity: 0;
-            transition: 0.3s;
-            z-index: 1000;
+            background: #111;
+            color: var(--primary);
+            padding: 16px 32px;
+            border: 1px solid var(--primary);
+            border-radius: 12px;
+            display: none;
+            z-index: 10000;
+            font-weight: bold;
+            box-shadow: 0 0 20px rgba(0, 255, 157, 0.5);
         }
-        .toast.show { opacity: 1; }
-
-        .hidden { display: none !important; }
     </style>
 </head>
 <body>
+    <div class="container">
+        <h1>NPC OFFSET CONVERTER</h1>
 
-<canvas id="bg-canvas"></canvas>
-
-<div class="container">
-    <header>
-        <h1>NPC ELITE CONVERTER</h1>
-        <div class="subtitle">TERMINAL v1.0 • RED EDITION</div>
-    </header>
-
-    <div class="card">
-        <div class="input-group">
-            <label>Library</label>
+        <!-- Library -->
+        <div class="card">
+            <label>LIBRARY NAME</label>
             <input type="text" id="libName" value="libanogs.so">
         </div>
-        <div class="input-group">
-            <label>Hex Patch</label>
-            <input type="text" id="hexPatch" value="00 00 80 D2 C0 03 5F D6">
+
+        <!-- Mode -->
+        <div class="card">
+            <label>CONVERSION MODE</label>
+            <div class="mode-selector" id="modeDisplay" onclick="showModal()">
+                Offsets → HexPatches <span style="color:#0f0;">▼</span>
+            </div>
         </div>
-        <div class="input-group">
-            <label>Offsets (One per line)</label>
-            <textarea id="input" placeholder="0x123456&#10;789ABC&#10;0xDEF012"></textarea>
-            <div class="hint">0x prefix optional • One offset per line</div>
+
+        <!-- Input -->
+        <div class="card">
+            <label>INPUT OFFSETS</label>
+            <textarea id="input" placeholder="Paste your offsets here... (one per line)"></textarea>
+            <button onclick="convert()" class="red">CONVERT NOW</button>
         </div>
-        <div class="btn-container">
-            <button class="btn-icon" onclick="pasteFromClipboard()">📋</button>
-            <button class="btn-primary" onclick="generate()">CONVERT</button>
+
+        <!-- Results -->
+        <div class="card">
+            <label>OUTPUT RESULT</label>
+            <div class="results" id="output">Converted code will appear here...</div>
+            <div class="btn-group">
+                <button onclick="copyResult()" class="red">COPY RESULT</button>
+                <button onclick="clearAll()">CLEAR ALL</button>
+            </div>
         </div>
     </div>
 
-    <div class="global-bar" id="globalActions">
-        <strong>CONVERSION COMPLETE</strong>
-        <div style="display:flex; gap:10px;">
-            <button onclick="copyAll()">COPY ALL</button>
-            <button onclick="saveAll()">SAVE ALL</button>
+    <!-- Mode Modal -->
+    <div id="modal" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.95); z-index:9999; padding:20px; overflow:auto;">
+        <div style="background:#1a1a1a; border:1px solid var(--primary); border-radius:16px; max-width:400px; margin:40px auto;">
+            <div style="padding:18px; text-align:center; color:var(--primary); font-weight:bold; border-bottom:1px solid #333;">SELECT MODE</div>
+            <div id="modeOptions" style="padding:10px 0;"></div>
         </div>
     </div>
 
-    <div id="results-area"></div>
-</div>
+    <!-- Toast -->
+    <div id="toast">COPIED TO CLIPBOARD ✓</div>
 
-<div id="toast" class="toast">Ready</div>
+    <script>
+        let currentMode = "Offsets → HexPatches";
 
-<script>
-        // --- Configuration ---
-        const els = {
-            libName: document.getElementById('libName'),
-            hexPatch: document.getElementById('hexPatch'),
-            input: document.getElementById('input'),
-            results: document.getElementById('results-area'),
-            globalActions: document.getElementById('globalActions'),
-            toast: document.getElementById('toast')
-        };
-
-        let fullOutputText = "";
-
-        // --- Bypass Types ---
-        const bypassTypes = [
-            { id: 'encoff', title: 'EncOff Format', ext: 'txt', gen: (o) => { let s=["/* ===== EncOff FORMAT ===== */"]; o.forEach(x=>s.push(`EncOff(0x${x.toString(16).toUpperCase()}),`)); return s.join('\n'); } },
-            { id: 'bypass_offsets', title: 'Bypass Offsets', ext: 'cpp', gen: (o) => { let s=["/* ===== BYPASS OFFSETS ===== */"]; o.forEach((x,i)=>s.push(`inline uintptr_t bypass${i+1} = 0x${x.toString(16).toUpperCase()};`)); return s.join('\n'); } },
-            { id: 'direct_patch', title: 'Direct Memory Patch', ext: 'cpp', gen: (o, lib, pat) => { let s=["/* ===== DIRECT MEMORY PATCH ===== */"]; o.forEach(x=>s.push(`MemoryPatch::createWithHex("${lib}", 0x${x.toString(16).toUpperCase()}, "${pat}").Modify();`)); return s.join('\n'); } },
-            { id: 'armfalse_patch', title: 'ArmFalse Patch', ext: 'cpp', gen: (o, lib) => { let s=["/* ===== BYPASS MEMORY PATCH (armFalse) ===== */"]; for(let i=0;i<o.length;i++) s.push(`MemoryPatch::createWithHex(OBFUSCATE("${lib}"), bypass${i+1}, armFalse).Modify();`); return s.join('\n'); } },
-            { id: 'tools_hook', title: 'Tools::Hook Calls', ext: 'cpp', gen: (o, lib) => { let s=["/* ===== TOOLS::HOOK CALLS ===== */"]; o.forEach(x=>s.push(`Tools::Hook((void*)getAbsoluteAddress(OBFUSCATE("${lib}"), 0x${x.toString(16).toUpperCase()}), (void*)hook_bypass, (void**)&orig_bypass);`)); return s.join('\n'); } },
-            { id: 'dobby_hook', title: 'Dobby Hook Calls', ext: 'cpp', gen: (o, lib) => { let s=["/* ===== DOBBY HOOK CALLS ===== */"]; o.forEach(x=>s.push(`DobbyHook((void*)getAbsoluteAddress(OBFUSCATE("${lib}"), 0x${x.toString(16).toUpperCase()}), (void*)hook_bypass, (void**)&orig_bypass);`)); return s.join('\n'); } },
-            { id: 'hook_lib', title: 'Hook Lib Format', ext: 'cpp', gen: (o, lib) => { let s=["/* ===== HOOK_LIB FORMAT ===== */"]; o.forEach(x=>s.push(`HOOK_LIB("${lib}", "0x${x.toString(16).toUpperCase()}", h_disabled, o_disabled);`)); return s.join('\n'); } },
-            { id: 'hexpatch_injector', title: 'HexPatch (Injector)', ext: 'lua', gen: (o, lib, pat) => { let s=["/* ===== HEXPATCH (INJECTOR) ===== */"]; o.forEach(x=>s.push(`HexPatches.MemoryPatch("${lib}", 0x${x.toString(16).toUpperCase()}, "${pat}", 32);`)); return s.join('\n'); } }
+        const allModes = [
+            "Offsets → MemoryPatch",
+            "Offsets → HexPatches"
         ];
 
-        // --- Functions ---
+        function showModal() {
+            const container = document.getElementById('modeOptions');
+            container.innerHTML = '';
+            allModes.forEach(mode => {
+                const div = document.createElement('div');
+                div.style.padding = '16px 20px';
+                div.style.borderBottom = '1px solid #333';
+                div.style.cursor = 'pointer';
+                div.style.color = mode === currentMode ? '#0f0' : '#ddd';
+                div.textContent = mode;
+                div.onclick = () => {
+                    currentMode = mode;
+                    document.getElementById('modeDisplay').innerHTML = `${mode} <span style="color:#0f0;">▼</span>`;
+                    document.getElementById('modal').style.display = 'none';
+                };
+                container.appendChild(div);
+            });
+            document.getElementById('modal').style.display = 'block';
+        }
 
-        async function pasteFromClipboard() {
-            try {
-                const text = await navigator.clipboard.readText();
-                els.input.value = text;
-                showToast("Pasted from clipboard");
-            } catch (e) {
-                showToast("Could not paste automatically", "error");
+        function extractOffset(str) {
+            str = str.trim();
+            const hexMatch = str.match(/0x([A-Fa-f0-9]+)/i) || str.match(/([A-Fa-f0-9]{5,})/);
+            if (hexMatch) {
+                let offset = hexMatch[1] || hexMatch[0];
+                return '0x' + offset.replace(/^0x/i, '').toUpperCase();
             }
+            return null;
         }
 
-        function generate() {
-            const raw = els.input.value.trim();
-            if (!raw) return showToast("Please enter offsets first", "error");
+        function convert() {
+            const lib = document.getElementById('libName').value.trim() || "libanogs.so";
+            let inputText = document.getElementById('input').value.trim();
+            
+            if (!inputText) return alert("Input is empty!");
 
-            const lib = els.libName.value.trim() || "libanogs.so";
-            const pat = els.hexPatch.value.trim() || "00 00";
+            const lines = inputText.split('\n').map(l => l.trim()).filter(l => l);
+            let output = '';
 
-            // Parse
-            const offsets = raw.split('\n')
-                .map(l => l.trim())
-                .filter(l => l)
-                .map(l => {
-                    if (!l.toLowerCase().startsWith("0x")) l = "0x" + l;
-                    return parseInt(l, 16);
-                })
-                .filter(n => !isNaN(n));
+            lines.forEach(raw => {
+                const offset = extractOffset(raw);
+                if (!offset) return;
 
-            if (offsets.length === 0) return showToast("No valid offsets found", "error");
-
-            // Reset
-            els.results.innerHTML = '';
-            fullOutputText = "// ========================================\n//  LYC4N-BYPASS-FORMATTER | GENERATED\n// ========================================\n\n";
-
-            // Generate Cards
-            bypassTypes.forEach(type => {
-                const content = type.gen(offsets, lib, pat);
-                fullOutputText += content + "\n\n";
-
-                // Create Card Elements
-                const card = document.createElement('div');
-                card.className = 'result-card';
-
-                // Header
-                const header = document.createElement('div');
-                header.className = 'result-header';
-                header.innerHTML = `<span class="result-title">${type.title}</span>`;
-
-                // Preview
-                const preview = document.createElement('div');
-                preview.className = 'code-preview';
-                preview.textContent = content; // Safe text insertion
-
-                // Hidden Storage for Download Logic (Fixes the "Others can't download" issue)
-                const hiddenStore = document.createElement('textarea');
-                hiddenStore.className = 'hidden';
-                hiddenStore.value = content;
-
-                // Actions
-                const actions = document.createElement('div');
-                actions.className = 'result-actions';
-
-                const btnCopy = document.createElement('button');
-                btnCopy.className = 'btn-tonal';
-                btnCopy.textContent = 'Copy';
-                btnCopy.onclick = () => { navigator.clipboard.writeText(content); showToast("Copied!"); };
-
-                const btnSave = document.createElement('button');
-                btnSave.className = 'btn-tonal';
-                btnSave.textContent = `Save .${type.ext}`;
-                // Pass the element reference to the download function
-                btnSave.onclick = () => downloadFile(hiddenStore.value, `${type.id}.${type.ext}`);
-
-                actions.appendChild(btnCopy);
-                actions.appendChild(btnSave);
-
-                // Assemble
-                card.appendChild(header);
-                card.appendChild(preview);
-                card.appendChild(hiddenStore); // Hidden
-                card.appendChild(actions);
-                els.results.appendChild(card);
-            });
-
-            els.results.classList.add('active');
-            els.globalActions.classList.add('visible');
-            showToast("Generated successfully!");
-        }
-
-        function copyAll() {
-            if (!fullOutputText) return;
-            navigator.clipboard.writeText(fullOutputText).then(() => showToast("All output copied!"));
-        }
-
-        function saveAll() {
-            if (!fullOutputText) return;
-            downloadFile(fullOutputText, "full_bypass_output.txt");
-        }
-
-        // Robust Download Function
-        function downloadFile(content, filename) {
-            const blob = new Blob([content], { type: "text/plain" });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement("a");
-            a.href = url;
-            a.download = filename;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-            showToast(`Downloaded ${filename}`);
-        }
-
-        function showToast(msg, type = 'normal') {
-            const t = els.toast;
-            t.textContent = msg;
-            t.style.backgroundColor = type === 'error' ? '#550000' : '#1a1a00';
-            t.classList.add('show');
-            setTimeout(() => t.classList.remove('show'), 3000);
-        }
-    </script>
-
-<script>
-        // === Animated Background: Floating particles + grid ===
-        const canvas = document.getElementById('bg-canvas');
-        const ctx = canvas.getContext('2d');
-
-        function resize() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        }
-        resize();
-        window.addEventListener('resize', resize);
-
-        const PARTICLE_COUNT = 60;
-        const particles = [];
-
-        for (let i = 0; i < PARTICLE_COUNT; i++) {
-            particles.push({
-                x: Math.random() * window.innerWidth,
-                y: Math.random() * window.innerHeight,
-                r: Math.random() * 2 + 0.5,
-                dx: (Math.random() - 0.5) * 0.4,
-                dy: (Math.random() - 0.5) * 0.4,
-                alpha: Math.random() * 0.5 + 0.1
-            });
-        }
-
-        // Pulsing orbs
-        const orbs = [
-            { x: 0.2, y: 0.2, r: 200, phase: 0 },
-            { x: 0.8, y: 0.7, r: 260, phase: Math.PI },
-            { x: 0.5, y: 0.5, r: 180, phase: Math.PI / 2 },
-        ];
-
-        let tick = 0;
-
-        function draw() {
-            tick++;
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            // Draw grid
-            ctx.strokeStyle = 'rgba(255, 30, 30, 0.04)';
-            ctx.lineWidth = 1;
-            const gridSize = 50;
-            for (let x = 0; x < canvas.width; x += gridSize) {
-                ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke();
-            }
-            for (let y = 0; y < canvas.height; y += gridSize) {
-                ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke();
-            }
-
-            // Draw pulsing orbs
-            orbs.forEach(orb => {
-                const pulse = Math.sin(tick * 0.01 + orb.phase) * 0.5 + 0.5;
-                const grad = ctx.createRadialGradient(
-                    orb.x * canvas.width, orb.y * canvas.height, 0,
-                    orb.x * canvas.width, orb.y * canvas.height, orb.r + pulse * 80
-                );
-                grad.addColorStop(0, `rgba(255, 30, 30, ${0.07 + pulse * 0.05})`);
-                grad.addColorStop(1, 'rgba(0,0,0,0)');
-                ctx.fillStyle = grad;
-                ctx.beginPath();
-                ctx.arc(orb.x * canvas.width, orb.y * canvas.height, orb.r + pulse * 80, 0, Math.PI * 2);
-                ctx.fill();
-            });
-
-            // Draw particles + connections
-            particles.forEach(p => {
-                p.x += p.dx;
-                p.y += p.dy;
-                if (p.x < 0 || p.x > canvas.width) p.dx *= -1;
-                if (p.y < 0 || p.y > canvas.height) p.dy *= -1;
-
-                ctx.beginPath();
-                ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-                ctx.fillStyle = `rgba(255, 77, 77, ${p.alpha})`;
-                ctx.fill();
-            });
-
-            // Draw connections between close particles
-            for (let i = 0; i < particles.length; i++) {
-                for (let j = i + 1; j < particles.length; j++) {
-                    const a = particles[i], b = particles[j];
-                    const dist = Math.hypot(a.x - b.x, a.y - b.y);
-                    if (dist < 120) {
-                        ctx.beginPath();
-                        ctx.moveTo(a.x, a.y);
-                        ctx.lineTo(b.x, b.y);
-                        ctx.strokeStyle = `rgba(255, 50, 50, ${0.12 * (1 - dist / 120)})`;
-                        ctx.lineWidth = 0.8;
-                        ctx.stroke();
-                    }
+                if (currentMode === "Offsets → HexPatches") {
+                    output += `HexPatches.MemoryPatch("${lib}", ${offset}, "h00 00 80 D2 C0 03 5F D6", 32);\n`;
+                } 
+                else if (currentMode === "Offsets → MemoryPatch") {
+                    output += `MemoryPatch::createWithHex("${lib}", ${offset}, "000080D2C0035FD6").Modify();\n`;
                 }
-            }
+            });
 
-            requestAnimationFrame(draw);
+            document.getElementById('output').textContent = output.trim() || "No valid offset found.";
         }
 
-        draw();
-    </script>
+        async function copyResult() {
+            const text = document.getElementById('output').textContent.trim();
+            if (!text || text === "Converted code will appear here..." || text === "No valid offset found.") {
+                alert("Nothing to copy!");
+                return;
+            }
 
+            try {
+                await navigator.clipboard.writeText(text);
+                const toast = document.getElementById('toast');
+                toast.style.display = 'block';
+                setTimeout(() => toast.style.display = 'none', 1800);
+            } catch (e) {
+                alert("✅ COPIED!");
+            }
+        }
+
+        function clearAll() {
+            document.getElementById('input').value = '';
+            document.getElementById('output').textContent = "Converted code will appear here...";
+        }
+    </script>
 </body>
 </html>
