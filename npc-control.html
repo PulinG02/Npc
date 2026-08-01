@@ -9,410 +9,442 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 /* ============================================================
-   NPC CONTROL — "Control Tower" design system
-   Graphite + signal-cyan ops console for access/key management.
+   NPC CONTROL — "High-Tech Cyber/Glass" Design System
+   Applied over full Firebase functionality
    ============================================================ */
 
-:root{
-  --bg:            #0A0C10;
-  --bg-2:          #0E1117;
-  --surface:       #12161D;
-  --surface-2:     #161B24;
-  --border:        #232934;
-  --border-soft:   #1A1F28;
+:root {
+  --bg:            #030712;
+  --bg-2:          #0B0F19;
+  --surface:       rgba(17, 24, 39, 0.65);
+  --surface-2:     rgba(31, 41, 55, 0.65);
+  --border:        rgba(45, 212, 191, 0.25);
+  --border-soft:   rgba(255, 255, 255, 0.08);
 
-  --ink:           #E7EBF1;
-  --ink-dim:       #8993A4;
-  --ink-faint:     #545D6E;
+  --ink:           #F9FAFB;
+  --ink-dim:       #9CA3AF;
+  --ink-faint:     #4B5563;
 
-  --signal:        #5EEAD4;
-  --signal-dim:    #2D6F66;
-  --signal-glow:   rgba(94,234,212,0.18);
+  --signal:        #2DD4BF;
+  --signal-dim:    #115E59;
+  --signal-glow:   rgba(45, 212, 191, 0.25);
 
-  --amber:         #F5A623;
-  --amber-dim:     #5C4419;
-  --amber-glow:    rgba(245,166,35,0.16);
+  --amber:         #FBBF24;
+  --amber-dim:     #92400E;
+  --amber-glow:    rgba(251, 191, 36, 0.2);
 
-  --coral:         #FF6B6B;
-  --coral-dim:     #5C2A2A;
-  --coral-glow:    rgba(255,107,107,0.16);
+  --coral:         #F87171;
+  --coral-dim:     #991B1B;
+  --coral-glow:    rgba(248, 113, 113, 0.2);
 
-  --violet:        #8B8FF7;
-  --violet-dim:    #38398C;
-  --violet-glow:   rgba(139,143,247,0.16);
+  --violet:        #A78BFA;
+  --violet-dim:    #4C1D95;
+  --violet-glow:   rgba(167, 139, 250, 0.2);
 
   --font-display:  'Inter', sans-serif;
   --font-mono:     'JetBrains Mono', monospace;
 
-  --r-sm: 6px; --r-md: 10px; --r-lg: 14px; --r-xl: 20px;
+  --r-sm: 8px; --r-md: 12px; --r-lg: 16px; --r-xl: 24px;
 }
 
-body.light-theme{
-  --bg:            #F3F4F2;
-  --bg-2:          #ECEEEC;
-  --surface:       #FFFFFF;
-  --surface-2:     #F8F9F8;
-  --border:        #DDE1DE;
-  --border-soft:   #E6E9E6;
-  --ink:           #131614;
-  --ink-dim:       #5C6460;
-  --ink-faint:     #97A09B;
-  --signal-dim:    #BFEFE8;
-  --signal-glow:   rgba(20,150,135,0.10);
-  --amber-dim:     #FCE6BF;
-  --amber-glow:    rgba(180,120,10,0.10);
-  --coral-dim:     #FAD2D2;
-  --coral-glow:    rgba(200,50,50,0.10);
-  --violet-dim:    #DEDFFB;
-  --violet-glow:   rgba(100,100,220,0.10);
+body.light-theme {
+  --bg:            #F3F4F6;
+  --bg-2:          #E5E7EB;
+  --surface:       rgba(255, 255, 255, 0.8);
+  --surface-2:     rgba(243, 244, 246, 0.8);
+  --border:        #D1D5DB;
+  --border-soft:   #E5E7EB;
+  --ink:           #111827;
+  --ink-dim:       #4B5563;
+  --ink-faint:     #9CA3AF;
+  --signal:        #0D9488;
+  --signal-dim:    #99F6E4;
+  --signal-glow:   rgba(13, 148, 136, 0.15);
+  --amber:         #D97706;
+  --amber-dim:     #FDE68A;
+  --amber-glow:    rgba(217, 119, 6, 0.15);
+  --coral:         #DC2626;
+  --coral-dim:     #FECACA;
+  --coral-glow:    rgba(220, 38, 38, 0.15);
+  --violet:        #7C3AED;
+  --violet-dim:    #DDD6FE;
+  --violet-glow:   rgba(124, 58, 237, 0.15);
 }
 
-*{ box-sizing:border-box; margin:0; padding:0; }
-html{ -webkit-tap-highlight-color: transparent; }
-body{
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { -webkit-tap-highlight-color: transparent; }
+body {
   background: var(--bg);
   color: var(--ink);
   font-family: var(--font-display);
-  min-height:100vh;
-  position:relative;
-  overflow-x:hidden;
-  transition: background .25s ease, color .25s ease;
+  min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
+  transition: background .3s ease, color .3s ease;
   -webkit-font-smoothing: antialiased;
 }
 
-/* ---------- ambient backdrop: faint signal grid + scan sweep ---------- */
-.bg-field{ position:fixed; inset:0; z-index:-2; background:var(--bg); transition:background .25s ease; }
-.bg-field::before{
-  content:''; position:absolute; inset:0;
+/* ---------- ambient backdrop ---------- */
+.bg-field { position: fixed; inset: 0; z-index: -2; background: var(--bg); transition: background .3s ease; }
+.bg-field::before {
+  content: ''; position: absolute; inset: 0;
   background-image:
     linear-gradient(var(--border-soft) 1px, transparent 1px),
     linear-gradient(90deg, var(--border-soft) 1px, transparent 1px);
-  background-size: 64px 64px;
-  -webkit-mask-image: radial-gradient(ellipse 70% 50% at 50% 0%, black 30%, transparent 75%);
-          mask-image: radial-gradient(ellipse 70% 50% at 50% 0%, black 30%, transparent 75%);
+  background-size: 50px 50px;
+  -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, black 40%, transparent 80%);
+          mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, black 40%, transparent 80%);
 }
-.bg-sweep{
-  position:absolute; left:-10%; right:-10%; height:200px; top:-200px;
+.bg-sweep {
+  position: absolute; left: -10%; right: -10%; height: 150px; top: -200px;
   background: linear-gradient(to bottom, transparent, var(--signal-glow), transparent);
-  animation: sweep 11s linear infinite;
-  opacity:.5;
+  animation: sweep 8s linear infinite;
+  opacity: 0.8;
 }
-@keyframes sweep{ 0%{transform:translateY(0);} 100%{transform:translateY(140vh);} }
-@media (prefers-reduced-motion: reduce){ .bg-sweep{ animation:none; display:none; } }
+@keyframes sweep { 0% { transform: translateY(0); } 100% { transform: translateY(120vh); } }
+@media (prefers-reduced-motion: reduce) { .bg-sweep { animation: none; display: none; } }
 
 /* ---------- motion primitives ---------- */
-@keyframes fadeUp{ from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);} }
-@keyframes fadeIn{ from{opacity:0;} to{opacity:1;} }
-@keyframes popIn{ 0%{transform:scale(1);} 35%{transform:scale(1.18);} 65%{transform:scale(.94);} 100%{transform:scale(1);} }
-@keyframes pulseDot{ 0%,100%{ box-shadow:0 0 0 0 var(--signal-glow);} 50%{ box-shadow:0 0 0 5px transparent; } }
-@keyframes spin{ to{ transform:rotate(360deg); } }
-@keyframes slideInRow{ from{opacity:0; transform:translateX(-8px);} to{opacity:1; transform:translateX(0);} }
-@keyframes toastIn{ from{opacity:0; transform:translateY(10px) scale(.97);} to{opacity:1; transform:translateY(0) scale(1);} }
-@keyframes toastOut{ from{opacity:1; transform:translateY(0) scale(1);} to{opacity:0; transform:translateY(10px) scale(.97);} }
-@keyframes modalIn{ from{opacity:0; transform:translateY(8px) scale(.96);} to{opacity:1; transform:translateY(0) scale(1);} }
-@keyframes tickFlash{ 0%{ color:var(--signal); } 100%{ color:inherit; } }
-@media (prefers-reduced-motion: reduce){ *{ animation-duration:.001ms !important; animation-iteration-count:1 !important; } }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes popIn { 0% { transform: scale(1); } 35% { transform: scale(1.18); } 65% { transform: scale(.94); } 100% { transform: scale(1); } }
+@keyframes pulseDot { 0%, 100% { box-shadow: 0 0 0 0 var(--signal-glow); } 50% { box-shadow: 0 0 0 6px transparent; } }
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes slideInRow { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes toastIn { from { opacity: 0; transform: translateY(10px) scale(.97); } to { opacity: 1; transform: translateY(0) scale(1); } }
+@keyframes toastOut { from { opacity: 1; } to { opacity: 0; transform: translateY(10px) scale(.97); } }
+@keyframes modalIn { from { opacity: 0; transform: translateY(8px) scale(.96); } to { opacity: 1; transform: translateY(0) scale(1); } }
+@keyframes tickFlash { 0% { color: var(--signal); text-shadow: 0 0 10px var(--signal-glow); } 100% { color: inherit; } }
 
-::selection{ background:var(--signal-glow); color:var(--ink); }
-::-webkit-scrollbar{ width:8px; height:8px; }
-::-webkit-scrollbar-thumb{ background:var(--border); border-radius:8px; }
-::-webkit-scrollbar-thumb:hover{ background:var(--ink-faint); }
+::selection { background: var(--signal-glow); color: var(--ink); }
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { background: var(--signal); }
 
-a{ color:inherit; }
+a { color: inherit; text-decoration: none; }
 
 /* ============================================================
-   Form controls
+   Form controls (Glassmorphism)
    ============================================================ */
-input, select, textarea{
+input, select, textarea {
   font-family: var(--font-mono);
   font-size: 13.5px;
-  padding: 10px 12px;
+  padding: 12px 14px;
   border-radius: var(--r-sm);
-  border: 1px solid var(--border);
+  border: 1px solid var(--border-soft);
   width: 100%;
-  background: var(--surface);
+  background: rgba(0, 0, 0, 0.2);
   color: var(--ink);
-  transition: border-color .15s ease, box-shadow .15s ease, background .25s ease;
+  transition: all .2s ease;
+  backdrop-filter: blur(4px);
 }
-input::placeholder{ color: var(--ink-faint); font-family: var(--font-display); }
-input:focus, select:focus, textarea:focus{
-  outline:none; border-color: var(--signal);
-  box-shadow: 0 0 0 3px var(--signal-glow);
+input::placeholder { color: var(--ink-faint); font-family: var(--font-display); }
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: var(--signal);
+  background: rgba(0, 0, 0, 0.4);
+  box-shadow: 0 0 12px var(--signal-glow);
 }
-input[type="checkbox"]{ width:auto; accent-color: var(--signal); cursor:pointer; }
-select{ cursor:pointer; }
-input:disabled{ opacity:.5; cursor:not-allowed; }
+input[type="checkbox"] { width: auto; accent-color: var(--signal); cursor: pointer; }
+select { cursor: pointer; }
+input:disabled { opacity: .5; cursor: not-allowed; }
+select option { background: #0B0F19; }
 
-button{
+button {
   font-family: var(--font-display);
   font-size: 13px;
   font-weight: 600;
-  letter-spacing: .01em;
-  padding: 10px 14px;
+  letter-spacing: .02em;
+  padding: 10px 16px;
   border-radius: var(--r-sm);
-  border: 1px solid var(--border);
-  background: var(--surface);
+  border: 1px solid var(--border-soft);
+  background: var(--surface-2);
   color: var(--ink);
   cursor: pointer;
-  transition: border-color .15s ease, background .15s ease, transform .08s ease, box-shadow .15s ease;
+  transition: all .2s ease;
+  backdrop-filter: blur(4px);
 }
-button:hover{ border-color: var(--ink-faint); background: var(--surface-2); }
-button:active{ transform: scale(.97); }
-button:focus-visible, input:focus-visible, select:focus-visible{ outline: 2px solid var(--signal); outline-offset: 1px; }
-button.working{ opacity:.65; pointer-events:none; }
+button:hover {
+  border-color: var(--signal);
+  background: rgba(255, 255, 255, 0.05);
+  box-shadow: 0 0 8px var(--signal-glow);
+}
+button:active { transform: scale(.96); }
+button:focus-visible { outline: 2px solid var(--signal); outline-offset: 1px; }
+button.working { opacity: .65; pointer-events: none; }
 
-.btn-primary{ background: var(--signal); color:#0A0C10; border-color: var(--signal); }
-.btn-primary:hover{ background:#7FF1DD; border-color:#7FF1DD; }
-.btn-ghost{ background:transparent; }
-.btn-danger{ color: var(--coral); border-color: var(--coral-dim); }
-.btn-danger:hover{ background: var(--coral-glow); border-color: var(--coral); }
-.btn-warn{ color: var(--amber); border-color: var(--amber-dim); }
-.btn-warn:hover{ background: var(--amber-glow); border-color: var(--amber); }
-.btn-info{ color: var(--violet); border-color: var(--violet-dim); }
-.btn-info:hover{ background: var(--violet-glow); border-color: var(--violet); }
-.btn-sm{ padding:5px 10px; font-size:11px; }
-.btn-icon{ width:38px; padding:8px; flex:none; }
+.btn-primary {
+  background: var(--signal);
+  color: #000;
+  border-color: var(--signal);
+  box-shadow: 0 4px 15px var(--signal-glow);
+}
+.btn-primary:hover {
+  background: #4FD1C5;
+  box-shadow: 0 4px 20px rgba(79, 209, 197, 0.5);
+}
+.btn-ghost { background: transparent; border-color: transparent; }
+.btn-ghost:hover { background: rgba(255, 255, 255, 0.05); }
+.btn-danger { color: var(--coral); border-color: var(--coral-dim); }
+.btn-danger:hover { background: var(--coral-glow); border-color: var(--coral); box-shadow: 0 0 10px var(--coral-glow); }
+.btn-warn { color: var(--amber); border-color: var(--amber-dim); }
+.btn-warn:hover { background: var(--amber-glow); border-color: var(--amber); }
+.btn-info { color: var(--violet); border-color: var(--violet-dim); }
+.btn-info:hover { background: var(--violet-glow); border-color: var(--violet); }
+.btn-sm { padding: 6px 12px; font-size: 11px; }
+.btn-icon { width: 38px; padding: 8px; flex: none; }
 
-.row{ display:flex; gap:8px; flex-wrap:wrap; }
-.row > *{ margin:0; }
-.row.eq > button, .row.eq > input, .row.eq > select{ flex:1; min-width:110px; }
+.row { display: flex; gap: 10px; flex-wrap: wrap; }
+.row > * { margin: 0; }
+.row.eq > button, .row.eq > input, .row.eq > select { flex: 1; min-width: 110px; }
 
-.spinner{ display:inline-block; width:13px; height:13px; border:2px solid currentColor; border-right-color:transparent; border-radius:50%; animation: spin .65s linear infinite; vertical-align:-2px; margin-right:6px; }
+.spinner { display: inline-block; width: 13px; height: 13px; border: 2px solid currentColor; border-right-color: transparent; border-radius: 50%; animation: spin .65s linear infinite; vertical-align: -2px; margin-right: 6px; }
 
 /* ============================================================
-   Surfaces: cards, panels
+   Surfaces: Glass Panels
    ============================================================ */
-.panel{
+.panel {
   background: var(--surface);
   border: 1px solid var(--border-soft);
   border-radius: var(--r-lg);
-  padding: 18px;
-  margin-bottom: 14px;
-  animation: fadeUp .4s ease both;
-  transition: border-color .2s ease, background .25s ease;
+  padding: 20px;
+  margin-bottom: 16px;
+  backdrop-filter: blur(12px);
+  animation: fadeUp .5s ease both;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  transition: border-color .2s ease, background .3s ease;
 }
-.panel-head{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:14px; }
-.panel-eyebrow{
-  font-family: var(--font-mono); font-size:11px; font-weight:600;
-  letter-spacing:.08em; text-transform:uppercase; color: var(--ink-dim);
-  display:flex; align-items:center; gap:8px;
+.panel-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 18px; }
+.panel-eyebrow {
+  font-family: var(--font-mono); font-size: 12px; font-weight: 700;
+  letter-spacing: .1em; text-transform: uppercase; color: var(--signal);
+  display: flex; align-items: center; gap: 8px;
+  text-shadow: 0 0 8px var(--signal-glow);
 }
-.panel-eyebrow .ic{ color: var(--signal); font-size:14px; }
+.panel-eyebrow .ic { color: var(--signal); font-size: 14px; }
 
-/* ============================================================
-   Field label (shared)
-   ============================================================ */
-label.field-label{ font-family:var(--font-mono); font-size:10.5px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-faint); display:block; margin-bottom:6px; }
-
-/* ============================================================
-   Generate New Key card
-   ============================================================ */
-.gk-field{ margin-bottom:16px; }
-.gk-field:last-of-type{ margin-bottom:0; }
-.gk-id-toggle{ display:flex; gap:4px; margin-bottom:8px; background:var(--surface-2); border:1px solid var(--border-soft); border-radius:var(--r-sm); padding:3px; }
-.gk-id-toggle button{ flex:1; border:none; background:transparent; padding:6px; border-radius:5px; font-size:11.5px; color:var(--ink-dim); }
-.gk-id-toggle button.active{ background: var(--surface); color: var(--signal); border:1px solid var(--border); }
-.gk-auto-row{ display:flex; gap:8px; align-items:center; }
-.gk-auto-row input{ flex:1; }
-.gk-auto-row button{ flex:none; }
-
-/* ============================================================
-   Number stepper (max devices)
-   ============================================================ */
-.stepper{ display:flex; align-items:stretch; border:1px solid var(--border); border-radius:var(--r-sm); overflow:hidden; background:var(--surface); }
-.stepper button{ width:38px; border:none; border-radius:0; background:var(--surface-2); font-size:17px; color:var(--ink-dim); }
-.stepper button:hover{ color:var(--signal); background:var(--surface-2); }
-.stepper input{ border:none; border-left:1px solid var(--border); border-right:1px solid var(--border); border-radius:0; text-align:center; font-weight:700; height:auto; }
-.chip-row{ display:flex; gap:5px; margin-top:6px; flex-wrap:wrap; }
-.chip-row button{ flex:1; min-width:30px; padding:4px 0; font-size:11px; font-family:var(--font-mono); }
-
-/* ============================================================
-   Toasts
-   ============================================================ */
-.toast{ display:none; border-radius:var(--r-md); padding:11px 16px; text-align:center; margin-top:12px; font-size:12.5px; font-weight:600; border:1px solid transparent; }
-.toast.visible{ display:block; animation: toastIn .22s ease forwards; }
-.toast.hiding{ display:block; animation: toastOut .22s ease forwards; }
-.toast.success{ background: var(--signal-glow); color: var(--signal); border-color: var(--signal-dim); }
-.toast.error{ background: var(--coral-glow); color: var(--coral); border-color: var(--coral-dim); }
-.toast.info{ background: var(--violet-glow); color: var(--violet); border-color: var(--violet-dim); }
-
-/* ============================================================
-   Metrics grid — the signature element.
-   Each tile is a "telemetry" readout with a live status pulse
-   and a tiny sparkline ghosted behind the number.
-   ============================================================ */
-.metrics{ display:grid; grid-template-columns:repeat(2,1fr); gap:10px; margin-bottom:16px; }
-@media(min-width:480px){ .metrics{ grid-template-columns:repeat(4,1fr); } }
-.metric{
-  position:relative; overflow:hidden;
-  background: var(--surface);
-  border:1px solid var(--border-soft);
-  border-radius: var(--r-md);
-  padding: 13px 14px;
-  animation: fadeUp .45s ease both;
-  transition: border-color .2s ease, background .25s ease;
-}
-.metric:hover{ border-color: var(--border); }
-.metric svg.spark{ position:absolute; right:8px; bottom:6px; opacity:.35; pointer-events:none; }
-.metric-label{
-  font-family: var(--font-mono); font-size:10px; font-weight:600;
-  letter-spacing:.07em; text-transform:uppercase; color: var(--ink-faint);
-  display:flex; align-items:center; gap:6px; margin-bottom:8px;
-}
-.dot{ width:6px; height:6px; border-radius:50%; background:var(--ink-faint); flex:none; }
-.dot.live{ background: var(--signal); animation: pulseDot 2s ease-in-out infinite; }
-.dot.warn{ background: var(--amber); }
-.dot.danger{ background: var(--coral); }
-.metric-value{ font-family: var(--font-mono); font-size:24px; font-weight:700; line-height:1; color:var(--ink); }
-.metric-value.tick{ animation: tickFlash .5s ease; }
+label.field-label { font-family: var(--font-mono); font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-dim); display: block; margin-bottom: 8px; }
 
 /* ============================================================
    Pills / badges
    ============================================================ */
-.pill{
-  display:inline-flex; align-items:center; gap:4px;
-  font-family: var(--font-mono); font-size:10.5px; font-weight:600;
-  padding: 3px 8px; border-radius: 100px; border:1px solid transparent;
-  white-space:nowrap;
+.pill {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-family: var(--font-mono); font-size: 10.5px; font-weight: 600;
+  padding: 3px 8px; border-radius: 100px; border: 1px solid transparent;
+  white-space: nowrap;
 }
-.pill-signal{ background: var(--signal-glow); color: var(--signal); border-color: var(--signal-dim); }
-.pill-amber{ background: var(--amber-glow); color: var(--amber); border-color: var(--amber-dim); }
-.pill-coral{ background: var(--coral-glow); color: var(--coral); border-color: var(--coral-dim); }
-.pill-violet{ background: var(--violet-glow); color: var(--violet); border-color: var(--violet-dim); }
-.pill-neutral{ background: var(--surface-2); color: var(--ink-dim); border-color: var(--border); }
+.pill-signal { background: var(--signal-glow); color: var(--signal); border-color: var(--signal-dim); }
+.pill-amber { background: var(--amber-glow); color: var(--amber); border-color: var(--amber-dim); }
+.pill-coral { background: var(--coral-glow); color: var(--coral); border-color: var(--coral-dim); }
+.pill-violet { background: var(--violet-glow); color: var(--violet); border-color: var(--violet-dim); }
+.pill-neutral { background: var(--surface-2); color: var(--ink-dim); border-color: var(--border-soft); }
 
-.role-badge{ font-family:var(--font-mono); font-size:9.5px; font-weight:700; letter-spacing:.06em; padding:2px 7px; border-radius:5px; text-transform:uppercase; }
-.role-admin{ background: var(--coral-glow); color: var(--coral); }
-.role-reseller{ background: var(--violet-glow); color: var(--violet); }
-.role-user{ background: var(--surface-2); color: var(--ink-dim); }
+.role-badge { font-family: var(--font-mono); font-size: 9.5px; font-weight: 700; letter-spacing: .06em; padding: 3px 8px; border-radius: 6px; text-transform: uppercase; }
+.role-admin { background: var(--coral-glow); color: var(--coral); border: 1px solid var(--coral-dim); }
+.role-reseller { background: var(--violet-glow); color: var(--violet); border: 1px solid var(--violet-dim); }
+.role-user { background: var(--surface-2); color: var(--ink-dim); border: 1px solid var(--border-soft); }
+
+/* ============================================================
+   Metrics grid
+   ============================================================ */
+.metrics { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 20px; }
+@media(min-width: 480px) { .metrics { grid-template-columns: repeat(4, 1fr); } }
+.metric {
+  position: relative; overflow: hidden;
+  background: var(--surface);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--r-md);
+  padding: 16px;
+  backdrop-filter: blur(10px);
+  animation: fadeUp .5s ease both;
+  transition: all .2s ease;
+}
+.metric:hover { border-color: var(--signal); transform: translateY(-2px); box-shadow: 0 4px 15px var(--signal-glow); }
+.metric-label {
+  font-family: var(--font-mono); font-size: 11px; font-weight: 600;
+  letter-spacing: .08em; text-transform: uppercase; color: var(--ink-dim);
+  display: flex; align-items: center; gap: 8px; margin-bottom: 10px;
+}
+.dot { width: 8px; height: 8px; border-radius: 50%; background: var(--ink-faint); flex: none; }
+.dot.live { background: var(--signal); animation: pulseDot 2s ease-in-out infinite; }
+.dot.warn { background: var(--amber); }
+.dot.danger { background: var(--coral); }
+.metric-value { font-family: var(--font-mono); font-size: 26px; font-weight: 700; line-height: 1; color: var(--ink); }
+.metric-value.tick { animation: tickFlash .5s ease; }
+
+/* ============================================================
+   Generate New Key card
+   ============================================================ */
+.gk-field { margin-bottom: 18px; }
+.gk-field:last-of-type { margin-bottom: 0; }
+.gk-id-toggle {
+  display: flex; gap: 4px; margin-bottom: 10px;
+  background: rgba(0, 0, 0, 0.2); border: 1px solid var(--border-soft);
+  border-radius: var(--r-sm); padding: 4px;
+}
+.gk-id-toggle button { flex: 1; border: none; background: transparent; padding: 8px; border-radius: 5px; font-size: 12px; color: var(--ink-dim); box-shadow: none; }
+.gk-id-toggle button.active { background: var(--surface); color: var(--signal); border: 1px solid var(--border); box-shadow: 0 0 8px var(--signal-glow); }
+.gk-auto-row { display: flex; gap: 8px; align-items: center; }
+.gk-auto-row input { flex: 1; }
+.gk-auto-row button { flex: none; }
+
+.stepper { display: flex; align-items: stretch; border: 1px solid var(--border-soft); border-radius: var(--r-sm); overflow: hidden; background: rgba(0, 0, 0, 0.2); }
+.stepper button { width: 40px; border: none; border-radius: 0; background: transparent; font-size: 18px; color: var(--ink); box-shadow: none; }
+.stepper button:hover { color: var(--signal); background: rgba(255, 255, 255, 0.05); }
+.stepper input { border: none; border-left: 1px solid var(--border-soft); border-right: 1px solid var(--border-soft); border-radius: 0; text-align: center; font-weight: 700; height: auto; }
+.chip-row { display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap; }
+.chip-row button { flex: 1; min-width: 32px; padding: 6px 0; font-size: 11px; font-family: var(--font-mono); border-color: var(--border-soft); background: transparent; }
+
+/* ============================================================
+   Toasts
+   ============================================================ */
+.toast { display: none; border-radius: var(--r-md); padding: 12px 16px; text-align: center; margin-top: 12px; font-size: 12.5px; font-weight: 600; border: 1px solid transparent; backdrop-filter: blur(8px); }
+.toast.visible { display: block; animation: toastIn .22s ease forwards; }
+.toast.hiding { display: block; animation: toastOut .22s ease forwards; }
+.toast.success { background: var(--signal-glow); color: var(--signal); border-color: var(--signal-dim); box-shadow: 0 0 10px var(--signal-glow); }
+.toast.error { background: var(--coral-glow); color: var(--coral); border-color: var(--coral-dim); box-shadow: 0 0 10px var(--coral-glow); }
+.toast.info { background: var(--violet-glow); color: var(--violet); border-color: var(--violet-dim); }
 
 /* ============================================================
    Key / user row items
    ============================================================ */
-.item{
-  background: var(--surface); border:1px solid var(--border-soft); border-radius: var(--r-md);
-  padding: 12px 13px; margin-bottom: 8px;
+.item {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--r-md);
+  padding: 16px; margin-bottom: 12px;
   animation: slideInRow .3s ease both;
   transition: border-color .15s ease, opacity .25s ease, transform .25s ease;
+  backdrop-filter: blur(4px);
 }
-.item:hover{ border-color: var(--border); }
-.item.selected{ border-color: var(--signal); background: var(--signal-glow); }
-.item.deleting{ opacity:0; transform: scale(.96) translateX(-6px); }
-.item-key{ font-family: var(--font-mono); font-size:14px; font-weight:700; color: var(--ink); letter-spacing:.01em; word-break:break-all; }
-.item-meta{ display:flex; gap:5px; flex-wrap:wrap; margin: 7px 0; }
-.item-actions{ display:flex; gap:5px; flex-wrap:wrap; margin-top:8px; }
-.item-actions button{ padding:5px 9px; font-size:11px; }
-.device-toggle{ font-family: var(--font-mono); font-size:11px; color: var(--ink-faint); cursor:pointer; user-select:none; display:inline-block; margin-top:6px; }
-.device-toggle:hover{ color: var(--signal); }
-.device-list{ margin-top:6px; border-top:1px dashed var(--border); padding-top:6px; display:flex; flex-direction:column; gap:4px; }
-.device-row{ display:flex; align-items:center; justify-content:space-between; background: var(--surface-2); border-radius:5px; padding:5px 8px; font-family:var(--font-mono); font-size:11px; color:var(--ink-dim); }
-.device-row button{ width:20px; height:20px; padding:0; border:none; background:transparent; color:var(--coral); font-size:13px; }
-.device-empty{ font-size:11px; color: var(--ink-faint); text-align:center; padding:8px 0; }
+.item:hover { border-color: var(--border); background: rgba(255, 255, 255, 0.06); }
+.item.selected { border-color: var(--signal); background: var(--signal-glow); }
+.item.deleting { opacity: 0; transform: scale(.96) translateX(-6px); }
+.item-key { font-family: var(--font-mono); font-size: 15px; font-weight: 700; color: var(--signal); letter-spacing: .02em; word-break: break-all; margin-bottom: 8px; text-shadow: 0 0 8px var(--signal-glow); }
+.item-meta { display: flex; gap: 6px; flex-wrap: wrap; margin: 7px 0; }
+.item-actions { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 8px; }
+.item-actions button { padding: 5px 10px; font-size: 11px; }
+.device-toggle { font-family: var(--font-mono); font-size: 11px; color: var(--ink-faint); cursor: pointer; user-select: none; display: inline-block; margin-top: 6px; }
+.device-toggle:hover { color: var(--signal); }
+.device-list { margin-top: 6px; border-top: 1px dashed var(--border-soft); padding-top: 6px; display: flex; flex-direction: column; gap: 4px; }
+.device-row { display: flex; align-items: center; justify-content: space-between; background: rgba(0, 0, 0, 0.2); border-radius: 5px; padding: 5px 8px; font-family: var(--font-mono); font-size: 11px; color: var(--ink-dim); }
+.device-row button { width: 20px; height: 20px; padding: 0; border: none; background: transparent; color: var(--coral); font-size: 13px; }
+.device-empty { font-size: 11px; color: var(--ink-faint); text-align: center; padding: 8px 0; }
 
 /* ============================================================
-   Filter bars
+   Drawers (Glassmorphism)
    ============================================================ */
-.filter-bar{ display:flex; gap:6px; padding:10px 14px; border-bottom:1px solid var(--border-soft); flex-shrink:0; }
-.filter-bar input{ flex:2; }
-.filter-bar select{ flex:1; min-width:90px; }
-
-/* ============================================================
-   Drawers
-   ============================================================ */
-.drawer-overlay{ position:fixed; inset:0; background:rgba(5,7,10,.6); backdrop-filter: blur(2px); opacity:0; pointer-events:none; transition:opacity .25s ease; z-index:40; }
-.drawer-overlay.open{ opacity:1; pointer-events:auto; }
-.drawer{
-  position:fixed; top:0; right:0; height:100%; width:min(420px,100%);
-  background: var(--bg-2); border-left:1px solid var(--border);
-  transform: translateX(100%); transition: transform .3s cubic-bezier(.2,.8,.2,1);
-  z-index:41; display:flex; flex-direction:column;
+.drawer-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, .7); backdrop-filter: blur(4px); opacity: 0; pointer-events: none; transition: opacity .3s ease; z-index: 40; }
+.drawer-overlay.open { opacity: 1; pointer-events: auto; }
+.drawer {
+  position: fixed; top: 0; right: 0; height: 100%; width: min(450px, 100%);
+  background: rgba(11, 15, 25, 0.92);
+  backdrop-filter: blur(16px);
+  border-left: 1px solid var(--border);
+  box-shadow: -10px 0 30px rgba(0, 0, 0, 0.5);
+  transform: translateX(100%); transition: transform .3s cubic-bezier(.2, .8, .2, 1);
+  z-index: 41; display: flex; flex-direction: column;
 }
-.drawer.open{ transform: translateX(0); }
-.drawer-header{ display:flex; align-items:center; justify-content:space-between; padding:14px 16px; border-bottom:1px solid var(--border-soft); flex-shrink:0; }
-.drawer-title{ font-weight:700; font-size:14px; }
-.drawer-title .count{ font-family:var(--font-mono); color:var(--signal); }
-.drawer-body{ flex:1; overflow-y:auto; padding:12px 14px; }
-.bulk-bar{ display:flex; align-items:center; gap:8px; padding:9px 14px; border-bottom:1px solid var(--border-soft); font-family:var(--font-mono); font-size:11px; color:var(--ink-dim); flex-wrap:wrap; }
-.bulk-bar button{ margin-left:auto; }
+.drawer.open { transform: translateX(0); }
+.drawer-header { display: flex; align-items: center; justify-content: space-between; padding: 20px; border-bottom: 1px solid var(--border-soft); flex-shrink: 0; }
+.drawer-title { font-weight: 700; font-size: 15px; display: flex; align-items: center; gap: 8px; }
+.drawer-title .count { font-family: var(--font-mono); color: var(--signal); background: var(--signal-glow); padding: 2px 8px; border-radius: 20px; font-size: 12px; box-shadow: 0 0 8px var(--signal-glow); }
+.drawer-body { flex: 1; overflow-y: auto; padding: 16px; }
+
+.filter-bar { display: flex; gap: 8px; padding: 12px 16px; border-bottom: 1px solid var(--border-soft); background: rgba(0, 0, 0, 0.2); flex-shrink: 0; }
+.filter-bar input { flex: 2; }
+.filter-bar select { flex: 1; min-width: 90px; }
+.bulk-bar { display: flex; align-items: center; gap: 10px; padding: 10px 16px; border-bottom: 1px solid var(--border-soft); font-family: var(--font-mono); font-size: 12px; color: var(--ink-dim); background: rgba(0, 0, 0, 0.1); flex-wrap: wrap; }
+.bulk-bar button { margin-left: auto; }
 
 /* ============================================================
-   Modals
+   Modals (Glass)
    ============================================================ */
-.modal-overlay{ position:fixed; inset:0; background:rgba(5,7,10,.65); opacity:0; pointer-events:none; transition:opacity .2s ease; z-index:60; display:flex; align-items:center; justify-content:center; padding:20px; }
-.modal-overlay.open{ opacity:1; pointer-events:auto; }
-.modal-box{ background: var(--surface); border:1px solid var(--border); border-radius: var(--r-lg); padding:20px; width:100%; max-width:360px; animation: modalIn .22s ease; }
-.modal-title{ font-weight:700; font-size:15px; margin-bottom:8px; }
-.modal-msg{ font-size:13px; color: var(--ink-dim); margin-bottom:16px; white-space:pre-line; line-height:1.5; }
+.modal-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, .75); backdrop-filter: blur(6px); opacity: 0; pointer-events: none; transition: opacity .2s ease; z-index: 60; display: flex; align-items: center; justify-content: center; padding: 20px; }
+.modal-overlay.open { opacity: 1; pointer-events: auto; }
+.modal-box { background: rgba(17, 24, 39, 0.9); backdrop-filter: blur(20px); border: 1px solid var(--border); border-radius: var(--r-lg); padding: 24px; width: 100%; max-width: 360px; animation: modalIn .22s ease; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 0 1px var(--signal-glow); }
+.modal-title { font-weight: 700; font-size: 16px; margin-bottom: 10px; color: var(--signal); text-shadow: 0 0 8px var(--signal-glow); }
+.modal-msg { font-size: 13px; color: var(--ink-dim); margin-bottom: 18px; white-space: pre-line; line-height: 1.6; font-family: var(--font-mono); }
 
 /* ============================================================
-   Top bar / shell
+   Top bar & Auth screen
    ============================================================ */
-.shell{ max-width:640px; margin:0 auto; padding: 18px 16px 90px; position:relative; z-index:1; }
-.topbar{ display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; margin-bottom:18px; }
-.who{ font-size:12px; color: var(--ink-dim); }
-.who b{ color: var(--ink); }
-.brand-row{ display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px; margin-bottom:4px; }
-.brand{ display:flex; align-items:center; gap:10px; }
-.brand-mark{ width:34px; height:34px; border-radius:9px; background:linear-gradient(155deg,var(--signal),var(--signal-dim)); display:flex; align-items:center; justify-content:center; color:#0A0C10; font-weight:800; font-family:var(--font-mono); font-size:14px; flex:none; }
-.brand h1{ font-size:17px; font-weight:800; letter-spacing:-.01em; }
-.brand .tag{ font-family:var(--font-mono); font-size:10px; color:var(--ink-faint); letter-spacing:.06em; text-transform:uppercase; }
-.live-indicator{ font-family:var(--font-mono); font-size:10.5px; color:var(--ink-faint); display:flex; align-items:center; gap:6px; }
+.shell { max-width: 700px; margin: 0 auto; padding: 24px 20px 90px; position: relative; z-index: 1; }
+.topbar { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid var(--border-soft); }
+.who { font-size: 13px; color: var(--ink-dim); }
+.who b { color: var(--ink); font-weight: 700; }
+
+.brand-row { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; margin-bottom: 4px; }
+.brand { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+.brand-mark { width: 42px; height: 42px; border-radius: 10px; background: linear-gradient(135deg, var(--signal), #0D9488); display: flex; align-items: center; justify-content: center; color: #000; font-weight: 800; font-family: var(--font-mono); font-size: 16px; box-shadow: 0 0 15px var(--signal-glow); flex: none; }
+.brand h1 { font-size: 20px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; }
+.brand .tag { font-family: var(--font-mono); font-size: 11px; color: var(--signal); letter-spacing: .1em; text-transform: uppercase; }
+.live-indicator { font-family: var(--font-mono); font-size: 10.5px; color: var(--ink-faint); display: flex; align-items: center; gap: 6px; }
+
+.auth-wrap { max-width: 400px; min-height: 100vh; margin: 0 auto; padding: 0 20px; display: flex; flex-direction: column; justify-content: center; z-index: 1; position: relative; }
+.auth-brand { text-align: center; margin-bottom: 32px; }
+.auth-brand .brand-mark { margin: 0 auto 16px; width: 56px; height: 56px; font-size: 22px; }
+.auth-brand h1 { font-size: 22px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 4px; }
+.auth-brand .tag { font-family: var(--font-mono); font-size: 11px; color: var(--signal); letter-spacing: .1em; text-transform: uppercase; }
+.auth-tabs { display: flex; gap: 6px; margin-bottom: 16px; background: rgba(0, 0, 0, 0.3); backdrop-filter: blur(10px); border: 1px solid var(--border-soft); border-radius: var(--r-sm); padding: 6px; }
+.auth-tabs button { flex: 1; border: none; background: transparent; padding: 10px; border-radius: 6px; color: var(--ink-dim); font-size: 14px; box-shadow: none; }
+.auth-tabs button.active { background: var(--signal); color: #000; font-weight: 700; box-shadow: 0 0 12px var(--signal-glow); }
+.auth-status { display: flex; align-items: center; justify-content: center; gap: 7px; font-family: var(--font-mono); font-size: 10.5px; color: var(--ink-faint); letter-spacing: .05em; margin-top: 22px; }
+.remember-row { display: flex; align-items: center; gap: 8px; font-size: 12.5px; color: var(--ink-dim); margin-bottom: 12px; cursor: pointer; }
+.locked-msg { display: none; font-size: 12px; color: var(--amber); background: var(--amber-glow); border: 1px solid var(--amber-dim); border-radius: var(--r-sm); padding: 10px 14px; margin-bottom: 12px; text-align: center; backdrop-filter: blur(8px); }
+
+.hidden { display: none !important; }
 
 /* ============================================================
-   Auth screen
+   Security tabs / logs
    ============================================================ */
-.auth-wrap{ max-width:380px; min-height:100vh; margin: 0 auto; padding: 0 18px; position:relative; z-index:1; display:flex; flex-direction:column; justify-content:center; }
-.auth-status{ display:flex; align-items:center; justify-content:center; gap:7px; font-family:var(--font-mono); font-size:10.5px; color:var(--ink-faint); letter-spacing:.05em; margin-top:22px; }
-.auth-brand{ text-align:center; margin-bottom:28px; }
-.auth-brand .brand-mark{ margin:0 auto 14px; width:48px; height:48px; border-radius:13px; font-size:18px; }
-.auth-brand h1{ font-size:21px; font-weight:800; letter-spacing:-.01em; margin-bottom:4px; }
-.auth-brand .tag{ font-family:var(--font-mono); font-size:11px; color:var(--ink-faint); letter-spacing:.08em; text-transform:uppercase; }
-.auth-tabs{ display:flex; gap:4px; margin-bottom:14px; background:var(--surface); border:1px solid var(--border-soft); border-radius:var(--r-sm); padding:3px; }
-.auth-tabs button{ flex:1; border:none; background:transparent; padding:8px; border-radius:5px; color:var(--ink-dim); }
-.auth-tabs button.active{ background: var(--signal); color:#0A0C10; }
-.hidden{ display:none !important; }
-.locked-msg{ display:none; font-size:12px; color: var(--amber); background:var(--amber-glow); border:1px solid var(--amber-dim); border-radius:var(--r-sm); padding:9px 12px; margin-bottom:10px; text-align:center; }
-.remember-row{ display:flex; align-items:center; gap:7px; font-size:12.5px; color:var(--ink-dim); margin-bottom:10px; }
-.remember-row label{ cursor:pointer; }
+.security-tabs { display: flex; gap: 4px; margin-bottom: 14px; background: rgba(0, 0, 0, 0.2); border: 1px solid var(--border-soft); border-radius: var(--r-sm); padding: 4px; }
+.security-tabs button { flex: 1; border: none; background: transparent; padding: 8px; border-radius: 5px; font-size: 12px; color: var(--ink-dim); box-shadow: none; }
+.security-tabs button.active { background: var(--surface); color: var(--signal); border: 1px solid var(--border); box-shadow: 0 0 8px var(--signal-glow); }
+.log-entry { font-family: var(--font-mono); font-size: 11.5px; padding: 9px 11px; border-radius: var(--r-sm); background: rgba(0, 0, 0, 0.2); border: 1px solid var(--border-soft); margin-bottom: 6px; line-height: 1.5; backdrop-filter: blur(4px); }
+.log-entry.danger { border-color: var(--coral-dim); background: var(--coral-glow); }
+.log-entry.login { border-color: var(--signal-dim); background: var(--signal-glow); }
+
+/* ============================================================
+   User keys drawer
+   ============================================================ */
+.user-keys-drawer {
+  position: fixed; top: 0; right: 0; height: 100%; width: min(380px, 100%);
+  background: rgba(11, 15, 25, 0.92); backdrop-filter: blur(16px);
+  border-left: 1px solid var(--border);
+  box-shadow: -10px 0 30px rgba(0, 0, 0, 0.5);
+  transform: translateX(100%); transition: transform .3s cubic-bezier(.2, .8, .2, 1);
+  z-index: 50; display: flex; flex-direction: column;
+}
+.user-keys-drawer.open { transform: translateX(0); }
+
+/* ============================================================
+   Inactivity bar
+   ============================================================ */
+.inactivity-bar { position: fixed; top: 0; left: 0; height: 3px; background: linear-gradient(90deg, var(--amber), var(--coral)); z-index: 70; transition: width 1s linear; box-shadow: 0 0 8px var(--amber-glow); }
 
 /* ============================================================
    FAB
    ============================================================ */
-.fab{
-  position:fixed; bottom:22px; right:22px; width:54px; height:54px; border-radius:50%;
-  background: var(--signal); color:#0A0C10; display:flex; align-items:center; justify-content:center;
-  cursor:pointer; box-shadow: 0 6px 24px rgba(0,0,0,.35); z-index:30;
-  transition: transform .15s ease;
+.fab {
+  position: fixed; bottom: 30px; right: 30px; width: 56px; height: 56px; border-radius: 50%;
+  background: var(--signal); color: #000; display: flex; align-items: center; justify-content: center;
+  cursor: pointer; box-shadow: 0 8px 24px rgba(45, 212, 191, 0.4); z-index: 30;
+  transition: all .2s ease; font-size: 20px;
 }
-.fab:hover{ transform: scale(1.06); }
-.fab:active{ transform: scale(.94); }
-.fab.pop{ animation: popIn .35s ease; }
-.fab .badge{ position:absolute; top:-4px; right:-4px; background:var(--coral); color:#fff; font-family:var(--font-mono); font-size:10px; font-weight:700; min-width:18px; height:18px; border-radius:9px; display:flex; align-items:center; justify-content:center; padding:0 4px; }
+.fab:hover { transform: scale(1.1); background: #4FD1C5; box-shadow: 0 8px 30px rgba(79, 209, 197, 0.6); }
+.fab:active { transform: scale(.94); }
+.fab.pop { animation: popIn .35s ease; }
+.fab .badge { position: absolute; top: -4px; right: -4px; background: var(--coral); color: #fff; font-family: var(--font-mono); font-size: 10px; font-weight: 700; min-width: 18px; height: 18px; border-radius: 9px; display: flex; align-items: center; justify-content: center; padding: 0 4px; box-shadow: 0 0 6px var(--coral-glow); }
 
 /* ============================================================
-   Security tabs, inactivity bar, user-keys side panel
+   Empty states
    ============================================================ */
-.security-tabs{ display:flex; gap:4px; margin-bottom:12px; background:var(--surface-2); border:1px solid var(--border-soft); border-radius:var(--r-sm); padding:3px; }
-.security-tabs button{ flex:1; border:none; background:transparent; padding:7px; border-radius:5px; font-size:12px; color:var(--ink-dim); }
-.security-tabs button.active{ background: var(--surface); color: var(--signal); border:1px solid var(--border); }
-.log-entry{ font-family:var(--font-mono); font-size:11.5px; padding:8px 10px; border-radius:var(--r-sm); background:var(--surface); border:1px solid var(--border-soft); margin-bottom:6px; line-height:1.5; }
-.log-entry.danger{ border-color: var(--coral-dim); }
-.log-entry.login{ border-color: var(--signal-dim); }
+.empty-state { text-align: center; padding: 3rem 1rem; color: var(--ink-faint); font-size: 14px; }
+.empty-state .ic { font-size: 32px; display: block; margin-bottom: 12px; opacity: .8; }
 
-.inactivity-bar{ position:fixed; top:0; left:0; height:3px; background: var(--amber); z-index:70; transition: width 1s linear; }
-
-.user-keys-drawer{
-  position:fixed; top:0; right:0; height:100%; width:min(380px,100%);
-  background: var(--bg-2); border-left:1px solid var(--border);
-  transform: translateX(100%); transition: transform .3s cubic-bezier(.2,.8,.2,1);
-  z-index:50; display:flex; flex-direction:column;
-}
-.user-keys-drawer.open{ transform: translateX(0); }
-
-.empty-state{ text-align:center; padding:2.5rem 1rem; color: var(--ink-faint); font-size:13px; }
-.empty-state .ic{ font-size:26px; display:block; margin-bottom:8px; opacity:.6; }
-
-@media(max-width:380px){ .shell{ padding:14px 10px 90px; } }
+@media(max-width: 380px) { .shell { padding: 14px 10px 90px; } }
 </style>
 </head>
 <body>
@@ -436,22 +468,22 @@ label.field-label{ font-family:var(--font-mono); font-size:10.5px; font-weight:6
   <div id="loginForm" class="panel">
     <label class="field-label">Username</label>
     <input type="text" id="loginUser" placeholder="your-username" autocomplete="username" />
-    <label class="field-label">Password</label>
+    <label class="field-label" style="margin-top:14px;">Password</label>
     <input type="password" id="loginPass" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()" />
-    <div class="remember-row">
+    <div class="remember-row" style="margin-top:14px;">
       <input type="checkbox" id="rememberMe" /><label for="rememberMe">Remember my login on this device</label>
     </div>
-    <button class="btn-primary" style="width:100%;" onclick="doLogin()" id="loginBtn">Log in</button>
+    <button class="btn-primary" style="width:100%; margin-top:4px; font-size:14px;" onclick="doLogin()" id="loginBtn">Authenticate</button>
   </div>
 
   <div id="registerForm" class="panel hidden">
     <label class="field-label">Username</label>
     <input type="text" id="regUser" placeholder="choose-a-username" autocomplete="username" />
-    <label class="field-label">Password</label>
+    <label class="field-label" style="margin-top:14px;">Password</label>
     <input type="password" id="regPass" placeholder="min. 4 characters" autocomplete="new-password" />
-    <label class="field-label">Confirm password</label>
+    <label class="field-label" style="margin-top:14px;">Confirm password</label>
     <input type="password" id="regPass2" placeholder="repeat password" autocomplete="new-password" />
-    <button class="btn-primary" style="width:100%;" onclick="doRegister()">Create account</button>
+    <button class="btn-primary" style="width:100%; margin-top:18px; font-size:14px;" onclick="doRegister()">Create account</button>
   </div>
 
   <div class="toast" id="authToast"></div>
@@ -461,12 +493,12 @@ label.field-label{ font-family:var(--font-mono); font-size:10.5px; font-weight:6
 <!-- ===================== MAIN APP ===================== -->
 <div id="mainApp" class="hidden shell">
   <div class="topbar">
-    <span class="who">Signed in as <b id="currentUserLabel">-</b> <span id="currentRoleBadge"></span></span>
+    <span class="who">Operator: <b id="currentUserLabel">-</b> <span id="currentRoleBadge"></span></span>
     <div class="row">
-      <button class="btn-icon theme-toggle" onclick="toggleTheme()" title="Toggle theme">☽</button>
+      <button class="btn-ghost theme-toggle" onclick="toggleTheme()" title="Toggle Theme">🌓 Mode</button>
       <button id="adminPanelBtn" class="hidden" onclick="openAdminDrawer()">Admin panel</button>
       <button id="secLogsBtn" class="hidden btn-info" onclick="openSecDrawer()">🛡 Logs</button>
-      <button class="btn-ghost" onclick="doLogout()">Log out</button>
+      <button class="btn-ghost" onclick="doLogout()">Log out ⎋</button>
     </div>
   </div>
 
@@ -475,52 +507,46 @@ label.field-label{ font-family:var(--font-mono); font-size:10.5px; font-weight:6
       <div class="brand-mark">NC</div>
       <div>
         <h1>NPC Control</h1>
-        <div class="tag">Access &amp; Key Management</div>
+        <div class="tag">Telemetry &amp; Access</div>
       </div>
     </div>
     <span class="live-indicator"><span class="dot" id="arDot"></span> Auto-refresh: <span id="arLabel">Off</span></span>
   </div>
 
-  <div style="height:10px;"></div>
-
   <div class="metrics">
-    <div class="metric"><div class="metric-label"><span class="dot live"></span>Total keys</div><div class="metric-value" id="totalCount">0</div></div>
-    <div class="metric"><div class="metric-label"><span class="dot live"></span>Valid keys</div><div class="metric-value" id="validCount">0</div></div>
+    <div class="metric"><div class="metric-label"><span class="dot live"></span>Total Keys</div><div class="metric-value" id="totalCount">0</div></div>
+    <div class="metric"><div class="metric-label"><span class="dot live"></span>Valid</div><div class="metric-value" id="validCount">0</div></div>
     <div class="metric"><div class="metric-label"><span class="dot danger"></span>Expired</div><div class="metric-value" id="expiredCount">0</div></div>
-    <div class="metric"><div class="metric-label"><span class="dot warn"></span>At capacity</div><div class="metric-value" id="fullCount">0</div></div>
-    <div class="metric"><div class="metric-label"><span class="dot"></span>Total users</div><div class="metric-value" id="totalUsers">0</div></div>
+    <div class="metric"><div class="metric-label"><span class="dot warn"></span>At Capacity</div><div class="metric-value" id="fullCount">0</div></div>
+    <div class="metric"><div class="metric-label"><span class="dot"></span>Total Users</div><div class="metric-value" id="totalUsers">0</div></div>
     <div class="metric"><div class="metric-label"><span class="dot live"></span>Approved</div><div class="metric-value" id="approvedUsers">0</div></div>
     <div class="metric"><div class="metric-label"><span class="dot warn"></span>Pending</div><div class="metric-value" id="pendingUsers">0</div></div>
-    <div class="metric"><div class="metric-label"><span class="dot"></span>Devices linked</div><div class="metric-value" id="totalDevices">0</div></div>
+    <div class="metric"><div class="metric-label"><span class="dot"></span>Devices</div><div class="metric-value" id="totalDevices">0</div></div>
   </div>
 
   <div class="panel" id="adminOnlyCards">
-    <div class="panel-head"><div class="panel-eyebrow"><span class="ic">&gt;_</span>System activity</div></div>
+    <div class="panel-head"><div class="panel-eyebrow"><span class="ic">&gt;_</span>System Activity</div></div>
     <div id="adminLogs"><div class="log-entry">System initialized</div></div>
   </div>
 
   <div class="panel">
-    <div class="panel-head"><div class="panel-eyebrow"><span class="ic">~</span>Key usage monitor</div></div>
+    <div class="panel-head"><div class="panel-eyebrow"><span class="ic">~</span>Key Usage Monitor</div></div>
     <div id="usageMonitor"><div class="log-entry">No device activity detected</div></div>
   </div>
 
-  <!-- ============================================================
-       GENERATE NEW KEY — single card, matched to reference mockup
-       Fields: Key Name/ID (manual/auto toggle), Expiry date,
-       Max devices, Created by (auto from session), Generate.
-       ============================================================ -->
+  <!-- Generate New Key Panel -->
   <div class="panel">
-    <div class="panel-head"><div class="panel-eyebrow"><span class="ic">+</span>Generate New Key</div></div>
+    <div class="panel-head"><div class="panel-eyebrow">✛ Generate New Key</div></div>
 
     <div class="gk-field">
       <label class="field-label">Key name / ID</label>
       <div class="gk-id-toggle">
-        <button id="gkModeManualBtn" class="active" onclick="setGkIdMode('manual')">Manual</button>
-        <button id="gkModeAutoBtn" onclick="setGkIdMode('auto')">Auto-generate ID</button>
+        <button id="gkModeManualBtn" class="active" onclick="setGkIdMode('manual')">Manual Input</button>
+        <button id="gkModeAutoBtn" onclick="setGkIdMode('auto')">Auto-generate</button>
       </div>
       <div class="gk-auto-row">
         <input type="text" id="gkKeyId" placeholder="e.g. NPC-A3KL-9QRZ" oninput="gkOnManualEdit()" />
-        <button class="btn-sm" id="gkRegenBtn" onclick="gkRegenerateId()" style="display:none;" title="Generate new ID">⚡ Regenerate</button>
+        <button class="btn-sm" id="gkRegenBtn" onclick="gkRegenerateId()" style="display:none;" title="Regenerate">⚡ Regen</button>
       </div>
     </div>
 
@@ -551,14 +577,19 @@ label.field-label{ font-family:var(--font-mono); font-size:10.5px; font-weight:6
       <input type="text" id="gkCreatedBy" disabled />
     </div>
 
-    <button class="btn-primary" style="width:100%;" id="gkGenBtn" onclick="gkGenerateKey()">Generate Key</button>
+    <button class="btn-primary" style="width:100%; font-size:14px;" id="gkGenBtn" onclick="gkGenerateKey()">Deploy Key</button>
+  </div>
+
+  <div class="row eq" style="margin-bottom:14px;">
+    <button onclick="loadKeys()">↻ Refresh</button>
+    <button onclick="copyAll()">⎘ Copy All</button>
+    <button onclick="exportTxt()">↓ Export</button>
+    <button onclick="toggleAutoRefresh()" id="autoRefreshBtn" class="btn-info">Auto: Off</button>
   </div>
 
   <div class="row eq" style="margin-bottom:12px;">
-    <button onclick="loadKeys()">↻ Refresh</button>
-    <button onclick="copyAll()">⎘ Copy all</button>
-    <button onclick="exportTxt()">↓ Export</button>
-    <button onclick="toggleAutoRefresh()" id="autoRefreshBtn" class="btn-info">Auto: Off</button>
+    <button onclick="openDrawer()">📋 View All Keys</button>
+    <button class="btn-info" onclick="openSecDrawer()">🛡 Security Logs</button>
   </div>
 
   <div class="toast" id="toast"></div>
@@ -568,16 +599,16 @@ label.field-label{ font-family:var(--font-mono); font-size:10.5px; font-weight:6
 <div class="drawer-overlay" id="overlay" onclick="closeDrawer()"></div>
 <div class="drawer" id="drawer">
   <div class="drawer-header">
-    <p class="drawer-title">Keys <span class="count">(<span id="drawerCount">0</span>)</span></p>
+    <div class="drawer-title">Key Database <span class="count"><span id="drawerCount">0</span></span></div>
     <div class="row">
       <button class="btn-sm" onclick="exportTxt()">Export</button>
-      <button class="btn-sm btn-icon" onclick="closeDrawer()" aria-label="Close">✕</button>
+      <button class="btn-sm btn-ghost" onclick="closeDrawer()" aria-label="Close">✕</button>
     </div>
   </div>
   <div class="filter-bar">
     <input type="text" id="searchInput" placeholder="Search key or label..." oninput="renderDrawer()" />
     <select id="filterStatus" onchange="renderDrawer()">
-      <option value="all">All</option>
+      <option value="all">Status: All</option>
       <option value="valid">Valid</option>
       <option value="expired">Expired</option>
       <option value="full">Full</option>
@@ -596,7 +627,7 @@ label.field-label{ font-family:var(--font-mono); font-size:10.5px; font-weight:6
   <div class="bulk-bar" id="bulkBar">
     <input type="checkbox" class="key-checkbox" id="selectAllChk" onchange="toggleSelectAll(this.checked)" title="Select all" />
     <span id="selectedCount">0 selected</span>
-    <button class="btn-sm btn-danger" onclick="bulkDelete()">Delete selected</button>
+    <button class="btn-sm btn-danger" onclick="bulkDelete()">🗑 Delete selected</button>
     <button class="btn-sm btn-warn" onclick="bulkResetDevices()">Reset devices</button>
   </div>
   <div class="drawer-body" id="drawerList">
@@ -608,10 +639,10 @@ label.field-label{ font-family:var(--font-mono); font-size:10.5px; font-weight:6
 <div class="drawer-overlay" id="adminOverlay" onclick="closeAdminDrawer()"></div>
 <div class="drawer" id="adminDrawer">
   <div class="drawer-header">
-    <p class="drawer-title">Admin panel <span class="count">(<span id="pendingCount">0</span> pending)</span></p>
+    <div class="drawer-title">Admin Panel <span class="count"><span id="pendingCount">0</span> pending</span></div>
     <div class="row">
       <button class="btn-sm btn-icon" onclick="loadPendingUsers()" aria-label="Refresh">↻</button>
-      <button class="btn-sm btn-icon" onclick="closeAdminDrawer()" aria-label="Close">✕</button>
+      <button class="btn-sm btn-ghost btn-icon" onclick="closeAdminDrawer()" aria-label="Close">✕</button>
     </div>
   </div>
   <div class="filter-bar" style="flex-wrap:wrap;">
@@ -638,8 +669,8 @@ label.field-label{ font-family:var(--font-mono); font-size:10.5px; font-weight:6
 <!-- USER KEYS DRAWER -->
 <div class="user-keys-drawer" id="userKeysDrawer">
   <div class="drawer-header">
-    <p class="drawer-title" style="color:var(--violet);">Keys of <span id="userKeysLabel">-</span></p>
-    <button class="btn-sm btn-icon" onclick="closeUserKeysDrawer()" aria-label="Close">✕</button>
+    <div class="drawer-title" style="color:var(--violet); text-shadow: 0 0 8px var(--violet-glow);">Keys of <span id="userKeysLabel">-</span></div>
+    <button class="btn-sm btn-ghost btn-icon" onclick="closeUserKeysDrawer()" aria-label="Close">✕</button>
   </div>
   <div class="drawer-body" id="userKeysList">
     <div class="empty-state"><span class="ic"><span class="spinner"></span></span>Loading...</div>
@@ -650,10 +681,10 @@ label.field-label{ font-family:var(--font-mono); font-size:10.5px; font-weight:6
 <div class="drawer-overlay" id="secOverlay" onclick="closeSecDrawer()"></div>
 <div class="drawer" id="secDrawer">
   <div class="drawer-header">
-    <p class="drawer-title"><span style="color:var(--signal);">🛡</span> Security logs</p>
+    <div class="drawer-title"><span style="color:var(--signal); text-shadow:0 0 8px var(--signal-glow);">🛡</span> Security Logs</div>
     <div class="row">
       <button class="btn-sm btn-icon" onclick="loadSecurityLogs()" aria-label="Refresh">↻</button>
-      <button class="btn-sm btn-icon" onclick="closeSecDrawer()" aria-label="Close">✕</button>
+      <button class="btn-sm btn-ghost btn-icon" onclick="closeSecDrawer()" aria-label="Close">✕</button>
     </div>
   </div>
   <div class="drawer-body">
@@ -668,7 +699,7 @@ label.field-label{ font-family:var(--font-mono); font-size:10.5px; font-weight:6
 
 <!-- FAB -->
 <div class="fab hidden" id="fab" onclick="openDrawer()">
-  <span style="font-size:19px;">🔑</span>
+  🔑
   <span class="badge" id="fabBadge" style="display:none;">0</span>
 </div>
 
@@ -690,15 +721,15 @@ label.field-label{ font-family:var(--font-mono); font-size:10.5px; font-weight:6
 <!-- EXTEND MODAL -->
 <div class="modal-overlay" id="extendModal">
   <div class="modal-box">
-    <div class="modal-title">Extend expiration</div>
+    <div class="modal-title">Extend Expiration</div>
     <div class="modal-msg" id="extendKeyLabel">Key: -</div>
-    <div class="row eq" style="margin-bottom:10px;">
+    <div class="row eq" style="margin-bottom:12px;">
       <button onclick="doExtend(7)">+7d</button>
       <button onclick="doExtend(30)">+30d</button>
       <button onclick="doExtend(90)">+90d</button>
-      <button onclick="doExtend(365)">+1y</button>
+      <button onclick="doExtend(365)">+1yr</button>
     </div>
-    <div class="row" style="margin-bottom:10px;">
+    <div class="row" style="margin-bottom:12px;">
       <input type="number" id="extendCustomDays" placeholder="Custom days" style="flex:1;" min="1" />
       <button class="btn-primary" onclick="doExtendCustom()">Apply</button>
     </div>
@@ -706,6 +737,7 @@ label.field-label{ font-family:var(--font-mono); font-size:10.5px; font-weight:6
   </div>
 </div>
 
+<!-- ===================== JAVASCRIPT ===================== -->
 <script>
 const DB_URL = "https://vxnpc-667e4-default-rtdb.firebaseio.com";
 const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
@@ -717,18 +749,13 @@ let expandedDevices = {};
 let currentSession = null;
 let selectedKeys = new Set();
 let autoRefreshInterval = null;
-let extendTarget = null; // { idx, key }
+let extendTarget = null;
 let confirmCallback = null;
 let isDark = true;
 
-// =================== FIREBASE AUTH (anonymous, para sa Security Rules) ===================
-// PAALALA: Kunin ang "Web API Key" sa Firebase Console > Project settings > General
-// > Your apps, at i-paste sa ibaba. I-enable din ang "Anonymous" provider sa
-// Authentication > Sign-in method. Kung hindi ito i-setup, hindi makaka-konekta
-// ang app sa Firebase kapag na-apply na ang bagong Security Rules (auth != null).
+// =================== FIREBASE AUTH ===================
 const FIREBASE_API_KEY = "AIzaSyA37DP87axf_GCxLUyjQdCIyxfbiBH1rTo";
 const FB_REFRESH_KEY = "npc_fb_refresh_token";
-
 let dbToken = null;
 let dbTokenExpiry = 0;
 let dbTokenPromise = null;
@@ -741,38 +768,31 @@ async function getDbToken(){
       const refreshToken = localStorage.getItem(FB_REFRESH_KEY);
       if(refreshToken){
         const r = await fetch(`https://securetoken.googleapis.com/v1/token?key=${FIREBASE_API_KEY}`,{
-          method:'POST',
-          headers:{'Content-Type':'application/x-www-form-urlencoded'},
+          method:'POST', headers:{'Content-Type':'application/x-www-form-urlencoded'},
           body:`grant_type=refresh_token&refresh_token=${refreshToken}`
         });
         const data = await r.json();
         if(data.id_token){
           dbToken = data.id_token;
-          dbTokenExpiry = Date.now() + (parseInt(data.expires_in||'3600')-60)*1000;
+          dbTokenExpiry = Date.now()+(parseInt(data.expires_in||'3600')-60)*1000;
           if(data.refresh_token) localStorage.setItem(FB_REFRESH_KEY, data.refresh_token);
           return dbToken;
         }
       }
-      // Walang refresh token o nag-fail ito -> gumawa ng bagong anonymous identity
       const r2 = await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${FIREBASE_API_KEY}`,{
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
+        method:'POST', headers:{'Content-Type':'application/json'},
         body: JSON.stringify({returnSecureToken:true})
       });
       const data2 = await r2.json();
       if(data2.idToken){
         dbToken = data2.idToken;
-        dbTokenExpiry = Date.now() + (parseInt(data2.expiresIn||'3600')-60)*1000;
+        dbTokenExpiry = Date.now()+(parseInt(data2.expiresIn||'3600')-60)*1000;
         localStorage.setItem(FB_REFRESH_KEY, data2.refreshToken);
         return dbToken;
       }
       return null;
-    }catch(e){
-      console.error('DB auth error:', e);
-      return null;
-    }finally{
-      dbTokenPromise = null;
-    }
+    }catch(e){ console.error('DB auth error:',e); return null; }
+    finally{ dbTokenPromise = null; }
   })();
   return dbTokenPromise;
 }
@@ -787,186 +807,88 @@ async function withAuth(url){
 // =================== RATE LIMITING ===================
 const RATE_KEY = 'npc_login_attempts';
 const MAX_ATTEMPTS = 5;
-const LOCK_DURATION = 30; // seconds
+const LOCK_DURATION = 30;
 
-function getRateData(){
-  try{ return JSON.parse(localStorage.getItem(RATE_KEY)||'{"count":0,"lockedUntil":0}'); }
-  catch(e){ return {count:0,lockedUntil:0}; }
-}
+function getRateData(){ try{ return JSON.parse(localStorage.getItem(RATE_KEY)||'{"count":0,"lockedUntil":0}'); }catch(e){ return {count:0,lockedUntil:0}; } }
 function setRateData(d){ localStorage.setItem(RATE_KEY, JSON.stringify(d)); }
-function isLocked(){
-  const d = getRateData();
-  return d.lockedUntil > Date.now();
-}
-function recordFailedAttempt(){
-  const d = getRateData();
-  d.count = (d.count||0) + 1;
-  if(d.count >= MAX_ATTEMPTS){ d.lockedUntil = Date.now() + LOCK_DURATION*1000; d.count=0; }
-  setRateData(d);
-}
+function isLocked(){ return getRateData().lockedUntil > Date.now(); }
+function recordFailedAttempt(){ const d=getRateData(); d.count=(d.count||0)+1; if(d.count>=MAX_ATTEMPTS){ d.lockedUntil=Date.now()+LOCK_DURATION*1000; d.count=0; } setRateData(d); }
 function clearAttempts(){ setRateData({count:0,lockedUntil:0}); }
 function startLockCountdown(){
-  const el = document.getElementById('lockedMsg');
-  const cd = document.getElementById('lockCountdown');
-  const loginBtn = document.getElementById('loginBtn');
-  el.style.display='block';
-  loginBtn.disabled=true;
-  loginBtn.classList.add('working');
-  const iv = setInterval(()=>{
-    const d = getRateData();
-    const rem = Math.ceil((d.lockedUntil - Date.now())/1000);
-    if(rem<=0){
-      clearInterval(iv);
-      el.style.display='none';
-      loginBtn.disabled=false;
-      loginBtn.classList.remove('working');
-      cd.textContent=LOCK_DURATION;
-    } else {
-      cd.textContent=rem;
-    }
+  const el=document.getElementById('lockedMsg');
+  const cd=document.getElementById('lockCountdown');
+  const loginBtn=document.getElementById('loginBtn');
+  el.style.display='block'; loginBtn.disabled=true; loginBtn.classList.add('working');
+  const iv=setInterval(()=>{
+    const d=getRateData(); const rem=Math.ceil((d.lockedUntil-Date.now())/1000);
+    if(rem<=0){ clearInterval(iv); el.style.display='none'; loginBtn.disabled=false; loginBtn.classList.remove('working'); cd.textContent=LOCK_DURATION; }
+    else { cd.textContent=rem; }
   },500);
 }
 
 // =================== THEME ===================
 function toggleTheme(){
-  isDark = !isDark;
-  document.body.classList.toggle('light-theme', !isDark);
-  const btns = document.querySelectorAll('.theme-toggle');
-  btns.forEach(b=>b.innerHTML = isDark ? '☽' : '☀');
-  localStorage.setItem('npc_theme', isDark?'dark':'light');
+  isDark=!isDark;
+  document.body.classList.toggle('light-theme',!isDark);
+  const btns=document.querySelectorAll('.theme-toggle');
+  btns.forEach(b=>b.textContent=isDark?'🌓 Mode':'☀ Mode');
+  localStorage.setItem('npc_theme',isDark?'dark':'light');
 }
 function initTheme(){
-  const saved = localStorage.getItem('npc_theme');
-  if(saved==='light'){
-    isDark=false;
-    document.body.classList.add('light-theme');
-    document.querySelectorAll('.theme-toggle').forEach(b=>b.innerHTML='☀');
-  }
+  const saved=localStorage.getItem('npc_theme');
+  if(saved==='light'){ isDark=false; document.body.classList.add('light-theme'); document.querySelectorAll('.theme-toggle').forEach(b=>b.textContent='☀ Mode'); }
 }
 
 // =================== AUTO REFRESH ===================
 function toggleAutoRefresh(){
-  const btn = document.getElementById('autoRefreshBtn');
-  const dot = document.getElementById('arDot');
-  const lbl = document.getElementById('arLabel');
-  if(autoRefreshInterval){
-    clearInterval(autoRefreshInterval);
-    autoRefreshInterval=null;
-    btn.textContent='Auto: Off';
-    dot.classList.remove('live');
-    lbl.textContent='Off';
-  } else {
-    autoRefreshInterval = setInterval(()=>{ loadKeys(); loadUserStats(); }, 30000);
-    btn.textContent='Auto: On (30s)';
-    dot.classList.add('live');
-    lbl.textContent='30s';
-    showToast('Auto refresh on — every 30s','info');
-  }
+  const btn=document.getElementById('autoRefreshBtn');
+  const dot=document.getElementById('arDot');
+  const lbl=document.getElementById('arLabel');
+  if(autoRefreshInterval){ clearInterval(autoRefreshInterval); autoRefreshInterval=null; btn.textContent='Auto: Off'; dot.classList.remove('live'); lbl.textContent='Off'; }
+  else { autoRefreshInterval=setInterval(()=>{ loadKeys(); loadUserStats(); },30000); btn.textContent='Auto: On (30s)'; dot.classList.add('live'); lbl.textContent='30s'; showToast('Auto refresh on — every 30s','info'); }
 }
 
 // =================== CONFIRM MODAL ===================
-function openConfirm(title, msg, okLabel, cb){
-  confirmCallback = cb;
-  document.getElementById('confirmTitle').textContent = title;
-  document.getElementById('confirmMsg').textContent = msg;
-  document.getElementById('confirmOkBtn').textContent = okLabel||'Confirm';
-  document.getElementById('confirmModal').classList.add('open');
-}
-function cancelConfirm(){
-  confirmCallback=null;
-  document.getElementById('confirmModal').classList.remove('open');
-}
-function doConfirm(){
-  document.getElementById('confirmModal').classList.remove('open');
-  if(confirmCallback){ confirmCallback(); confirmCallback=null; }
-}
+function openConfirm(title,msg,okLabel,cb){ confirmCallback=cb; document.getElementById('confirmTitle').textContent=title; document.getElementById('confirmMsg').textContent=msg; document.getElementById('confirmOkBtn').textContent=okLabel||'Confirm'; document.getElementById('confirmModal').classList.add('open'); }
+function cancelConfirm(){ confirmCallback=null; document.getElementById('confirmModal').classList.remove('open'); }
+function doConfirm(){ document.getElementById('confirmModal').classList.remove('open'); if(confirmCallback){ confirmCallback(); confirmCallback=null; } }
 
 // =================== EXTEND MODAL ===================
-function openExtendModal(idx, key, currentExpire){
-  extendTarget = {idx, key, currentExpire};
-  document.getElementById('extendKeyLabel').textContent = 'Key: '+key+'\nExpires: '+formatDate(currentExpire);
-  document.getElementById('extendModal').classList.add('open');
-}
-function closeExtendModal(){
-  extendTarget=null;
-  document.getElementById('extendModal').classList.remove('open');
-  document.getElementById('extendCustomDays').value='';
-}
-async function doExtend(days){
-  if(!extendTarget) return;
-  await extendKeyExpiration(extendTarget.idx, extendTarget.key, extendTarget.currentExpire, days);
-  closeExtendModal();
-}
-async function doExtendCustom(){
-  if(!extendTarget) return;
-  const d = parseInt(document.getElementById('extendCustomDays').value);
-  if(!d||d<1) return showToast('Invalid days!','error');
-  await extendKeyExpiration(extendTarget.idx, extendTarget.key, extendTarget.currentExpire, d);
-  closeExtendModal();
-}
-async function extendKeyExpiration(idx, key, currentExpire, days){
-  const now = Math.floor(Date.now()/1000);
-  const base = Math.max(currentExpire, now); // if expired, extend from now
-  const newExpire = base + days*86400;
+function openExtendModal(idx,key,currentExpire){ extendTarget={idx,key,currentExpire}; document.getElementById('extendKeyLabel').textContent='Key: '+key+'\nExpires: '+formatDate(currentExpire); document.getElementById('extendModal').classList.add('open'); }
+function closeExtendModal(){ extendTarget=null; document.getElementById('extendModal').classList.remove('open'); document.getElementById('extendCustomDays').value=''; }
+async function doExtend(days){ if(!extendTarget) return; await extendKeyExpiration(extendTarget.idx,extendTarget.key,extendTarget.currentExpire,days); closeExtendModal(); }
+async function doExtendCustom(){ if(!extendTarget) return; const d=parseInt(document.getElementById('extendCustomDays').value); if(!d||d<1) return showToast('Invalid days!','error'); await extendKeyExpiration(extendTarget.idx,extendTarget.key,extendTarget.currentExpire,d); closeExtendModal(); }
+async function extendKeyExpiration(idx,key,currentExpire,days){
+  const now=Math.floor(Date.now()/1000);
+  const base=Math.max(currentExpire,now);
+  const newExpire=base+days*86400;
   try{
     await fetch(await withAuth(`${DB_URL}/keys/${key}/expire.json`),{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(newExpire)});
-    allKeys[idx].expire = newExpire;
-    renderDrawer(); updateCounts();
+    allKeys[idx].expire=newExpire; renderDrawer(); updateCounts();
     showToast('+'+days+' days extended!','success');
   }catch(e){ showToast('Error extending!','error'); }
 }
 
 // =================== BULK OPERATIONS ===================
-function toggleSelectAll(checked){
-  const checkboxes = document.querySelectorAll('.key-checkbox[data-key]');
-  checkboxes.forEach(cb=>{
-    cb.checked = checked;
-    if(checked) selectedKeys.add(cb.dataset.key);
-    else selectedKeys.delete(cb.dataset.key);
-  });
-  updateBulkBar();
-}
-function toggleKeySelect(key, checked){
-  if(checked) selectedKeys.add(key);
-  else selectedKeys.delete(key);
-  document.getElementById('selectAllChk').checked = false;
-  updateBulkBar();
-}
-function updateBulkBar(){
-  document.getElementById('selectedCount').textContent = selectedKeys.size+' selected';
-}
+function toggleSelectAll(checked){ const cbs=document.querySelectorAll('.key-checkbox[data-key]'); cbs.forEach(cb=>{ cb.checked=checked; if(checked) selectedKeys.add(cb.dataset.key); else selectedKeys.delete(cb.dataset.key); }); updateBulkBar(); }
+function toggleKeySelect(key,checked){ if(checked) selectedKeys.add(key); else selectedKeys.delete(key); document.getElementById('selectAllChk').checked=false; updateBulkBar(); }
+function updateBulkBar(){ document.getElementById('selectedCount').textContent=selectedKeys.size+' selected'; }
 
 function bulkDelete(){
-  if(!selectedKeys.size) return showToast('Walang napili!','error');
-  openConfirm('Bulk Delete', `Delete ${selectedKeys.size} key(s)?`, 'DELETE ALL', async()=>{
-    const toDelete = [...selectedKeys];
-    for(const key of toDelete){
-      await deleteKeyFromDb(key);
-      const i = allKeys.findIndex(k=>k.key===key);
-      if(i!==-1) allKeys.splice(i,1);
-    }
-    selectedKeys.clear();
-    document.getElementById('selectAllChk').checked=false;
-    updateBulkBar();
-    updateCounts(); renderDrawer();
+  if(!selectedKeys.size) return showToast('Nothing selected!','error');
+  openConfirm('Bulk Delete',`Delete ${selectedKeys.size} key(s)?`,'DELETE ALL',async()=>{
+    const toDelete=[...selectedKeys];
+    for(const key of toDelete){ await deleteKeyFromDb(key); const i=allKeys.findIndex(k=>k.key===key); if(i!==-1) allKeys.splice(i,1); }
+    selectedKeys.clear(); document.getElementById('selectAllChk').checked=false; updateBulkBar(); updateCounts(); renderDrawer();
     showToast('Deleted '+toDelete.length+' keys!','success');
   });
 }
 function bulkResetDevices(){
-  if(!selectedKeys.size) return showToast('Walang napili!','error');
-  openConfirm('Bulk Reset Devices', `Reset devices of ${selectedKeys.size} key(s)?`, 'RESET ALL', async()=>{
-    const keys = [...selectedKeys];
-    for(const key of keys){
-      try{
-        await fetch(await withAuth(`${DB_URL}/keys/${key}/devices.json`),{method:'PUT',headers:{'Content-Type':'application/json'},body:'null'});
-        const i = allKeys.findIndex(k=>k.key===key);
-        if(i!==-1) allKeys[i].devices=[];
-      }catch(e){}
-    }
-    selectedKeys.clear();
-    document.getElementById('selectAllChk').checked=false;
-    updateBulkBar();
-    renderDrawer(); updateCounts();
+  if(!selectedKeys.size) return showToast('Nothing selected!','error');
+  openConfirm('Bulk Reset Devices',`Reset devices of ${selectedKeys.size} key(s)?`,'RESET ALL',async()=>{
+    const keys=[...selectedKeys];
+    for(const key of keys){ try{ await fetch(await withAuth(`${DB_URL}/keys/${key}/devices.json`),{method:'PUT',headers:{'Content-Type':'application/json'},body:'null'}); const i=allKeys.findIndex(k=>k.key===key); if(i!==-1) allKeys[i].devices=[]; }catch(e){} }
+    selectedKeys.clear(); document.getElementById('selectAllChk').checked=false; updateBulkBar(); renderDrawer(); updateCounts();
     showToast('Devices reset on '+keys.length+' keys!','success');
   });
 }
@@ -975,112 +897,73 @@ function bulkResetDevices(){
 const SESSION_KEY = "npc_session_user";
 
 async function hashPassword(password){
-  const enc = new TextEncoder().encode(password);
-  const buf = await crypto.subtle.digest('SHA-256', enc);
+  const enc=new TextEncoder().encode(password);
+  const buf=await crypto.subtle.digest('SHA-256',enc);
   return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
 }
 
 function switchAuthTab(tab){
-  document.getElementById('loginForm').classList.toggle('hidden', tab!=='login');
-  document.getElementById('registerForm').classList.toggle('hidden', tab!=='register');
-  document.getElementById('tabLoginBtn').classList.toggle('active', tab==='login');
-  document.getElementById('tabRegisterBtn').classList.toggle('active', tab==='register');
+  document.getElementById('loginForm').classList.toggle('hidden',tab!=='login');
+  document.getElementById('registerForm').classList.toggle('hidden',tab!=='register');
+  document.getElementById('tabLoginBtn').classList.toggle('active',tab==='login');
+  document.getElementById('tabRegisterBtn').classList.toggle('active',tab==='register');
 }
 
-function showAuthToast(msg, type){
-  const t = document.getElementById('authToast');
+function showAuthToast(msg,type){
+  const t=document.getElementById('authToast');
   if(authToastTimer) clearTimeout(authToastTimer);
-  t.textContent = msg;
-  t.className = 'toast '+type+' visible';
-  authToastTimer = setTimeout(()=>{
-    t.classList.add('hiding');
-    setTimeout(()=>{ t.className='toast'; }, 250);
-  }, 4000);
+  t.textContent=msg; t.className='toast '+type+' visible';
+  authToastTimer=setTimeout(()=>{ t.classList.add('hiding'); setTimeout(()=>{ t.className='toast'; },250); },4000);
 }
 
 async function doRegister(){
-  const u = document.getElementById('regUser').value.trim();
-  const p = document.getElementById('regPass').value;
-  const p2 = document.getElementById('regPass2').value;
-
-  if(!u || !p) return showAuthToast('Punan ang lahat ng fields!','error');
-  if(p.length < 4) return showAuthToast('Password dapat 4+ characters!','error');
-  if(p !== p2) return showAuthToast('Hindi match ang password!','error');
-
-  const safeKey = u.toLowerCase().replace(/[^a-z0-9_]/g,'');
+  const u=document.getElementById('regUser').value.trim();
+  const p=document.getElementById('regPass').value;
+  const p2=document.getElementById('regPass2').value;
+  if(!u||!p) return showAuthToast('Fill in all fields!','error');
+  if(p.length<4) return showAuthToast('Password must be 4+ characters!','error');
+  if(p!==p2) return showAuthToast('Passwords do not match!','error');
+  const safeKey=u.toLowerCase().replace(/[^a-z0-9_]/g,'');
   if(!safeKey) return showAuthToast('Invalid username!','error');
-
   try{
-    const r = await fetch(await withAuth(`${DB_URL}/users/${safeKey}.json`));
-    const existing = await r.json();
+    const r=await fetch(await withAuth(`${DB_URL}/users/${safeKey}.json`));
+    const existing=await r.json();
     if(existing) return showAuthToast('Username already taken!','error');
-
-    const hashed = await hashPassword(p);
-    const body = {
-      username: u,
-      password: hashed,
-      status: "pending",
-      role: "user",
-      created_at: Math.floor(Date.now()/1000)
-    };
-    const res = await fetch(await withAuth(`${DB_URL}/users/${safeKey}.json`),{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
-    if(res.ok){
-      showAuthToast('Naka-register! Hintayin ang admin approval.','success');
-      document.getElementById('regUser').value='';
-      document.getElementById('regPass').value='';
-      document.getElementById('regPass2').value='';
-      switchAuthTab('login');
-    } else {
-      showAuthToast('Error sa pag-register!','error');
-    }
-  }catch(e){
-    showAuthToast('Connection error!','error');
-  }
+    const hashed=await hashPassword(p);
+    const body={username:u,password:hashed,status:"pending",role:"user",created_at:Math.floor(Date.now()/1000)};
+    const res=await fetch(await withAuth(`${DB_URL}/users/${safeKey}.json`),{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+    if(res.ok){ showAuthToast('Registered! Waiting for admin approval.','success'); document.getElementById('regUser').value=''; document.getElementById('regPass').value=''; document.getElementById('regPass2').value=''; switchAuthTab('login'); }
+    else showAuthToast('Registration error!','error');
+  }catch(e){ showAuthToast('Connection error!','error'); }
 }
 
 async function doLogin(){
-  if(isLocked()){ startLockCountdown(); return showAuthToast('Locked! Mag-antay muna.','error'); }
-  const u = document.getElementById('loginUser').value.trim();
-  const p = document.getElementById('loginPass').value;
-  if(!u || !p) return showAuthToast('Punan ang username at password!','error');
-
-  const safeKey = u.toLowerCase().replace(/[^a-z0-9_]/g,'');
+  if(isLocked()){ startLockCountdown(); return showAuthToast('Account locked! Please wait.','error'); }
+  const u=document.getElementById('loginUser').value.trim();
+  const p=document.getElementById('loginPass').value;
+  if(!u||!p) return showAuthToast('Enter username and password!','error');
+  const safeKey=u.toLowerCase().replace(/[^a-z0-9_]/g,'');
   try{
-    const r = await fetch(await withAuth(`${DB_URL}/users/${safeKey}.json`));
-    const data = await r.json();
-    if(!data){ recordFailedAttempt(); if(isLocked()) startLockCountdown(); await writeLoginHistory(u, false); return showAuthToast('Account hindi natagpuan!','error'); }
-
-    const hashed = await hashPassword(p);
-    if(data.password !== hashed){ recordFailedAttempt(); if(isLocked()) startLockCountdown(); await writeLoginHistory(u, false); return showAuthToast('Mali ang password!','error'); }
-
-    if(data.status === 'pending') return showAuthToast('Pending pa ang account mo.','info');
-    if(data.status === 'rejected') return showAuthToast('Hindi approved ang account mo.','error');
-    if(data.status === 'disabled') return showAuthToast('Disabled ang account mo.','error');
-    if(data.status !== 'approved') return showAuthToast('Account hindi pa active.','error');
-
+    const r=await fetch(await withAuth(`${DB_URL}/users/${safeKey}.json`));
+    const data=await r.json();
+    if(!data){ recordFailedAttempt(); if(isLocked()) startLockCountdown(); await writeLoginHistory(u,false); return showAuthToast('Account not found!','error'); }
+    const hashed=await hashPassword(p);
+    if(data.password!==hashed){ recordFailedAttempt(); if(isLocked()) startLockCountdown(); await writeLoginHistory(u,false); return showAuthToast('Incorrect password!','error'); }
+    if(data.status==='pending') return showAuthToast('Account pending approval.','info');
+    if(data.status==='rejected') return showAuthToast('Account not approved.','error');
+    if(data.status==='disabled') return showAuthToast('Account is disabled.','error');
+    if(data.status!=='approved') return showAuthToast('Account not active.','error');
     clearAttempts();
-    const role = data.role || 'user';
-    const deviceFP = getDeviceFingerprint();
-    const sessionObj = {username: data.username, role, safeKey, device: deviceFP, expiry: Date.now()+SESSION_EXPIRY_MS};
-    sessionStorage.setItem(SESSION_KEY, JSON.stringify(sessionObj));
-
-    // Remember Me
-    if(document.getElementById('rememberMe')?.checked){
-      saveRememberMe(safeKey, role, data.username);
-    } else {
-      clearRememberMe();
-    }
-
-    // Save device binding to Firebase
-    try{
-      await fetch(await withAuth(`${DB_URL}/users/${safeKey}/devices/${deviceFP}.json`),{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(true)});
-    }catch(e){}
-
-    await writeLoginHistory(data.username, true);
+    const role=data.role||'user';
+    const deviceFP=getDeviceFingerprint();
+    const sessionObj={username:data.username,role,safeKey,device:deviceFP,expiry:Date.now()+SESSION_EXPIRY_MS};
+    sessionStorage.setItem(SESSION_KEY,JSON.stringify(sessionObj));
+    if(document.getElementById('rememberMe')?.checked) saveRememberMe(safeKey,role,data.username);
+    else clearRememberMe();
+    try{ await fetch(await withAuth(`${DB_URL}/users/${safeKey}/devices/${deviceFP}.json`),{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(true)}); }catch(e){}
+    await writeLoginHistory(data.username,true);
     enterApp();
-  }catch(e){
-    showAuthToast('Connection error!','error');
-  }
+  }catch(e){ showAuthToast('Connection error!','error'); }
 }
 
 function doLogout(){
@@ -1091,393 +974,218 @@ function doLogout(){
   document.getElementById('loginUser').value='';
   document.getElementById('loginPass').value='';
   if(autoRefreshInterval){ clearInterval(autoRefreshInterval); autoRefreshInterval=null; }
-  allKeys=[];
+  allKeys=[]; currentSession=null;
 }
 
 function enterApp(){
-  const session = JSON.parse(sessionStorage.getItem(SESSION_KEY) || 'null');
+  const session=JSON.parse(sessionStorage.getItem(SESSION_KEY)||'null');
   if(!session) return;
-  if(session.expiry && Date.now() > session.expiry){
-    sessionStorage.removeItem(SESSION_KEY);
-    return;
-  }
-  currentSession = session;
+  if(session.expiry&&Date.now()>session.expiry){ sessionStorage.removeItem(SESSION_KEY); return; }
+  currentSession=session;
   document.getElementById('authScreen').classList.add('hidden');
   document.getElementById('mainApp').classList.remove('hidden');
   document.getElementById('fab').classList.remove('hidden');
-  document.getElementById('currentUserLabel').textContent = sanitize(session.username);
-  const isAdmin = session.role==='admin';
-  const isReseller = session.role==='reseller';
-  document.getElementById('adminPanelBtn').classList.toggle('hidden', !isAdmin);
-  document.getElementById('secLogsBtn').classList.toggle('hidden', !isAdmin);
-  document.getElementById('adminOnlyCards').classList.toggle('hidden', !isAdmin);
-  const roleBadge = document.getElementById('currentRoleBadge');
+  document.getElementById('currentUserLabel').textContent=sanitize(session.username);
+  const isAdmin=session.role==='admin';
+  const isReseller=session.role==='reseller';
+  document.getElementById('adminPanelBtn').classList.toggle('hidden',!isAdmin);
+  document.getElementById('secLogsBtn').classList.toggle('hidden',!isAdmin);
+  document.getElementById('adminOnlyCards').classList.toggle('hidden',!isAdmin);
+  const roleBadge=document.getElementById('currentRoleBadge');
   if(isAdmin) roleBadge.innerHTML='<span class="role-badge role-admin">Admin</span>';
   else if(isReseller) roleBadge.innerHTML='<span class="role-badge role-reseller">Reseller</span>';
   else roleBadge.innerHTML='<span class="role-badge role-user">User</span>';
-  gkInit();
-  resetInactivity();
-  loadKeys();
-  loadUserStats();
+  gkInit(); resetInactivity(); loadKeys(); loadUserStats();
 }
 
 function checkSession(){
-  const session = JSON.parse(sessionStorage.getItem(SESSION_KEY) || 'null');
-  if(session){ enterApp(); }
+  const session=JSON.parse(sessionStorage.getItem(SESSION_KEY)||'null');
+  if(session) enterApp();
 }
 
 // =================== ADMIN PANEL ===================
-function openAdminDrawer(){
-  document.getElementById('adminDrawer').classList.add('open');
-  document.getElementById('adminOverlay').classList.add('open');
-  loadPendingUsers();
-}
-function closeAdminDrawer(){
-  document.getElementById('adminDrawer').classList.remove('open');
-  document.getElementById('adminOverlay').classList.remove('open');
-}
+function openAdminDrawer(){ document.getElementById('adminDrawer').classList.add('open'); document.getElementById('adminOverlay').classList.add('open'); loadPendingUsers(); }
+function closeAdminDrawer(){ document.getElementById('adminDrawer').classList.remove('open'); document.getElementById('adminOverlay').classList.remove('open'); }
 
 function openUserKeysDrawer(username){
-  document.getElementById('userKeysLabel').textContent = username;
+  document.getElementById('userKeysLabel').textContent=username;
   document.getElementById('userKeysDrawer').classList.add('open');
-  const userKeys = allKeys.filter(k=>k.created_by===username);
-  const el = document.getElementById('userKeysList');
-  if(!userKeys.length){
-    el.innerHTML='<div class="empty-state">Walang keys na ginawa ng user na ito</div>';
-  } else {
-    el.innerHTML = userKeys.map(k=>`
-      <div class="item">
-        <span class="item-key">${k.key}</span>
-        <div class="item-meta">
-          <span class="pill ${isExpired(k.expire)?'pill-coral':'pill-signal'}">${isExpired(k.expire)?'Expired':'Valid'}: ${formatDate(k.expire)}</span>
-          <span class="pill pill-violet">${k.devices.length}/${k.max_devices>=999?'Unli':k.max_devices} devices</span>
-          ${k.label?'<span class="pill pill-amber">'+k.label+'</span>':''}
-        </div>
+  const userKeys=allKeys.filter(k=>k.created_by===username);
+  const el=document.getElementById('userKeysList');
+  if(!userKeys.length){ el.innerHTML='<div class="empty-state">No keys created by this user</div>'; return; }
+  el.innerHTML=userKeys.map(k=>`
+    <div class="item">
+      <span class="item-key">${k.key}</span>
+      <div class="item-meta">
+        <span class="pill ${isExpired(k.expire)?'pill-coral':'pill-signal'}">${isExpired(k.expire)?'Expired':'Valid'}: ${formatDate(k.expire)}</span>
+        <span class="pill pill-violet">${k.devices.length}/${k.max_devices>=999?'Unli':k.max_devices} devices</span>
+        ${k.label?'<span class="pill pill-amber">'+k.label+'</span>':''}
       </div>
-    `).join('');
-  }
+    </div>`).join('');
 }
-function closeUserKeysDrawer(){
-  document.getElementById('userKeysDrawer').classList.remove('open');
-}
+function closeUserKeysDrawer(){ document.getElementById('userKeysDrawer').classList.remove('open'); }
 
 async function loadPendingUsers(){
-  document.getElementById('pendingList').innerHTML = '<div class="empty-state"><span class="ic"><span class="spinner"></span></span>Loading...</div>';
+  document.getElementById('pendingList').innerHTML='<div class="empty-state"><span class="ic"><span class="spinner"></span></span>Loading...</div>';
   try{
-    const r = await fetch(await withAuth(`${DB_URL}/users.json`));
-    const data = await r.json();
-    pendingUsers = [];
-    if(data){
-      Object.keys(data).forEach(key=>{
-        pendingUsers.push({ key, username: data[key].username, status: data[key].status||'pending', role: data[key].role||'user', created_at: data[key].created_at||0 });
-      });
-    }
+    const r=await fetch(await withAuth(`${DB_URL}/users.json`));
+    const data=await r.json();
+    pendingUsers=[];
+    if(data) Object.keys(data).forEach(key=>{ pendingUsers.push({key,username:data[key].username,status:data[key].status||'pending',role:data[key].role||'user',created_at:data[key].created_at||0}); });
     renderPendingUsers();
-  }catch(e){
-    document.getElementById('pendingList').innerHTML = '<div class="empty-state" style="color:var(--coral);">Error loading!</div>';
-  }
+  }catch(e){ document.getElementById('pendingList').innerHTML='<div class="empty-state" style="color:var(--coral);">Error loading!</div>'; }
 }
 
 function renderPendingUsers(){
-  const el = document.getElementById('pendingList');
-  const search = (document.getElementById('userSearch')?.value||'').toLowerCase();
-  const filterVal = document.getElementById('userFilter')?.value||'all';
-  const sortVal = document.getElementById('userSort')?.value||'none';
-
-  let list = [...pendingUsers];
-  if(search) list = list.filter(u=>u.username.toLowerCase().includes(search));
-  if(filterVal!=='all') list = list.filter(u=>u.status===filterVal);
+  const el=document.getElementById('pendingList');
+  const search=(document.getElementById('userSearch')?.value||'').toLowerCase();
+  const filterVal=document.getElementById('userFilter')?.value||'all';
+  const sortVal=document.getElementById('userSort')?.value||'none';
+  let list=[...pendingUsers];
+  if(search) list=list.filter(u=>u.username.toLowerCase().includes(search));
+  if(filterVal!=='all') list=list.filter(u=>u.status===filterVal);
   if(sortVal==='date_asc') list.sort((a,b)=>a.created_at-b.created_at);
   else if(sortVal==='date_desc') list.sort((a,b)=>b.created_at-a.created_at);
   else if(sortVal==='name_az') list.sort((a,b)=>a.username.localeCompare(b.username));
-  else list.sort((a,b)=> (a.status==='pending'?-1:1)-(b.status==='pending'?-1:1));
-
-  document.getElementById('pendingCount').textContent = pendingUsers.filter(u=>u.status==='pending').length;
-
-  if(!list.length){
-    el.innerHTML = '<div class="empty-state">Walang results</div>';
-    return;
-  }
-
-  el.innerHTML = list.map(u=>{
-    const statusPill = u.status==='pending' ? '<span class="pill pill-amber">Pending</span>'
-      : u.status==='approved' ? '<span class="pill pill-signal">Approved</span>'
-      : u.status==='disabled' ? '<span class="pill pill-violet">Disabled</span>'
-      : '<span class="pill pill-coral">Rejected</span>';
-    const rolePill = `<span class="pill pill-${u.role==='admin'?'coral':u.role==='reseller'?'violet':'neutral'}">${u.role||'user'}</span>`;
-    const userKeyCount = allKeys.filter(k=>k.created_by===u.username).length;
-
-    let actions = `<div class="item-actions">`;
-    if(u.status==='pending'){
-      actions += `<button class="btn-sm" style="color:var(--signal);" onclick="approveUser('${u.key}')">Approve</button>`;
-      actions += `<button class="btn-sm btn-danger" onclick="rejectUser('${u.key}')">Reject</button>`;
-    } else if(u.status==='approved'){
-      actions += `<button class="btn-sm btn-danger" onclick="rejectUser('${u.key}')">Revoke</button>`;
-      actions += `<button class="btn-sm btn-warn" onclick="disableUser('${u.key}')">Disable</button>`;
-    } else if(u.status==='disabled'){
-      actions += `<button class="btn-sm" style="color:var(--signal);" onclick="approveUser('${u.key}')">Re-enable</button>`;
-    } else {
-      actions += `<button class="btn-sm" style="color:var(--signal);" onclick="approveUser('${u.key}')">Approve</button>`;
-    }
-    if(u.role!=='admin'){
-      actions += `<button class="btn-sm btn-info" onclick="setUserRole('${u.key}','${u.role==='reseller'?'user':'reseller'}')">${u.role==='reseller'?'→ User':'→ Reseller'}</button>`;
-    }
-    actions += `<button class="btn-sm btn-info" onclick="openUserKeysDrawer('${u.username}')">Keys (${userKeyCount})</button>`;
-    actions += `<button class="btn-sm" onclick="promptResetPassword('${u.key}','${u.username}')">Reset PW</button>`;
-    actions += `<button class="btn-sm btn-danger" onclick="confirmDeleteUser('${u.key}')">Delete</button>`;
-    actions += `</div>`;
-
-    return `<div class="item">
-      <span class="item-key">${u.username}</span>
-      <div class="item-meta">${statusPill}${rolePill}<span class="pill pill-neutral">${formatDate(u.created_at)}</span></div>
-      ${actions}
-    </div>`;
+  else list.sort((a,b)=>(a.status==='pending'?-1:1)-(b.status==='pending'?-1:1));
+  document.getElementById('pendingCount').textContent=pendingUsers.filter(u=>u.status==='pending').length;
+  if(!list.length){ el.innerHTML='<div class="empty-state">No results</div>'; return; }
+  el.innerHTML=list.map(u=>{
+    const statusPill=u.status==='pending'?'<span class="pill pill-amber">Pending</span>':u.status==='approved'?'<span class="pill pill-signal">Approved</span>':u.status==='disabled'?'<span class="pill pill-violet">Disabled</span>':'<span class="pill pill-coral">Rejected</span>';
+    const rolePill=`<span class="pill pill-${u.role==='admin'?'coral':u.role==='reseller'?'violet':'neutral'}">${u.role||'user'}</span>`;
+    const userKeyCount=allKeys.filter(k=>k.created_by===u.username).length;
+    let actions=`<div class="item-actions">`;
+    if(u.status==='pending'){ actions+=`<button class="btn-sm" style="color:var(--signal);" onclick="approveUser('${u.key}')">Approve</button><button class="btn-sm btn-danger" onclick="rejectUser('${u.key}')">Reject</button>`; }
+    else if(u.status==='approved'){ actions+=`<button class="btn-sm btn-danger" onclick="rejectUser('${u.key}')">Revoke</button><button class="btn-sm btn-warn" onclick="disableUser('${u.key}')">Disable</button>`; }
+    else if(u.status==='disabled'){ actions+=`<button class="btn-sm" style="color:var(--signal);" onclick="approveUser('${u.key}')">Re-enable</button>`; }
+    else { actions+=`<button class="btn-sm" style="color:var(--signal);" onclick="approveUser('${u.key}')">Approve</button>`; }
+    if(u.role!=='admin') actions+=`<button class="btn-sm btn-info" onclick="setUserRole('${u.key}','${u.role==='reseller'?'user':'reseller'}')">${u.role==='reseller'?'→ User':'→ Reseller'}</button>`;
+    actions+=`<button class="btn-sm btn-info" onclick="openUserKeysDrawer('${u.username}')">Keys (${userKeyCount})</button>`;
+    actions+=`<button class="btn-sm" onclick="promptResetPassword('${u.key}','${u.username}')">Reset PW</button>`;
+    actions+=`<button class="btn-sm btn-danger" onclick="confirmDeleteUser('${u.key}')">Delete</button></div>`;
+    return `<div class="item"><span class="item-key">${u.username}</span><div class="item-meta">${statusPill}${rolePill}<span class="pill pill-neutral">${formatDate(u.created_at)}</span></div>${actions}</div>`;
   }).join('');
 }
 
-async function approveUser(key){
-  try{
-    await fetch(await withAuth(`${DB_URL}/users/${key}/status.json`),{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify("approved")});
-    const u = pendingUsers.find(x=>x.key===key); if(u) u.status='approved';
-    renderPendingUsers(); loadUserStats();
-    showToast('Account approved!','success');
-    await writeAuditLog('approve_user', key);
-  }catch(e){ showToast('Error!','error'); }
-}
-async function rejectUser(key){
-  try{
-    await fetch(await withAuth(`${DB_URL}/users/${key}/status.json`),{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify("rejected")});
-    const u = pendingUsers.find(x=>x.key===key); if(u) u.status='rejected';
-    renderPendingUsers(); loadUserStats();
-    showToast('Account rejected!','success');
-    await writeAuditLog('reject_user', key);
-  }catch(e){ showToast('Error!','error'); }
-}
-async function disableUser(key){
-  try{
-    await fetch(await withAuth(`${DB_URL}/users/${key}/status.json`),{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify("disabled")});
-    const u = pendingUsers.find(x=>x.key===key); if(u) u.status='disabled';
-    renderPendingUsers(); loadUserStats();
-    showToast('Account disabled!','info');
-    await writeAuditLog('disable_user', key);
-  }catch(e){ showToast('Error!','error'); }
-}
-async function setUserRole(key, newRole){
-  try{
-    await fetch(await withAuth(`${DB_URL}/users/${key}/role.json`),{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(newRole)});
-    const u = pendingUsers.find(x=>x.key===key); if(u) u.role=newRole;
-    renderPendingUsers();
-    showToast('Role updated to '+newRole,'success');
-    await writeAuditLog('set_role:'+newRole, key);
-  }catch(e){ showToast('Error!','error'); }
-}
-function confirmDeleteUser(key){
-  const u = pendingUsers.find(x=>x.key===key);
-  openConfirm('Delete User', `Delete user "${u?u.username:key}"? Hindi na mabawi ito.`, 'DELETE', ()=>deleteUser(key));
-}
-async function deleteUser(key){
-  try{
-    await fetch(await withAuth(`${DB_URL}/users/${key}.json`),{method:'DELETE'});
-    pendingUsers = pendingUsers.filter(x=>x.key!==key);
-    renderPendingUsers(); loadUserStats();
-    showToast('Account deleted!','success');
-    await writeAuditLog('delete_user', key);
-  }catch(e){ showToast('Error!','error'); }
-}
+async function approveUser(key){ try{ await fetch(await withAuth(`${DB_URL}/users/${key}/status.json`),{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify("approved")}); const u=pendingUsers.find(x=>x.key===key); if(u) u.status='approved'; renderPendingUsers(); loadUserStats(); showToast('Account approved!','success'); await writeAuditLog('approve_user',key); }catch(e){ showToast('Error!','error'); } }
+async function rejectUser(key){ try{ await fetch(await withAuth(`${DB_URL}/users/${key}/status.json`),{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify("rejected")}); const u=pendingUsers.find(x=>x.key===key); if(u) u.status='rejected'; renderPendingUsers(); loadUserStats(); showToast('Account rejected!','success'); await writeAuditLog('reject_user',key); }catch(e){ showToast('Error!','error'); } }
+async function disableUser(key){ try{ await fetch(await withAuth(`${DB_URL}/users/${key}/status.json`),{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify("disabled")}); const u=pendingUsers.find(x=>x.key===key); if(u) u.status='disabled'; renderPendingUsers(); loadUserStats(); showToast('Account disabled!','info'); await writeAuditLog('disable_user',key); }catch(e){ showToast('Error!','error'); } }
+async function setUserRole(key,newRole){ try{ await fetch(await withAuth(`${DB_URL}/users/${key}/role.json`),{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(newRole)}); const u=pendingUsers.find(x=>x.key===key); if(u) u.role=newRole; renderPendingUsers(); showToast('Role updated to '+newRole,'success'); await writeAuditLog('set_role:'+newRole,key); }catch(e){ showToast('Error!','error'); } }
+function confirmDeleteUser(key){ const u=pendingUsers.find(x=>x.key===key); openConfirm('Delete User',`Delete user "${u?u.username:key}"? This cannot be undone.`,'DELETE',()=>deleteUser(key)); }
+async function deleteUser(key){ try{ await fetch(await withAuth(`${DB_URL}/users/${key}.json`),{method:'DELETE'}); pendingUsers=pendingUsers.filter(x=>x.key!==key); renderPendingUsers(); loadUserStats(); showToast('Account deleted!','success'); await writeAuditLog('delete_user',key); }catch(e){ showToast('Error!','error'); } }
 
-// =================== GENERATE NEW KEY CARD ===================
+// =================== GENERATE NEW KEY ===================
 let gkIdMode = 'manual';
 
 function gkInit(){
-  // default expiry: +30 days from today, matched sa reference mockup style
-  const el = document.getElementById('gkExpiryDate');
-  if(el && !el.value){
-    const d = new Date();
-    d.setDate(d.getDate()+30);
-    el.value = d.toISOString().slice(0,10);
-  }
-  const cb = document.getElementById('gkCreatedBy');
-  if(cb) cb.value = currentSession ? currentSession.username : '';
+  const el=document.getElementById('gkExpiryDate');
+  if(el&&!el.value){ const d=new Date(); d.setDate(d.getDate()+30); el.value=d.toISOString().slice(0,10); }
+  const cb=document.getElementById('gkCreatedBy');
+  if(cb) cb.value=currentSession?currentSession.username:'';
   setGkIdMode('manual');
 }
 
 function setGkIdMode(mode){
-  gkIdMode = mode;
-  document.getElementById('gkModeManualBtn').classList.toggle('active', mode==='manual');
-  document.getElementById('gkModeAutoBtn').classList.toggle('active', mode==='auto');
-  const input = document.getElementById('gkKeyId');
-  const regenBtn = document.getElementById('gkRegenBtn');
-  if(mode==='auto'){
-    input.disabled = true;
-    regenBtn.style.display = 'inline-flex';
-    gkRegenerateId();
-  } else {
-    input.disabled = false;
-    regenBtn.style.display = 'none';
-  }
+  gkIdMode=mode;
+  document.getElementById('gkModeManualBtn').classList.toggle('active',mode==='manual');
+  document.getElementById('gkModeAutoBtn').classList.toggle('active',mode==='auto');
+  const input=document.getElementById('gkKeyId');
+  const regenBtn=document.getElementById('gkRegenBtn');
+  if(mode==='auto'){ input.disabled=true; regenBtn.style.display='inline-flex'; gkRegenerateId(); }
+  else { input.disabled=false; regenBtn.style.display='none'; }
 }
 
-function gkOnManualEdit(){
-  // kapag nag-type sa field habang naka-manual mode, walang side effect;
-  // ito lang ang bumabantay kung dapat mag-switch pabalik sa manual
-  // kung galing sa auto value na na-edit
-}
-
-function gkRegenerateId(){
-  const pre = 'NPC';
-  const id = pre+'-'+randKey(4)+'-'+randKey(4);
-  document.getElementById('gkKeyId').value = id;
-}
-
-function gkChangeDevices(n){
-  const el=document.getElementById('gkMaxDevices');
-  el.value=Math.max(1,Math.min(999,parseInt(el.value||1)+n));
-}
-function gkClampDevices(){
-  const el=document.getElementById('gkMaxDevices');
-  if(el.value<1)el.value=1; if(el.value>999)el.value=999;
-}
+function gkOnManualEdit(){}
+function gkRegenerateId(){ const id='NPC-'+randKey(4)+'-'+randKey(4); document.getElementById('gkKeyId').value=id; }
+function gkChangeDevices(n){ const el=document.getElementById('gkMaxDevices'); el.value=Math.max(1,Math.min(999,parseInt(el.value||1)+n)); }
+function gkClampDevices(){ const el=document.getElementById('gkMaxDevices'); if(el.value<1)el.value=1; if(el.value>999)el.value=999; }
 function gkSetDev(n){ document.getElementById('gkMaxDevices').value=n; }
 
 async function gkGenerateKey(){
-  const btn = document.getElementById('gkGenBtn');
-  let keyId = document.getElementById('gkKeyId').value.trim();
-
-  if(gkIdMode==='auto' && !keyId){
-    gkRegenerateId();
-    keyId = document.getElementById('gkKeyId').value.trim();
-  }
-  if(!keyId) return showToast('Maglagay ng Key Name/ID!','error');
+  const btn=document.getElementById('gkGenBtn');
+  let keyId=document.getElementById('gkKeyId').value.trim();
+  if(gkIdMode==='auto'&&!keyId){ gkRegenerateId(); keyId=document.getElementById('gkKeyId').value.trim(); }
+  if(!keyId) return showToast('Enter a Key Name/ID!','error');
   if(allKeys.find(k=>k.key===keyId)) return showToast('Duplicate key!','error');
-
-  const dateVal = document.getElementById('gkExpiryDate').value;
-  if(!dateVal) return showToast('Pumili ng expiry date!','error');
-  const expire = Math.floor(new Date(dateVal).getTime()/1000);
-
-  const maxDev = parseInt(document.getElementById('gkMaxDevices').value)||1;
-  const createdBy = currentSession ? currentSession.username : '';
-
+  const dateVal=document.getElementById('gkExpiryDate').value;
+  if(!dateVal) return showToast('Select expiry date!','error');
+  const expire=Math.floor(new Date(dateVal).getTime()/1000);
+  const maxDev=parseInt(document.getElementById('gkMaxDevices').value)||1;
+  const createdBy=currentSession?currentSession.username:'';
   btn.classList.add('working');
-  btn.innerHTML = '<span class="spinner"></span>Generating...';
-
-  const saved = await saveKey(keyId, expire, '', maxDev);
-
+  btn.innerHTML='<span class="spinner"></span>Deploying...';
+  const saved=await saveKey(keyId,expire,'',maxDev);
   btn.classList.remove('working');
-  btn.textContent = 'Generate Key';
-
+  btn.textContent='Deploy Key';
   if(saved){
-    allKeys.push({key:keyId, expire, label:'', max_devices:maxDev, devices:[], created_by:createdBy});
+    allKeys.push({key:keyId,expire,label:'',max_devices:maxDev,devices:[],created_by:createdBy});
     updateCounts(); renderDrawer();
-    showToast('Key generated: '+keyId,'success');
-    popFab();
-    await writeAuditLog('generate_key', keyId);
-
-    // reset form para sa next entry
-    if(gkIdMode==='auto'){ gkRegenerateId(); }
-    else { document.getElementById('gkKeyId').value=''; }
-  } else {
-    showToast('Hindi na-save ang key!','error');
-  }
+    showToast('Key deployed: '+keyId,'success');
+    popFab(); await writeAuditLog('generate_key',keyId);
+    if(gkIdMode==='auto') gkRegenerateId(); else document.getElementById('gkKeyId').value='';
+  } else { showToast('Key could not be saved!','error'); }
 }
 
 // =================== KEY OPERATIONS ===================
 function randKey(len){ let r=''; for(let i=0;i<len;i++) r+=chars[Math.floor(Math.random()*chars.length)]; return r; }
-function isExpired(expire){ return expire < Math.floor(Date.now()/1000); }
-function formatDate(ts){
-  const d = new Date(ts*1000);
-  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')+' '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
-}
+function isExpired(expire){ return expire<Math.floor(Date.now()/1000); }
+function formatDate(ts){ const d=new Date(ts*1000); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')+' '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0'); }
 
-function animateCount(id, target){
-  const el = document.getElementById(id);
-  if(!el) return;
-  el.classList.remove('tick');
-  void el.offsetWidth;
-  el.classList.add('tick');
-  el.textContent = target;
-}
+function animateCount(id,target){ const el=document.getElementById(id); if(!el) return; el.classList.remove('tick'); void el.offsetWidth; el.classList.add('tick'); el.textContent=target; }
 
 async function loadKeys(){
-  document.getElementById('drawerList').innerHTML = '<div class="empty-state"><span class="ic"><span class="spinner"></span></span>Loading...</div>';
+  document.getElementById('drawerList').innerHTML='<div class="empty-state"><span class="ic"><span class="spinner"></span></span>Loading...</div>';
   try{
-    const r = await fetch(await withAuth(`${DB_URL}/keys.json`));
-    const data = await r.json();
-    allKeys = [];
-    const isAdmin = currentSession && currentSession.role === 'admin';
-    const isReseller = currentSession && currentSession.role === 'reseller';
+    const r=await fetch(await withAuth(`${DB_URL}/keys.json`));
+    const data=await r.json();
+    allKeys=[];
+    const isAdmin=currentSession&&currentSession.role==='admin';
+    const isReseller=currentSession&&currentSession.role==='reseller';
     if(data){
       Object.keys(data).forEach(key=>{
-        const v = data[key];
-        let devices = [];
-        if(v.devices){
-          if(Array.isArray(v.devices)){
-            devices = v.devices.filter(d=>d!==null && d!==undefined && d!=='');
-          } else if(typeof v.devices === 'object'){
-            devices = Object.values(v.devices).filter(d=>d!==null && d!==undefined && d!=='');
-          }
-        }
-        const createdBy = v.created_by || '';
-        if(!isAdmin && !isReseller && currentSession && createdBy !== currentSession.username) return;
-        allKeys.push({ key, expire: v.expire||0, label: v.label||'', max_devices: v.max_devices||1, devices, created_by: createdBy });
+        const v=data[key];
+        let devices=[];
+        if(v.devices){ if(Array.isArray(v.devices)) devices=v.devices.filter(d=>d!==null&&d!==undefined&&d!==''); else if(typeof v.devices==='object') devices=Object.values(v.devices).filter(d=>d!==null&&d!==undefined&&d!==''); }
+        const createdBy=v.created_by||'';
+        if(!isAdmin&&!isReseller&&currentSession&&createdBy!==currentSession.username) return;
+        allKeys.push({key,expire:v.expire||0,label:v.label||'',max_devices:v.max_devices||1,devices,created_by:createdBy});
       });
     }
     updateCounts(); renderDrawer();
     showToast('Loaded '+allKeys.length+' keys!','success');
     popFab();
-  }catch(e){
-    showToast('Error loading!','error');
-  }
+  }catch(e){ showToast('Error loading!','error'); }
 }
 
-async function saveKey(key, expire, label, maxDev){
-  const body = { expire, label: label||'', max_devices: maxDev, devices: [], created_by: currentSession ? currentSession.username : '' };
-  try{
-    const r = await fetch(await withAuth(`${DB_URL}/keys/${key}.json`),{ method:'PUT', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body) });
-    return r.ok;
-  }catch(e){ return false; }
+async function saveKey(key,expire,label,maxDev){
+  const body={expire,label:label||'',max_devices:maxDev,devices:[],created_by:currentSession?currentSession.username:''};
+  try{ const r=await fetch(await withAuth(`${DB_URL}/keys/${key}.json`),{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}); return r.ok; }catch(e){ return false; }
 }
 
-async function deleteKeyFromDb(key){
-  try{ await fetch(await withAuth(`${DB_URL}/keys/${key}.json`),{method:'DELETE'}); }catch(e){}
+async function deleteKeyFromDb(key){ try{ await fetch(await withAuth(`${DB_URL}/keys/${key}.json`),{method:'DELETE'}); }catch(e){} }
+
+async function resetDevices(i,key){ try{ await fetch(await withAuth(`${DB_URL}/keys/${key}/devices.json`),{method:'PUT',headers:{'Content-Type':'application/json'},body:'null'}); allKeys[i].devices=[]; renderDrawer(); showToast('Devices reset!','success'); }catch(e){ showToast('Error!','error'); } }
+
+async function removeOneDevice(i,key,deviceSerial){
+  const newDevices=allKeys[i].devices.filter(d=>d!==deviceSerial);
+  try{ await fetch(await withAuth(`${DB_URL}/keys/${key}/devices.json`),{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(newDevices.length?newDevices:null)}); allKeys[i].devices=newDevices; renderDrawer(); showToast('Device removed!','success'); }catch(e){ showToast('Error!','error'); }
 }
 
-async function resetDevices(i,key){
-  try{
-    await fetch(await withAuth(`${DB_URL}/keys/${key}/devices.json`),{method:'PUT',headers:{'Content-Type':'application/json'},body:'null'});
-    allKeys[i].devices = []; renderDrawer(); showToast('Devices reset!','success');
-  }catch(e){ showToast('Error!','error'); }
-}
-
-async function removeOneDevice(i, key, deviceSerial){
-  const newDevices = allKeys[i].devices.filter(d=>d!==deviceSerial);
-  try{
-    await fetch(await withAuth(`${DB_URL}/keys/${key}/devices.json`),{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(newDevices.length?newDevices:null)});
-    allKeys[i].devices = newDevices;
-    renderDrawer();
-    showToast('Device removed!','success');
-  }catch(e){ showToast('Error!','error'); }
-}
-
-function toggleDeviceList(key){
-  expandedDevices[key] = !expandedDevices[key];
-  renderDrawer();
-}
+function toggleDeviceList(key){ expandedDevices[key]=!expandedDevices[key]; renderDrawer(); }
 
 // =================== RENDER DRAWER ===================
 function renderDrawer(){
-  const el = document.getElementById('drawerList');
-  const search = (document.getElementById('searchInput')?.value||'').toLowerCase();
-  const filter = document.getElementById('filterStatus')?.value||'all';
-  const sort = document.getElementById('sortMode')?.value||'none';
-
-  let filtered = allKeys.filter(o=>{
-    if(search && !o.key.toLowerCase().includes(search) && !(o.label||'').toLowerCase().includes(search)) return false;
-    if(filter==='valid' && isExpired(o.expire)) return false;
-    if(filter==='expired' && !isExpired(o.expire)) return false;
-    if(filter==='full' && o.devices.length<o.max_devices) return false;
+  const el=document.getElementById('drawerList');
+  const search=(document.getElementById('searchInput')?.value||'').toLowerCase();
+  const filter=document.getElementById('filterStatus')?.value||'all';
+  const sort=document.getElementById('sortMode')?.value||'none';
+  let filtered=allKeys.filter(o=>{
+    if(search&&!o.key.toLowerCase().includes(search)&&!(o.label||'').toLowerCase().includes(search)) return false;
+    if(filter==='valid'&&isExpired(o.expire)) return false;
+    if(filter==='expired'&&!isExpired(o.expire)) return false;
+    if(filter==='full'&&o.devices.length<o.max_devices) return false;
     return true;
   });
-
   if(sort==='date_asc') filtered.sort((a,b)=>a.expire-b.expire);
   else if(sort==='date_desc') filtered.sort((a,b)=>b.expire-a.expire);
   else if(sort==='exp_asc') filtered.sort((a,b)=>a.expire-b.expire);
@@ -1485,45 +1193,28 @@ function renderDrawer(){
   else if(sort==='dev_asc') filtered.sort((a,b)=>a.devices.length-b.devices.length);
   else if(sort==='dev_desc') filtered.sort((a,b)=>b.devices.length-a.devices.length);
   else if(sort==='user_az') filtered.sort((a,b)=>(a.created_by||'').localeCompare(b.created_by||''));
-
-  if(!filtered.length){
-    el.innerHTML='<div class="empty-state">Walang results</div>';
-    return;
-  }
-
-  const isAdmin = currentSession && currentSession.role === 'admin';
-
-  el.innerHTML = filtered.map((obj, listIdx)=>{
-    const exp = isExpired(obj.expire);
-    const devCount = obj.devices.length;
-    const maxDev = obj.max_devices;
-    const isFull = devCount>=maxDev;
-    const isUnlimited = maxDev>=999;
-    const idx = allKeys.findIndex(k=>k.key===obj.key);
-    const devLabel = isUnlimited ? devCount+'/Unli' : (devCount+'/'+maxDev);
-    const expanded = !!expandedDevices[obj.key];
-    const isSelected = selectedKeys.has(obj.key);
-
-    let deviceListHtml = '';
+  if(!filtered.length){ el.innerHTML='<div class="empty-state"><span class="ic">🔍</span>No results found</div>'; return; }
+  const isAdmin=currentSession&&currentSession.role==='admin';
+  el.innerHTML=filtered.map((obj,listIdx)=>{
+    const exp=isExpired(obj.expire);
+    const devCount=obj.devices.length;
+    const maxDev=obj.max_devices;
+    const isFull=devCount>=maxDev;
+    const isUnlimited=maxDev>=999;
+    const idx=allKeys.findIndex(k=>k.key===obj.key);
+    const devLabel=isUnlimited?devCount+'/Unli':(devCount+'/'+maxDev);
+    const expanded=!!expandedDevices[obj.key];
+    const isSelected=selectedKeys.has(obj.key);
+    let deviceListHtml='';
     if(expanded){
-      if(devCount===0){
-        deviceListHtml = '<div class="device-list"><div class="device-empty">Walang connected device</div></div>';
-      } else {
-        const rows = obj.devices.map(d=>`
-          <div class="device-row">
-            <span>${d}</span>
-            <button onclick="removeOneDevice(${idx},'${obj.key}','${d.replace(/'/g,"\\'")}')">✕</button>
-          </div>
-        `).join('');
-        deviceListHtml = `<div class="device-list">${rows}</div>`;
-      }
+      if(devCount===0) deviceListHtml='<div class="device-list"><div class="device-empty">No devices connected</div></div>';
+      else { const rows=obj.devices.map(d=>`<div class="device-row"><span>${d}</span><button onclick="removeOneDevice(${idx},'${obj.key}','${d.replace(/'/g,"\\'")}')">✕</button></div>`).join(''); deviceListHtml=`<div class="device-list">${rows}</div>`; }
     }
-
     return `<div class="item${isSelected?' selected':''}" id="ki-${obj.key.replace(/[^a-z0-9]/gi,'_')}" style="animation-delay:${listIdx*0.03}s">
-      <div style="display:flex;align-items:flex-start;gap:8px;">
+      <div style="display:flex;align-items:flex-start;gap:10px;">
         <input type="checkbox" class="key-checkbox" data-key="${obj.key}" ${isSelected?'checked':''} onchange="toggleKeySelect('${obj.key}',this.checked)" style="margin-top:3px;" />
         <div style="flex:1;min-width:0;">
-          <span class="item-key">${obj.key}</span>
+          <div class="item-key">${obj.key}</div>
           <div class="item-meta">
             ${obj.label?'<span class="pill pill-amber">'+obj.label+'</span>':''}
             <span class="pill ${exp?'pill-coral':'pill-signal'}">${exp?'Expired':'Valid'}: ${formatDate(obj.expire)}</span>
@@ -1547,278 +1238,146 @@ function renderDrawer(){
 // =================== STATS ===================
 function updateDashboardStats(){
   try{
-    const totalDevices = allKeys.reduce((a,b)=>a+(b.devices?b.devices.length:0),0);
-    const td=document.getElementById('totalDevices');
-    if(td) td.textContent = totalDevices;
-
-    const expiredKeys = allKeys.filter(k=>isExpired(k.expire)).length;
-    const fullKeys = allKeys.filter(k=>k.devices.length>=k.max_devices && k.max_devices<999).length;
-    animateCount('expiredCount', expiredKeys);
-    animateCount('fullCount', fullKeys);
-
+    const totalDevices=allKeys.reduce((a,b)=>a+(b.devices?b.devices.length:0),0);
+    const td=document.getElementById('totalDevices'); if(td) td.textContent=totalDevices;
+    const expiredKeys=allKeys.filter(k=>isExpired(k.expire)).length;
+    const fullKeys=allKeys.filter(k=>k.devices.length>=k.max_devices&&k.max_devices<999).length;
+    animateCount('expiredCount',expiredKeys); animateCount('fullCount',fullKeys);
     const logs=document.getElementById('adminLogs');
-    if(logs){
-      logs.innerHTML=`
-      <div class="log-entry">LOAD_KEYS | ${new Date().toLocaleString()}</div>
-      <div class="log-entry">TOTAL KEYS: ${allKeys.length} | EXPIRED: ${expiredKeys} | FULL: ${fullKeys}</div>`;
-    }
-
+    if(logs) logs.innerHTML=`<div class="log-entry">LOAD_KEYS | ${new Date().toLocaleString()}</div><div class="log-entry">TOTAL KEYS: ${allKeys.length} | EXPIRED: ${expiredKeys} | FULL: ${fullKeys}</div>`;
     const monitor=document.getElementById('usageMonitor');
-    if(monitor){
-      monitor.innerHTML = allKeys.slice(0,10).map(k=>
-        `<div class="log-entry">${k.key} | ${k.devices.length}/${k.max_devices>=999?'Unli':k.max_devices} devs | ${isExpired(k.expire)?'<span style="color:var(--coral)">EXP</span>':'OK'}</div>`
-      ).join('') || '<div class="log-entry">No keys available</div>';
-    }
+    if(monitor) monitor.innerHTML=allKeys.slice(0,10).map(k=>`<div class="log-entry">${k.key} | ${k.devices.length}/${k.max_devices>=999?'Unli':k.max_devices} devs | ${isExpired(k.expire)?'<span style="color:var(--coral)">EXP</span>':'<span style="color:var(--signal)">OK</span>'}</div>`).join('')||'<div class="log-entry">No keys available</div>';
   }catch(e){}
   loadUserStats();
 }
 
 async function loadUserStats(){
-  const totalEl = document.getElementById('totalUsers');
-  const approvedEl = document.getElementById('approvedUsers');
-  const pendingEl = document.getElementById('pendingUsers');
-  if(!totalEl && !approvedEl && !pendingEl) return;
+  const totalEl=document.getElementById('totalUsers'); const approvedEl=document.getElementById('approvedUsers'); const pendingEl=document.getElementById('pendingUsers');
+  if(!totalEl&&!approvedEl&&!pendingEl) return;
   try{
-    const r = await fetch(await withAuth(`${DB_URL}/users.json`));
-    const data = await r.json();
-    let total = 0, approved = 0, pending = 0;
-    if(data){
-      Object.values(data).forEach(u=>{
-        total++;
-        if(u.status === 'approved') approved++;
-        else if(u.status === 'pending') pending++;
-      });
-    }
-    if(totalEl) totalEl.textContent = total;
-    if(approvedEl) approvedEl.textContent = approved;
-    if(pendingEl) pendingEl.textContent = pending;
+    const r=await fetch(await withAuth(`${DB_URL}/users.json`));
+    const data=await r.json();
+    let total=0,approved=0,pending=0;
+    if(data) Object.values(data).forEach(u=>{ total++; if(u.status==='approved') approved++; else if(u.status==='pending') pending++; });
+    if(totalEl) totalEl.textContent=total; if(approvedEl) approvedEl.textContent=approved; if(pendingEl) pendingEl.textContent=pending;
   }catch(e){}
 }
 
 function updateCounts(){
-  const total = allKeys.length;
-  const valid = allKeys.filter(k=>!isExpired(k.expire)).length;
-  animateCount('totalCount', total);
-  animateCount('validCount', valid);
-  const drawerCountEl = document.getElementById('drawerCount');
-  if(drawerCountEl) drawerCountEl.textContent = total;
+  const total=allKeys.length; const valid=allKeys.filter(k=>!isExpired(k.expire)).length;
+  animateCount('totalCount',total); animateCount('validCount',valid);
+  const drawerCountEl=document.getElementById('drawerCount'); if(drawerCountEl) drawerCountEl.textContent=total;
   updateDashboardStats();
-  const badge = document.getElementById('fabBadge');
-  badge.textContent = total;
-  badge.style.display = total>0 ? 'flex' : 'none';
+  const badge=document.getElementById('fabBadge'); badge.textContent=total; badge.style.display=total>0?'flex':'none';
 }
 
-function popFab(){
-  const fab = document.getElementById('fab');
-  fab.classList.remove('pop');
-  void fab.offsetWidth;
-  fab.classList.add('pop');
-}
+function popFab(){ const fab=document.getElementById('fab'); fab.classList.remove('pop'); void fab.offsetWidth; fab.classList.add('pop'); }
 
-// =================== KEY DELETE CONFIRM ===================
-function confirmDelKey(i, key){
-  openConfirm('Delete Key', `Delete key:\n"${key}"?\n\nHindi na mabawi ito.`, 'DELETE', ()=>delKey(i,key));
-}
-async function delKey(i, key){
-  const safeId = key.replace(/[^a-z0-9]/gi,'_');
-  const el = document.getElementById('ki-'+safeId);
-  if(el){
-    el.classList.add('deleting');
-    await new Promise(r=>setTimeout(r,250));
-  }
+// =================== DELETE KEY ===================
+function confirmDelKey(i,key){ openConfirm('Delete Key',`Delete key:\n"${key}"?\n\nThis cannot be undone.`,'DELETE',()=>delKey(i,key)); }
+async function delKey(i,key){
+  const safeId=key.replace(/[^a-z0-9]/gi,'_');
+  const el=document.getElementById('ki-'+safeId);
+  if(el){ el.classList.add('deleting'); await new Promise(r=>setTimeout(r,250)); }
   await deleteKeyFromDb(key);
-  allKeys.splice(i,1);
-  selectedKeys.delete(key);
+  allKeys.splice(i,1); selectedKeys.delete(key);
   updateCounts(); renderDrawer();
   showToast('Key deleted!','success');
-  await writeAuditLog('delete_key', key);
+  await writeAuditLog('delete_key',key);
 }
 
 function copyOne(k){ navigator.clipboard.writeText(k).catch(()=>{}); showToast('Copied!','success'); }
-function copyAll(){ if(!allKeys.length) return showToast('Walang keys!','error'); navigator.clipboard.writeText(allKeys.map(o=>o.key).join('\n')).catch(()=>{}); showToast('Copied '+allKeys.length+' keys!','success'); }
+function copyAll(){ if(!allKeys.length) return showToast('No keys to copy!','error'); navigator.clipboard.writeText(allKeys.map(o=>o.key).join('\n')).catch(()=>{}); showToast('Copied '+allKeys.length+' keys!','success'); }
 function exportTxt(){
-  if(!allKeys.length) return showToast('Walang keys!','error');
-  const b = new Blob([allKeys.map(o=>o.key+' | '+(o.label||'no label')+' | Expires: '+formatDate(o.expire)+' | Max devices: '+o.max_devices+' | Devices: '+(o.devices.join(', ')||'none')).join('\n')],{type:'text/plain'});
-  const a = document.createElement('a');
-  a.href=URL.createObjectURL(b);
-  a.download='npc_keys_'+Date.now()+'.txt';
-  a.click();
+  if(!allKeys.length) return showToast('No keys to export!','error');
+  const b=new Blob([allKeys.map(o=>o.key+' | '+(o.label||'no label')+' | Expires: '+formatDate(o.expire)+' | Max devices: '+o.max_devices+' | Devices: '+(o.devices.join(', ')||'none')).join('\n')],{type:'text/plain'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download='npc_keys_'+Date.now()+'.txt'; a.click();
 }
 
-function showToast(msg, type){
-  const t = document.getElementById('toast');
-  if(!t) return;
+function showToast(msg,type){
+  const t=document.getElementById('toast'); if(!t) return;
   if(toastTimer) clearTimeout(toastTimer);
-  t.textContent = msg;
-  t.className = 'toast '+type+' visible';
-  toastTimer = setTimeout(()=>{
-    t.classList.add('hiding');
-    setTimeout(()=>{ t.className='toast'; }, 250);
-  }, 3000);
+  t.textContent=msg; t.className='toast '+type+' visible';
+  toastTimer=setTimeout(()=>{ t.classList.add('hiding'); setTimeout(()=>{ t.className='toast'; },250); },3000);
 }
 
 function openDrawer(){ document.getElementById('drawer').classList.add('open'); document.getElementById('overlay').classList.add('open'); }
 function closeDrawer(){ document.getElementById('drawer').classList.remove('open'); document.getElementById('overlay').classList.remove('open'); }
 
 // =================== XSS SANITIZE ===================
-function sanitize(str){
-  return String(str||'')
-    .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")
-    .replace(/"/g,"&quot;").replace(/'/g,"&#39;");
-}
+function sanitize(str){ return String(str||'').replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#39;"); }
 
 // =================== DEVICE FINGERPRINT ===================
 function getDeviceFingerprint(){
-  const nav = window.navigator;
-  const raw = [nav.userAgent, nav.language, screen.width+'x'+screen.height, screen.colorDepth, new Date().getTimezoneOffset(), nav.hardwareConcurrency||''].join('|');
-  let hash = 0;
-  for(let i=0;i<raw.length;i++){ hash = ((hash<<5)-hash)+raw.charCodeAt(i); hash|=0; }
+  const nav=window.navigator;
+  const raw=[nav.userAgent,nav.language,screen.width+'x'+screen.height,screen.colorDepth,new Date().getTimezoneOffset(),nav.hardwareConcurrency||''].join('|');
+  let hash=0; for(let i=0;i<raw.length;i++){ hash=((hash<<5)-hash)+raw.charCodeAt(i); hash|=0; }
   return 'DEV-'+Math.abs(hash).toString(36).toUpperCase();
 }
 
-// =================== SESSION EXPIRY / REMEMBER ME ===================
-const REMEMBER_KEY = 'npc_remember';
-const SESSION_EXPIRY_MS = 8 * 60 * 60 * 1000; // 8 hours default
-const REMEMBER_EXPIRY_MS = 7 * 24 * 60 * 60 * 1000; // 7 days
-const INACTIVITY_LIMIT = 15 * 60 * 1000; // 15 minutes
-let inactivityTimer = null;
-let inactivityBarTimer = null;
-let inactivityBarEl = null;
+// =================== SESSION ===================
+const REMEMBER_KEY='npc_remember';
+const SESSION_EXPIRY_MS=8*60*60*1000;
+const REMEMBER_EXPIRY_MS=7*24*60*60*1000;
+const INACTIVITY_LIMIT=15*60*1000;
+let inactivityTimer=null; let inactivityBarTimer=null; let inactivityBarEl=null;
 
 function resetInactivity(){
   if(!currentSession) return;
-  clearTimeout(inactivityTimer);
-  clearInterval(inactivityBarTimer);
-  if(!inactivityBarEl) inactivityBarEl = document.getElementById('inactivityBar');
+  clearTimeout(inactivityTimer); clearInterval(inactivityBarTimer);
+  if(!inactivityBarEl) inactivityBarEl=document.getElementById('inactivityBar');
   if(inactivityBarEl){ inactivityBarEl.style.display='none'; inactivityBarEl.style.width='100%'; }
-  inactivityTimer = setTimeout(()=>{
-    if(!inactivityBarEl) inactivityBarEl = document.getElementById('inactivityBar');
+  inactivityTimer=setTimeout(()=>{
+    if(!inactivityBarEl) inactivityBarEl=document.getElementById('inactivityBar');
     if(inactivityBarEl){ inactivityBarEl.style.display='block'; inactivityBarEl.style.width='100%'; }
-    let secs = 60;
-    inactivityBarTimer = setInterval(()=>{
-      secs--;
-      if(inactivityBarEl) inactivityBarEl.style.width=(secs/60*100)+'%';
-      if(secs<=0){
-        clearInterval(inactivityBarTimer);
-        showToast('Auto-logout: inactive for 15 min','info');
-        setTimeout(doLogout, 800);
-      }
-    }, 1000);
-  }, INACTIVITY_LIMIT);
+    let secs=60;
+    inactivityBarTimer=setInterval(()=>{
+      secs--; if(inactivityBarEl) inactivityBarEl.style.width=(secs/60*100)+'%';
+      if(secs<=0){ clearInterval(inactivityBarTimer); showToast('Auto-logout: inactive 15 min','info'); setTimeout(doLogout,800); }
+    },1000);
+  },INACTIVITY_LIMIT);
 }
 
-function saveRememberMe(safeKey, role, username){
-  localStorage.setItem(REMEMBER_KEY, JSON.stringify({safeKey,role,username,exp:Date.now()+REMEMBER_EXPIRY_MS}));
-}
+function saveRememberMe(safeKey,role,username){ localStorage.setItem(REMEMBER_KEY,JSON.stringify({safeKey,role,username,exp:Date.now()+REMEMBER_EXPIRY_MS})); }
 function clearRememberMe(){ localStorage.removeItem(REMEMBER_KEY); }
-function getRememberMe(){
-  try{
-    const d = JSON.parse(localStorage.getItem(REMEMBER_KEY)||'null');
-    if(d && d.exp > Date.now()) return d;
-    clearRememberMe(); return null;
-  }catch(e){ return null; }
-}
-function saveSessionExpiry(){
-  if(!currentSession) return;
-  const expiry = Date.now() + SESSION_EXPIRY_MS;
-  const s = JSON.parse(sessionStorage.getItem(SESSION_KEY)||'null');
-  if(s){ s.expiry = expiry; sessionStorage.setItem(SESSION_KEY, JSON.stringify(s)); }
-}
-function checkSessionExpiry(){
-  const s = JSON.parse(sessionStorage.getItem(SESSION_KEY)||'null');
-  if(s && s.expiry && Date.now() > s.expiry){
-    showToast('Session expired. Nag-logout na.','info');
-    setTimeout(doLogout, 800);
-    return false;
-  }
-  return true;
-}
+function getRememberMe(){ try{ const d=JSON.parse(localStorage.getItem(REMEMBER_KEY)||'null'); if(d&&d.exp>Date.now()) return d; clearRememberMe(); return null; }catch(e){ return null; } }
+function checkSessionExpiry(){ const s=JSON.parse(sessionStorage.getItem(SESSION_KEY)||'null'); if(s&&s.expiry&&Date.now()>s.expiry){ showToast('Session expired. Logging out.','info'); setTimeout(doLogout,800); return false; } return true; }
 
-// =================== AUDIT LOG ===================
-async function writeAuditLog(action, target){
-  if(!currentSession) return;
-  try{
-    const log = { actor: sanitize(currentSession.username), action: sanitize(action), target: sanitize(target||''), time: Math.floor(Date.now()/1000), device: getDeviceFingerprint() };
-    await fetch(await withAuth(`${DB_URL}/audit_logs.json`),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(log)});
-  }catch(e){}
-}
-
-// =================== LOGIN HISTORY ===================
-async function writeLoginHistory(username, success){
-  try{
-    const rec = { username: sanitize(username), time: Math.floor(Date.now()/1000), device: getDeviceFingerprint(), userAgent: navigator.userAgent.slice(0,80), success };
-    await fetch(await withAuth(`${DB_URL}/login_history.json`),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(rec)});
-  }catch(e){}
-}
+// =================== AUDIT / LOGIN HISTORY ===================
+async function writeAuditLog(action,target){ if(!currentSession) return; try{ const log={actor:sanitize(currentSession.username),action:sanitize(action),target:sanitize(target||''),time:Math.floor(Date.now()/1000),device:getDeviceFingerprint()}; await fetch(await withAuth(`${DB_URL}/audit_logs.json`),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(log)}); }catch(e){} }
+async function writeLoginHistory(username,success){ try{ const rec={username:sanitize(username),time:Math.floor(Date.now()/1000),device:getDeviceFingerprint(),userAgent:navigator.userAgent.slice(0,80),success}; await fetch(await withAuth(`${DB_URL}/login_history.json`),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(rec)}); }catch(e){} }
 
 // =================== SECURITY DRAWER ===================
-function openSecDrawer(){
-  document.getElementById('secDrawer').classList.add('open');
-  document.getElementById('secOverlay').classList.add('open');
-  loadSecurityLogs();
-}
-function closeSecDrawer(){
-  document.getElementById('secDrawer').classList.remove('open');
-  document.getElementById('secOverlay').classList.remove('open');
-}
-let secTab = 'audit';
+function openSecDrawer(){ document.getElementById('secDrawer').classList.add('open'); document.getElementById('secOverlay').classList.add('open'); loadSecurityLogs(); }
+function closeSecDrawer(){ document.getElementById('secDrawer').classList.remove('open'); document.getElementById('secOverlay').classList.remove('open'); }
+let secTab='audit';
 function switchSecTab(tab){
-  secTab = tab;
-  document.getElementById('secTabAudit').classList.toggle('active', tab==='audit');
-  document.getElementById('secTabLogin').classList.toggle('active', tab==='login');
-  document.getElementById('auditLogPanel').style.display = tab==='audit'?'':'none';
-  document.getElementById('loginHistoryPanel').style.display = tab==='login'?'':'none';
+  secTab=tab;
+  document.getElementById('secTabAudit').classList.toggle('active',tab==='audit');
+  document.getElementById('secTabLogin').classList.toggle('active',tab==='login');
+  document.getElementById('auditLogPanel').style.display=tab==='audit'?'':'none';
+  document.getElementById('loginHistoryPanel').style.display=tab==='login'?'':'none';
 }
 async function loadSecurityLogs(){
-  document.getElementById('auditLogPanel').innerHTML = '<div class="empty-state"><span class="ic"><span class="spinner"></span></span>Loading...</div>';
-  document.getElementById('loginHistoryPanel').innerHTML = '<div class="empty-state"><span class="ic"><span class="spinner"></span></span>Loading...</div>';
+  document.getElementById('auditLogPanel').innerHTML='<div class="empty-state"><span class="ic"><span class="spinner"></span></span>Loading...</div>';
+  document.getElementById('loginHistoryPanel').innerHTML='<div class="empty-state"><span class="ic"><span class="spinner"></span></span>Loading...</div>';
   try{
-    const [ar, lr] = await Promise.all([
-      fetch(await withAuth(`${DB_URL}/audit_logs.json`)),
-      fetch(await withAuth(`${DB_URL}/login_history.json`))
-    ]);
-    const auditData = await ar.json();
-    const loginData = await lr.json();
-
-    const auditEl = document.getElementById('auditLogPanel');
-    if(auditData){
-      const entries = Object.values(auditData).sort((a,b)=>b.time-a.time).slice(0,80);
-      auditEl.innerHTML = entries.map(e=>`
-        <div class="log-entry">
-          [${formatDate(e.time)}] <b>${sanitize(e.actor)}</b> → ${sanitize(e.action)} : <span style="opacity:0.8">${sanitize(e.target)}</span>
-          <div style="font-size:9px;opacity:0.55;margin-top:2px;">${sanitize(e.device||'')}</div>
-        </div>`).join('') || '<div class="empty-state">Walang audit logs</div>';
-    } else {
-      auditEl.innerHTML = '<div class="empty-state">Walang audit logs</div>';
-    }
-
-    const loginEl = document.getElementById('loginHistoryPanel');
-    if(loginData){
-      const entries = Object.values(loginData).sort((a,b)=>b.time-a.time).slice(0,80);
-      loginEl.innerHTML = entries.map(e=>`
-        <div class="log-entry ${e.success?'login':'danger'}">
-          [${formatDate(e.time)}] <b>${sanitize(e.username)}</b> — ${e.success?'✅ Success':'❌ Failed'}
-          <div style="font-size:9px;opacity:0.6;margin-top:2px;">${sanitize(e.device||'')} | ${sanitize((e.userAgent||'').slice(0,60))}</div>
-        </div>`).join('') || '<div class="empty-state">Walang login history</div>';
-    } else {
-      loginEl.innerHTML = '<div class="empty-state">Walang login history</div>';
-    }
-  }catch(e){
-    document.getElementById('auditLogPanel').innerHTML='<div class="empty-state" style="color:var(--coral);">Error loading logs!</div>';
-    document.getElementById('loginHistoryPanel').innerHTML='<div class="empty-state" style="color:var(--coral);">Error loading logs!</div>';
-  }
+    const [ar,lr]=await Promise.all([fetch(await withAuth(`${DB_URL}/audit_logs.json`)),fetch(await withAuth(`${DB_URL}/login_history.json`))]);
+    const auditData=await ar.json(); const loginData=await lr.json();
+    const auditEl=document.getElementById('auditLogPanel');
+    if(auditData){ const entries=Object.values(auditData).sort((a,b)=>b.time-a.time).slice(0,80); auditEl.innerHTML=entries.map(e=>`<div class="log-entry">[${formatDate(e.time)}] <b>${sanitize(e.actor)}</b> → ${sanitize(e.action)} : <span style="opacity:0.8">${sanitize(e.target)}</span><div style="font-size:9px;opacity:0.55;margin-top:2px;">${sanitize(e.device||'')}</div></div>`).join('')||'<div class="empty-state">No audit logs</div>'; }
+    else auditEl.innerHTML='<div class="empty-state">No audit logs</div>';
+    const loginEl=document.getElementById('loginHistoryPanel');
+    if(loginData){ const entries=Object.values(loginData).sort((a,b)=>b.time-a.time).slice(0,80); loginEl.innerHTML=entries.map(e=>`<div class="log-entry ${e.success?'login':'danger'}">[${formatDate(e.time)}] <b>${sanitize(e.username)}</b> — ${e.success?'✅ Success':'❌ Failed'}<div style="font-size:9px;opacity:0.6;margin-top:2px;">${sanitize(e.device||'')} | ${sanitize((e.userAgent||'').slice(0,60))}</div></div>`).join('')||'<div class="empty-state">No login history</div>'; }
+    else loginEl.innerHTML='<div class="empty-state">No login history</div>';
+  }catch(e){ document.getElementById('auditLogPanel').innerHTML='<div class="empty-state" style="color:var(--coral);">Error loading logs!</div>'; document.getElementById('loginHistoryPanel').innerHTML='<div class="empty-state" style="color:var(--coral);">Error loading logs!</div>'; }
 }
 
-// =================== PASSWORD RESET (Admin) ===================
-async function promptResetPassword(key, username){
-  const newPw = prompt(`Set new password for "${username}":\n(min. 4 characters)`);
-  if(!newPw || newPw.length < 4){ showToast('Password too short / cancelled','error'); return; }
-  try{
-    const hashed = await hashPassword(newPw);
-    await fetch(await withAuth(`${DB_URL}/users/${key}/password.json`),{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(hashed)});
-    showToast('Password reset para kay '+username,'success');
-    await writeAuditLog('reset_password', username);
-  }catch(e){ showToast('Error sa reset!','error'); }
+// =================== PASSWORD RESET ===================
+async function promptResetPassword(key,username){
+  const newPw=prompt(`Set new password for "${username}":\n(min. 4 characters)`);
+  if(!newPw||newPw.length<4){ showToast('Password too short / cancelled','error'); return; }
+  try{ const hashed=await hashPassword(newPw); await fetch(await withAuth(`${DB_URL}/users/${key}/password.json`),{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(hashed)}); showToast('Password reset for '+username,'success'); await writeAuditLog('reset_password',username); }catch(e){ showToast('Error resetting!','error'); }
 }
 
 // =================== INIT ===================
@@ -1826,17 +1385,14 @@ initTheme();
 getDbToken();
 
 (function(){
-  const rem = getRememberMe();
-  if(rem && !sessionStorage.getItem(SESSION_KEY)){
-    sessionStorage.setItem(SESSION_KEY, JSON.stringify({username:rem.username, role:rem.role, safeKey:rem.safeKey, expiry: Date.now()+SESSION_EXPIRY_MS}));
-  }
+  const rem=getRememberMe();
+  if(rem&&!sessionStorage.getItem(SESSION_KEY)) sessionStorage.setItem(SESSION_KEY,JSON.stringify({username:rem.username,role:rem.role,safeKey:rem.safeKey,expiry:Date.now()+SESSION_EXPIRY_MS}));
 })();
 
 checkSession();
 
-['mousemove','keydown','touchstart','click','scroll'].forEach(ev=>document.addEventListener(ev, resetInactivity, {passive:true}));
-
-setInterval(()=>{ if(currentSession) checkSessionExpiry(); }, 2*60*1000);
+['mousemove','keydown','touchstart','click','scroll'].forEach(ev=>document.addEventListener(ev,resetInactivity,{passive:true}));
+setInterval(()=>{ if(currentSession) checkSessionExpiry(); },2*60*1000);
 </script>
 </body>
 </html>
