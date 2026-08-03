@@ -8,13 +8,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-/* ============================================================
-   NPC CONTROL — CYBERPUNK / JARVIS HUD REDESIGN
-   Palette: Void Black · Signal Cyan · Violet Energy · Crimson Alert
-   ============================================================ */
-
 :root {
-  /* Core palette */
   --void:          #030508;
   --void-2:        #060A10;
   --surface:       #0A0F18;
@@ -22,42 +16,28 @@
   --surface-3:     #111928;
   --border:        #1A2535;
   --border-glow:   #1E3048;
-
-  /* Signal Cyan — primary accent */
   --cyan:          #00F5FF;
   --cyan-dim:      #004D52;
   --cyan-glow:     rgba(0,245,255,0.12);
   --cyan-glow-hard:rgba(0,245,255,0.25);
-
-  /* Violet Energy — secondary */
   --violet:        #9D5CFF;
   --violet-dim:    #2D1A55;
   --violet-glow:   rgba(157,92,255,0.12);
-
-  /* Crimson — danger/alert */
   --crimson:       #FF1744;
   --crimson-dim:   #4A0818;
   --crimson-glow:  rgba(255,23,68,0.12);
-
-  /* Amber — warning */
   --amber:         #FFB300;
   --amber-dim:     #3D2900;
   --amber-glow:    rgba(255,179,0,0.12);
-
-  /* Text */
   --ink:           #E2F0FF;
   --ink-dim:       #6A8BAA;
   --ink-faint:     #2D4A62;
-
-  /* Type */
   --font-hud:      'Orbitron', monospace;
   --font-mono:     'Share Tech Mono', monospace;
   --font-body:     'Rajdhani', sans-serif;
-
   --r-sm: 4px; --r-md: 6px; --r-lg: 10px; --r-xl: 14px;
 }
 
-/* ============================================================ BASE ============================================================ */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { -webkit-tap-highlight-color: transparent; }
 body {
@@ -69,15 +49,12 @@ body {
   -webkit-font-smoothing: antialiased;
   position: relative;
 }
-
 ::selection { background: var(--cyan-glow-hard); color: var(--cyan); }
 
-/* ============================================================ SCROLLBAR ============================================================ */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: var(--void-2); }
 ::-webkit-scrollbar-thumb { background: linear-gradient(var(--cyan), var(--violet)); border-radius: 4px; }
 
-/* ============================================================ AMBIENT WORLD ============================================================ */
 .bg-world {
   position: fixed; inset: 0; z-index: -3;
   background:
@@ -85,8 +62,6 @@ body {
     radial-gradient(ellipse 60% 40% at 90% 110%, rgba(157,92,255,0.06) 0%, transparent 55%),
     var(--void);
 }
-
-/* Moving grid */
 .bg-grid {
   position: fixed; inset: 0; z-index: -2; pointer-events: none;
   background-image:
@@ -97,11 +72,7 @@ body {
 }
 @keyframes gridDrift { to { background-position: 48px 48px; } }
 
-/* Scan line sweep */
-.bg-scan {
-  position: fixed; inset: 0; z-index: -1; pointer-events: none;
-  overflow: hidden;
-}
+.bg-scan { position: fixed; inset: 0; z-index: -1; pointer-events: none; overflow: hidden; }
 .bg-scan::after {
   content: '';
   position: absolute; left: 0; right: 0; height: 3px; top: -3px;
@@ -111,7 +82,6 @@ body {
 }
 @keyframes scanSweep { to { top: 110%; } }
 
-/* Horizontal scan lines overlay */
 body::after {
   content: '';
   position: fixed; inset: 0; z-index: 0; pointer-events: none;
@@ -128,7 +98,6 @@ body::after {
   .bg-grid, .bg-scan::after { animation: none; }
 }
 
-/* ============================================================ ANIMATIONS ============================================================ */
 @keyframes fadeUp { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
 @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
 @keyframes slideRight { from { opacity:0; transform:translateX(-10px); } to { opacity:1; transform:translateX(0); } }
@@ -141,42 +110,25 @@ body::after {
 @keyframes toastIn { from { opacity:0; transform:translateY(8px) scale(.97); } to { opacity:1; transform:translateY(0) scale(1); } }
 @keyframes toastOut { from { opacity:1; } to { opacity:0; transform:translateY(8px); } }
 @keyframes modalIn { from { opacity:0; transform:translateY(10px) scale(.95); } to { opacity:1; transform:translateY(0) scale(1); } }
-@keyframes cornerPulse { 0%,100% { opacity:1; } 50% { opacity:.4; } }
 @keyframes rgbTitle { to { background-position: 300%; } }
 
-/* ============================================================ HUD CORNER DECORATOR ============================================================ */
-.hud-box {
-  position: relative;
-}
+.hud-box { position: relative; }
 .hud-box::before, .hud-box::after {
-  content: '';
-  position: absolute;
-  width: 12px; height: 12px;
-  border-color: var(--cyan);
-  border-style: solid;
-  pointer-events: none;
-  z-index: 1;
+  content: ''; position: absolute; width: 12px; height: 12px;
+  border-color: var(--cyan); border-style: solid; pointer-events: none; z-index: 1;
 }
 .hud-box::before { top: -1px; left: -1px; border-width: 2px 0 0 2px; }
 .hud-box::after { bottom: -1px; right: -1px; border-width: 0 2px 2px 0; }
 
-/* ============================================================ FORMS ============================================================ */
 input, select, textarea {
-  font-family: var(--font-mono);
-  font-size: 13px;
-  padding: 10px 12px;
-  border-radius: var(--r-sm);
-  border: 1px solid var(--border-glow);
-  width: 100%;
-  background: var(--surface-2);
-  color: var(--ink);
-  transition: border-color .2s, box-shadow .2s;
-  position: relative;
+  font-family: var(--font-mono); font-size: 13px; padding: 10px 12px;
+  border-radius: var(--r-sm); border: 1px solid var(--border-glow);
+  width: 100%; background: var(--surface-2); color: var(--ink);
+  transition: border-color .2s, box-shadow .2s; position: relative;
 }
 input::placeholder { color: var(--ink-faint); font-family: var(--font-mono); }
 input:focus, select:focus, textarea:focus {
-  outline: none;
-  border-color: var(--cyan);
+  outline: none; border-color: var(--cyan);
   box-shadow: 0 0 0 2px var(--cyan-glow-hard), 0 0 16px var(--cyan-glow);
 }
 input[type="checkbox"] { width: auto; accent-color: var(--cyan); cursor: pointer; }
@@ -184,30 +136,19 @@ select { cursor: pointer; }
 select option { background: var(--surface-3); }
 
 button {
-  font-family: var(--font-hud);
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: .1em;
-  text-transform: uppercase;
-  padding: 10px 16px;
-  border-radius: var(--r-sm);
-  border: 1px solid var(--border-glow);
-  background: var(--surface-2);
-  color: var(--ink-dim);
-  cursor: pointer;
-  transition: all .2s;
-  position: relative;
-  overflow: hidden;
+  font-family: var(--font-hud); font-size: 10px; font-weight: 600;
+  letter-spacing: .1em; text-transform: uppercase; padding: 10px 16px;
+  border-radius: var(--r-sm); border: 1px solid var(--border-glow);
+  background: var(--surface-2); color: var(--ink-dim); cursor: pointer;
+  transition: all .2s; position: relative; overflow: hidden;
 }
 button::after {
-  content: '';
-  position: absolute; inset: 0;
+  content: ''; position: absolute; inset: 0;
   background: linear-gradient(135deg, transparent 40%, rgba(0,245,255,0.05));
   pointer-events: none;
 }
 button:hover {
-  border-color: var(--cyan);
-  color: var(--cyan);
+  border-color: var(--cyan); color: var(--cyan);
   box-shadow: 0 0 12px var(--cyan-glow), inset 0 0 12px var(--cyan-glow);
   transform: translateY(-1px);
 }
@@ -215,12 +156,9 @@ button:active { transform: scale(.97); }
 button.working { opacity: .55; pointer-events: none; }
 
 .btn-primary {
-  background: transparent;
-  border-color: var(--cyan);
-  color: var(--cyan);
+  background: transparent; border-color: var(--cyan); color: var(--cyan);
   box-shadow: 0 0 12px var(--cyan-glow), inset 0 0 16px var(--cyan-glow);
-  animation: glowPulse 3s ease-in-out infinite;
-  letter-spacing: .15em;
+  animation: glowPulse 3s ease-in-out infinite; letter-spacing: .15em;
 }
 .btn-primary:hover {
   background: var(--cyan-glow-hard);
@@ -242,44 +180,26 @@ button.working { opacity: .55; pointer-events: none; }
 .row.eq > button, .row.eq > input, .row.eq > select { flex: 1; min-width: 100px; }
 .spinner { display: inline-block; width: 12px; height: 12px; border: 2px solid currentColor; border-right-color: transparent; border-radius: 50%; animation: spin .6s linear infinite; vertical-align: -2px; margin-right: 6px; }
 
-/* ============================================================ PANEL ============================================================ */
 .panel {
-  background: var(--surface);
-  border: 1px solid var(--border-glow);
-  border-radius: var(--r-md);
-  padding: 18px;
-  margin-bottom: 12px;
-  animation: fadeUp .4s ease both;
-  position: relative;
-  overflow: hidden;
+  background: var(--surface); border: 1px solid var(--border-glow);
+  border-radius: var(--r-md); padding: 18px; margin-bottom: 12px;
+  animation: fadeUp .4s ease both; position: relative; overflow: hidden;
 }
 .panel::before, .panel::after {
-  content: '';
-  position: absolute;
-  width: 14px; height: 14px;
-  border-color: var(--cyan);
-  border-style: solid;
-  pointer-events: none;
-  opacity: .6;
+  content: ''; position: absolute; width: 14px; height: 14px;
+  border-color: var(--cyan); border-style: solid; pointer-events: none; opacity: .6;
 }
 .panel::before { top: 0; left: 0; border-width: 2px 0 0 2px; }
 .panel::after { bottom: 0; right: 0; border-width: 0 2px 2px 0; }
 
 .panel-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 14px; }
 .panel-eyebrow {
-  font-family: var(--font-mono);
-  font-size: 11px;
-  letter-spacing: .1em;
-  text-transform: uppercase;
-  color: var(--cyan);
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  text-shadow: 0 0 8px var(--cyan);
+  font-family: var(--font-mono); font-size: 11px; letter-spacing: .1em;
+  text-transform: uppercase; color: var(--cyan);
+  display: flex; align-items: center; gap: 8px; text-shadow: 0 0 8px var(--cyan);
 }
 .panel-eyebrow .ic { opacity: .7; }
 
-/* ============================================================ STEPPER ============================================================ */
 .stepper { display: flex; align-items: stretch; border: 1px solid var(--border-glow); border-radius: var(--r-sm); overflow: hidden; }
 .stepper button { width: 38px; border: none; border-radius: 0; background: var(--surface-3); font-size: 16px; color: var(--ink-dim); box-shadow: none; }
 .stepper button:hover { color: var(--cyan); box-shadow: none; transform: none; }
@@ -287,7 +207,6 @@ button.working { opacity: .55; pointer-events: none; }
 .chip-row { display: flex; gap: 5px; margin-top: 6px; flex-wrap: wrap; }
 .chip-row button { flex: 1; min-width: 30px; padding: 4px 0; font-size: 9px; }
 
-/* ============================================================ TOASTS ============================================================ */
 .toast { display: none; border-radius: var(--r-sm); padding: 10px 16px; text-align: center; margin-top: 12px; font-family: var(--font-mono); font-size: 12px; border: 1px solid transparent; letter-spacing: .05em; }
 .toast.visible { display: block; animation: toastIn .2s ease forwards; }
 .toast.hiding { display: block; animation: toastOut .2s ease forwards; }
@@ -295,67 +214,45 @@ button.working { opacity: .55; pointer-events: none; }
 .toast.error { background: var(--crimson-glow); color: var(--crimson); border-color: var(--crimson-dim); box-shadow: 0 0 16px var(--crimson-glow); }
 .toast.info { background: var(--violet-glow); color: var(--violet); border-color: var(--violet-dim); box-shadow: 0 0 16px var(--violet-glow); }
 
-/* ============================================================ METRICS ============================================================ */
 .metrics { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 14px; }
 @media(min-width:480px) { .metrics { grid-template-columns: repeat(4,1fr); } }
 
 .metric {
-  position: relative; overflow: hidden;
-  background: var(--surface);
-  border: 1px solid var(--border-glow);
-  border-radius: var(--r-md);
-  padding: 14px;
+  position: relative; overflow: hidden; background: var(--surface);
+  border: 1px solid var(--border-glow); border-radius: var(--r-md); padding: 14px;
   animation: fadeUp .45s ease both;
-  transition: border-color .2s, box-shadow .2s, transform .2s;
-  cursor: default;
+  transition: border-color .2s, box-shadow .2s, transform .2s; cursor: default;
 }
 .metric::before, .metric::after {
-  content: '';
-  position: absolute;
-  width: 8px; height: 8px;
-  border-color: var(--cyan);
-  border-style: solid;
-  opacity: .4;
-  transition: opacity .2s;
+  content: ''; position: absolute; width: 8px; height: 8px;
+  border-color: var(--cyan); border-style: solid; opacity: .4; transition: opacity .2s;
 }
 .metric::before { top: 0; left: 0; border-width: 1.5px 0 0 1.5px; }
 .metric::after { bottom: 0; right: 0; border-width: 0 1.5px 1.5px 0; }
 .metric:hover { border-color: var(--cyan); box-shadow: 0 0 20px var(--cyan-glow); transform: translateY(-2px); }
 .metric:hover::before, .metric:hover::after { opacity: 1; }
-
-/* Ambient glow strip at top */
 .metric .glow-strip {
   position: absolute; top: 0; left: 0; right: 0; height: 1px;
   background: linear-gradient(90deg, transparent, var(--cyan), transparent);
-  opacity: 0;
-  transition: opacity .2s;
+  opacity: 0; transition: opacity .2s;
 }
 .metric:hover .glow-strip { opacity: 1; }
-
 .metric-label {
-  font-family: var(--font-mono);
-  font-size: 9.5px;
-  letter-spacing: .1em;
-  text-transform: uppercase;
-  color: var(--ink-faint);
-  display: flex; align-items: center; gap: 6px;
-  margin-bottom: 10px;
+  font-family: var(--font-mono); font-size: 9.5px; letter-spacing: .1em;
+  text-transform: uppercase; color: var(--ink-faint);
+  display: flex; align-items: center; gap: 6px; margin-bottom: 10px;
 }
 .dot { width: 5px; height: 5px; border-radius: 50%; background: var(--ink-faint); flex: none; }
 .dot.live { background: var(--cyan); animation: dotPulse 2s ease-in-out infinite; box-shadow: 0 0 6px var(--cyan); }
 .dot.warn { background: var(--amber); box-shadow: 0 0 6px var(--amber); }
 .dot.danger { background: var(--crimson); animation: dotPulse 1s ease-in-out infinite; box-shadow: 0 0 6px var(--crimson); }
-
 .metric-value {
-  font-family: var(--font-hud);
-  font-size: 26px; font-weight: 700; line-height: 1;
-  color: var(--ink);
-  transition: text-shadow .3s;
+  font-family: var(--font-hud); font-size: 26px; font-weight: 700; line-height: 1;
+  color: var(--ink); transition: text-shadow .3s;
 }
 .metric:hover .metric-value { text-shadow: 0 0 16px var(--cyan); color: var(--cyan); }
 .metric-value.tick { animation: tickFlash .6s ease; }
 
-/* ============================================================ PILLS ============================================================ */
 .pill {
   display: inline-flex; align-items: center; gap: 4px;
   font-family: var(--font-mono); font-size: 10px; font-weight: 600;
@@ -377,27 +274,21 @@ button.working { opacity: .55; pointer-events: none; }
 .role-reseller { background: var(--violet-glow); color: var(--violet); border-color: var(--violet-dim); }
 .role-user { background: var(--surface-3); color: var(--ink-dim); border-color: var(--border); }
 
-/* ============================================================ KEY ITEMS ============================================================ */
 .item {
-  background: var(--surface);
-  border: 1px solid var(--border-glow);
-  border-radius: var(--r-md);
-  padding: 12px 13px; margin-bottom: 8px;
+  background: var(--surface); border: 1px solid var(--border-glow);
+  border-radius: var(--r-md); padding: 12px 13px; margin-bottom: 8px;
   animation: slideRight .3s ease both;
   transition: border-color .15s, opacity .25s, transform .25s, box-shadow .15s;
   position: relative; overflow: hidden;
 }
 .item::before {
-  content: '';
-  position: absolute; left: 0; top: 0; bottom: 0; width: 2px;
-  background: var(--cyan);
-  opacity: 0; transition: opacity .2s;
+  content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 2px;
+  background: var(--cyan); opacity: 0; transition: opacity .2s;
 }
 .item:hover { border-color: var(--cyan); box-shadow: 0 0 16px var(--cyan-glow); }
 .item:hover::before { opacity: 1; }
 .item.selected { border-color: var(--cyan); background: var(--cyan-glow); box-shadow: 0 0 20px var(--cyan-glow); }
 .item.deleting { opacity: 0; transform: scale(.96) translateX(-8px); }
-
 .item-key {
   font-family: var(--font-mono); font-size: 13.5px; font-weight: 700;
   color: var(--cyan); letter-spacing: .05em; word-break: break-all;
@@ -422,183 +313,142 @@ button.working { opacity: .55; pointer-events: none; }
 .device-row button { width: 20px; height: 20px; padding: 0; border: none; background: transparent; color: var(--crimson); font-size: 12px; box-shadow: none; }
 .device-empty { font-family: var(--font-mono); font-size: 10px; color: var(--ink-faint); text-align: center; padding: 8px 0; letter-spacing: .05em; }
 
-/* ============================================================ FILTER BARS ============================================================ */
 .filter-bar {
   display: flex; gap: 6px; padding: 10px 14px;
-  border-bottom: 1px solid var(--border); flex-shrink: 0;
-  background: var(--void-2);
+  border-bottom: 1px solid var(--border); flex-shrink: 0; background: var(--void-2);
 }
 .filter-bar input { flex: 2; }
 .filter-bar select { flex: 1; min-width: 90px; }
 
-/* ============================================================ DRAWERS ============================================================ */
 .drawer-overlay {
-  position: fixed; inset: 0;
-  background: rgba(3,5,8,.75);
-  backdrop-filter: blur(4px);
-  opacity: 0; pointer-events: none;
+  position: fixed; inset: 0; background: rgba(3,5,8,.75);
+  backdrop-filter: blur(4px); opacity: 0; pointer-events: none;
   transition: opacity .3s; z-index: 40;
 }
 .drawer-overlay.open { opacity: 1; pointer-events: auto; }
 
 .drawer {
-  position: fixed; top: 0; right: 0; height: 100%;
-  width: min(440px, 100%);
-  background: var(--void-2);
-  border-left: 1px solid var(--border-glow);
-  transform: translateX(100%);
-  transition: transform .35s cubic-bezier(.2,.8,.2,1);
+  position: fixed; top: 0; right: 0; height: 100%; width: min(440px, 100%);
+  background: var(--void-2); border-left: 1px solid var(--border-glow);
+  transform: translateX(100%); transition: transform .35s cubic-bezier(.2,.8,.2,1);
   z-index: 41; display: flex; flex-direction: column;
   box-shadow: -8px 0 48px rgba(0,245,255,0.06);
 }
 .drawer.open { transform: translateX(0); }
-
 .drawer-header {
   display: flex; align-items: center; justify-content: space-between;
-  padding: 14px 16px;
-  border-bottom: 1px solid var(--border);
-  background: var(--surface);
-  flex-shrink: 0;
+  padding: 14px 16px; border-bottom: 1px solid var(--border);
+  background: var(--surface); flex-shrink: 0;
 }
 .drawer-title {
-  font-family: var(--font-hud);
-  font-weight: 700; font-size: 12px;
+  font-family: var(--font-hud); font-weight: 700; font-size: 12px;
   letter-spacing: .1em; text-transform: uppercase; color: var(--ink);
 }
 .drawer-title .count { color: var(--cyan); }
 .drawer-body { flex: 1; overflow-y: auto; padding: 12px 14px; }
 
 .bulk-bar {
-  display: flex; align-items: center; gap: 8px;
-  padding: 8px 14px; border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 8px; padding: 8px 14px;
+  border-bottom: 1px solid var(--border);
   font-family: var(--font-mono); font-size: 10px; color: var(--ink-dim);
   flex-wrap: wrap; background: var(--void-2);
 }
 .bulk-bar button { margin-left: auto; }
 
-/* ============================================================ MODALS ============================================================ */
 .modal-overlay {
-  position: fixed; inset: 0;
-  background: rgba(3,5,8,.8);
-  opacity: 0; pointer-events: none;
-  transition: opacity .2s; z-index: 60;
+  position: fixed; inset: 0; background: rgba(3,5,8,.8);
+  opacity: 0; pointer-events: none; transition: opacity .2s; z-index: 60;
   display: flex; align-items: center; justify-content: center; padding: 20px;
 }
 .modal-overlay.open { opacity: 1; pointer-events: auto; }
-
 .modal-box {
-  background: var(--surface);
-  border: 1px solid var(--cyan);
-  border-radius: var(--r-lg); padding: 24px;
-  width: 100%; max-width: 360px;
+  background: var(--surface); border: 1px solid var(--cyan);
+  border-radius: var(--r-lg); padding: 24px; width: 100%; max-width: 360px;
   animation: modalIn .22s ease;
   box-shadow: 0 0 40px var(--cyan-glow), 0 0 80px rgba(0,245,255,0.05);
   position: relative; overflow: hidden;
 }
 .modal-box::before, .modal-box::after {
-  content: '';
-  position: absolute;
-  width: 14px; height: 14px;
-  border-color: var(--cyan);
-  border-style: solid;
+  content: ''; position: absolute; width: 14px; height: 14px;
+  border-color: var(--cyan); border-style: solid;
 }
 .modal-box::before { top: 0; left: 0; border-width: 2px 0 0 2px; }
 .modal-box::after { bottom: 0; right: 0; border-width: 0 2px 2px 0; }
 .modal-title {
   font-family: var(--font-hud); font-weight: 700; font-size: 13px;
   letter-spacing: .1em; text-transform: uppercase;
-  color: var(--cyan); margin-bottom: 10px;
-  text-shadow: 0 0 10px var(--cyan);
+  color: var(--cyan); margin-bottom: 10px; text-shadow: 0 0 10px var(--cyan);
 }
 .modal-msg { font-family: var(--font-mono); font-size: 12px; color: var(--ink-dim); margin-bottom: 16px; white-space: pre-line; line-height: 1.6; }
 
-/* ============================================================ TOPBAR / SHELL ============================================================ */
 .shell { max-width: 680px; margin: 0 auto; padding: 18px 16px 100px; position: relative; z-index: 1; }
-
 .topbar {
   display: flex; align-items: center; justify-content: space-between;
   gap: 10px; flex-wrap: wrap; margin-bottom: 20px;
 }
-.who {
-  font-family: var(--font-mono); font-size: 11px; color: var(--ink-faint);
-  letter-spacing: .05em;
-}
+.who { font-family: var(--font-mono); font-size: 11px; color: var(--ink-faint); letter-spacing: .05em; }
 .who b { color: var(--cyan); text-shadow: 0 0 8px var(--cyan); }
 
-/* HUD Brand */
 .brand-row {
   display: flex; align-items: center; justify-content: space-between;
-  flex-wrap: wrap; gap: 10px; margin-bottom: 4px;
-  padding: 16px 18px;
-  border: 1px solid var(--border-glow);
-  border-radius: var(--r-md);
-  background: var(--surface);
-  position: relative; overflow: hidden;
-  margin-bottom: 12px;
+  flex-wrap: wrap; gap: 10px; padding: 16px 18px;
+  border: 1px solid var(--border-glow); border-radius: var(--r-md);
+  background: var(--surface); position: relative; overflow: hidden; margin-bottom: 12px;
 }
 .brand-row::before {
-  content: '';
-  position: absolute; top: 0; left: 0; right: 0; height: 1px;
-  background: linear-gradient(90deg, transparent, var(--cyan), transparent);
-  opacity: .6;
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--cyan), transparent); opacity: .6;
 }
-
 .brand { display: flex; align-items: center; gap: 12px; }
+
+/* FIXED: font-size reduced so NPC fits in the box */
 .brand-mark {
   width: 40px; height: 40px; border-radius: var(--r-md);
-  background: transparent;
-  border: 2px solid var(--cyan);
+  background: transparent; border: 2px solid var(--cyan);
   display: flex; align-items: center; justify-content: center;
   color: var(--cyan); font-weight: 900; font-family: var(--font-hud);
-  font-size: 14px; flex: none; letter-spacing: -.02em;
+  font-size: 10px; /* was 14px — reduced to fit NPC */
+  flex: none; letter-spacing: .02em;
   box-shadow: 0 0 16px var(--cyan-glow), inset 0 0 16px var(--cyan-glow);
   animation: glowPulse 4s ease-in-out infinite;
 }
 .brand h1 {
-  font-family: var(--font-hud);
-  font-size: 18px; font-weight: 900;
+  font-family: var(--font-hud); font-size: 18px; font-weight: 900;
   letter-spacing: .05em; text-transform: uppercase;
   background: linear-gradient(90deg, #00F5FF, #9D5CFF, #FF1744, #00F5FF);
   background-size: 300%;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  animation: rgbTitle 6s linear infinite;
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text; animation: rgbTitle 6s linear infinite;
 }
-.brand .tag {
-  font-family: var(--font-mono); font-size: 10px; color: var(--ink-faint);
-  letter-spacing: .1em; text-transform: uppercase;
-}
+.brand .tag { font-family: var(--font-mono); font-size: 10px; color: var(--ink-faint); letter-spacing: .1em; text-transform: uppercase; }
 .live-indicator {
   font-family: var(--font-mono); font-size: 10px; color: var(--ink-faint);
   display: flex; align-items: center; gap: 6px; letter-spacing: .05em;
 }
 
-/* ============================================================ AUTH SCREEN ============================================================ */
 .auth-wrap {
-  max-width: 400px; min-height: 100vh;
-  margin: 0 auto; padding: 0 18px;
-  position: relative; z-index: 1;
-  display: flex; flex-direction: column; justify-content: center;
+  max-width: 400px; min-height: 100vh; margin: 0 auto; padding: 0 18px;
+  position: relative; z-index: 1; display: flex; flex-direction: column; justify-content: center;
 }
 .auth-status {
   display: flex; align-items: center; justify-content: center; gap: 7px;
   font-family: var(--font-mono); font-size: 10px; color: var(--ink-faint);
   letter-spacing: .08em; margin-top: 20px;
 }
-
 .auth-brand { text-align: center; margin-bottom: 32px; }
-.auth-brand .brand-mark { margin: 0 auto 16px; width: 56px; height: 56px; border-radius: var(--r-lg); font-size: 20px; }
+
+/* FIXED: auth brand-mark — smaller font for NPC */
+.auth-brand .brand-mark {
+  margin: 0 auto 16px; width: 56px; height: 56px; border-radius: var(--r-lg);
+  font-size: 13px; /* was 20px — reduced to fit NPC */
+}
 .auth-brand h1 {
-  font-family: var(--font-hud);
-  font-size: 24px; font-weight: 900; letter-spacing: .05em; text-transform: uppercase;
+  font-family: var(--font-hud); font-size: 24px; font-weight: 900;
+  letter-spacing: .05em; text-transform: uppercase;
   background: linear-gradient(90deg, #00F5FF, #9D5CFF, #FF1744, #00F5FF);
   background-size: 300%;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  animation: rgbTitle 5s linear infinite;
-  margin-bottom: 6px;
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text; animation: rgbTitle 5s linear infinite; margin-bottom: 6px;
 }
 .auth-brand .tag { font-family: var(--font-mono); font-size: 10px; color: var(--ink-faint); letter-spacing: .12em; text-transform: uppercase; }
 
@@ -607,11 +457,7 @@ button.working { opacity: .55; pointer-events: none; }
   background: var(--surface); border: 1px solid var(--border-glow);
   border-radius: var(--r-sm); padding: 3px;
 }
-.auth-tabs button {
-  flex: 1; border: none; background: transparent; padding: 8px;
-  border-radius: var(--r-sm); color: var(--ink-faint);
-  box-shadow: none;
-}
+.auth-tabs button { flex: 1; border: none; background: transparent; padding: 8px; border-radius: var(--r-sm); color: var(--ink-faint); box-shadow: none; }
 .auth-tabs button:hover { border: none; box-shadow: none; color: var(--ink); transform: none; }
 .auth-tabs button.active { background: var(--cyan-glow); color: var(--cyan); border: 1px solid var(--cyan-dim); box-shadow: 0 0 10px var(--cyan-glow); }
 
@@ -620,10 +466,8 @@ button.working { opacity: .55; pointer-events: none; }
   display: none; font-family: var(--font-mono); font-size: 11px;
   color: var(--amber); background: var(--amber-glow);
   border: 1px solid var(--amber-dim); border-radius: var(--r-sm);
-  padding: 9px 12px; margin-bottom: 10px; text-align: center;
-  letter-spacing: .05em;
+  padding: 9px 12px; margin-bottom: 10px; text-align: center; letter-spacing: .05em;
 }
-
 label.field-label {
   font-family: var(--font-mono); font-size: 10px; font-weight: 600;
   letter-spacing: .1em; text-transform: uppercase; color: var(--ink-faint);
@@ -636,18 +480,13 @@ label.field-label {
 }
 .remember-row label { cursor: pointer; }
 
-/* ============================================================ FAB ============================================================ */
 .fab {
-  position: fixed; bottom: 24px; right: 24px;
-  width: 58px; height: 58px; border-radius: 50%;
-  background: transparent;
-  border: 2px solid var(--cyan);
-  color: var(--cyan);
-  display: flex; align-items: center; justify-content: center;
+  position: fixed; bottom: 24px; right: 24px; width: 58px; height: 58px;
+  border-radius: 50%; background: transparent; border: 2px solid var(--cyan);
+  color: var(--cyan); display: flex; align-items: center; justify-content: center;
   cursor: pointer;
   box-shadow: 0 0 20px var(--cyan-glow-hard), 0 0 48px var(--cyan-glow), inset 0 0 20px var(--cyan-glow);
-  z-index: 30;
-  transition: transform .2s, box-shadow .2s;
+  z-index: 30; transition: transform .2s, box-shadow .2s;
   animation: glowPulse 3s ease-in-out infinite;
 }
 .fab:hover { transform: scale(1.08); box-shadow: 0 0 32px var(--cyan-glow-hard), 0 0 64px var(--cyan-glow); }
@@ -662,54 +501,39 @@ label.field-label {
   border: 1px solid var(--void);
 }
 
-/* ============================================================ SECURITY / LOGS ============================================================ */
 .security-tabs {
   display: flex; gap: 4px; margin-bottom: 12px;
   background: var(--surface); border: 1px solid var(--border);
   border-radius: var(--r-sm); padding: 3px;
 }
-.security-tabs button {
-  flex: 1; border: none; background: transparent; padding: 7px;
-  border-radius: var(--r-sm); font-size: 9px; color: var(--ink-dim);
-  box-shadow: none;
-}
+.security-tabs button { flex: 1; border: none; background: transparent; padding: 7px; border-radius: var(--r-sm); font-size: 9px; color: var(--ink-dim); box-shadow: none; }
 .security-tabs button:hover { transform: none; box-shadow: none; border: none; color: var(--ink); }
-.security-tabs button.active {
-  background: var(--surface-3); color: var(--cyan);
-  border: 1px solid var(--border); box-shadow: none;
-}
+.security-tabs button.active { background: var(--surface-3); color: var(--cyan); border: 1px solid var(--border); box-shadow: none; }
 
 .log-entry {
-  font-family: var(--font-mono); font-size: 11px;
-  padding: 8px 10px; border-radius: var(--r-sm);
-  background: var(--surface); border: 1px solid var(--border);
+  font-family: var(--font-mono); font-size: 11px; padding: 8px 10px;
+  border-radius: var(--r-sm); background: var(--surface); border: 1px solid var(--border);
   margin-bottom: 6px; line-height: 1.5; color: var(--ink-dim);
   border-left: 2px solid var(--border-glow);
 }
 .log-entry.danger { border-left-color: var(--crimson); color: var(--ink-dim); }
 .log-entry.login { border-left-color: var(--cyan); }
 
-/* ============================================================ INACTIVITY BAR ============================================================ */
 .inactivity-bar {
   position: fixed; top: 0; left: 0; height: 2px;
   background: linear-gradient(90deg, var(--amber), var(--crimson));
-  z-index: 70; transition: width 1s linear;
-  box-shadow: 0 0 8px var(--amber);
+  z-index: 70; transition: width 1s linear; box-shadow: 0 0 8px var(--amber);
 }
 
-/* ============================================================ USER-KEYS DRAWER ============================================================ */
 .user-keys-drawer {
-  position: fixed; top: 0; right: 0; height: 100%;
-  width: min(380px, 100%);
+  position: fixed; top: 0; right: 0; height: 100%; width: min(380px, 100%);
   background: var(--void-2); border-left: 1px solid var(--border-glow);
-  transform: translateX(100%);
-  transition: transform .35s cubic-bezier(.2,.8,.2,1);
+  transform: translateX(100%); transition: transform .35s cubic-bezier(.2,.8,.2,1);
   z-index: 50; display: flex; flex-direction: column;
   box-shadow: -8px 0 48px var(--violet-glow);
 }
 .user-keys-drawer.open { transform: translateX(0); }
 
-/* ============================================================ EMPTY STATE ============================================================ */
 .empty-state {
   text-align: center; padding: 3rem 1rem;
   font-family: var(--font-mono); font-size: 12px;
@@ -717,7 +541,6 @@ label.field-label {
 }
 .empty-state .ic { font-size: 24px; display: block; margin-bottom: 10px; opacity: .5; }
 
-/* ============================================================ SECTION DIVIDER ============================================================ */
 .section-label {
   font-family: var(--font-mono); font-size: 9px; letter-spacing: .15em;
   text-transform: uppercase; color: var(--ink-faint);
@@ -737,10 +560,10 @@ label.field-label {
 <div class="bg-grid"></div>
 <div class="bg-scan"></div>
 
-<!-- ===================== AUTH SCREEN ===================== -->
+<!-- AUTH SCREEN -->
 <div id="authScreen" class="auth-wrap">
   <div class="auth-brand">
-    <div class="brand-mark">NC</div>
+    <div class="brand-mark">NPC</div>
     <h1>NPC Control</h1>
     <div class="tag">Access &amp; Key Management System</div>
   </div>
@@ -777,7 +600,7 @@ label.field-label {
   <div class="auth-status"><span class="dot live"></span> NPC-667E4 · Realtime Link Active</div>
 </div>
 
-<!-- ===================== MAIN APP ===================== -->
+<!-- MAIN APP -->
 <div id="mainApp" class="hidden shell">
   <div class="topbar">
     <span class="who">NODE: <b id="currentUserLabel">-</b> <span id="currentRoleBadge"></span></span>
@@ -791,7 +614,7 @@ label.field-label {
 
   <div class="brand-row">
     <div class="brand">
-      <div class="brand-mark">NC</div>
+      <div class="brand-mark">NPC</div>
       <div>
         <h1>NPC Control</h1>
         <div class="tag">Access &amp; Key Management System</div>
@@ -1049,9 +872,6 @@ label.field-label {
 </div>
 
 <script>
-/* ============================================================
-   ALL JAVASCRIPT — identical logic to original, unchanged.
-   ============================================================ */
 const DB_URL = "https://vxnpc-667e4-default-rtdb.firebaseio.com";
 const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
 let allKeys = [];
@@ -1356,7 +1176,6 @@ function changeDevices(n){ const el=document.getElementById('maxDevices'); el.va
 function clampDevices(){ const el=document.getElementById('maxDevices'); if(el.value<1)el.value=1; if(el.value>999)el.value=999; }
 function setDev(n){ document.getElementById('maxDevices').value=n; }
 function getMaxDev(){ return parseInt(document.getElementById('maxDevices').value)||1; }
-
 function animateCount(id,target){ const el=document.getElementById(id); if(!el)return; el.classList.remove('tick'); void el.offsetWidth; el.classList.add('tick'); el.textContent=target; }
 
 async function loadKeys(){
