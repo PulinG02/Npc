@@ -3,1396 +3,825 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NPC Control · Access Management</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<title>NPC OFFSET CONVERTER</title>
 <style>
-/* ============================================================
-   NPC CONTROL — "High-Tech Cyber/Glass" Design System
-   Applied over full Firebase functionality
-   ============================================================ */
+  :root { --main: #00FF9D; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
 
-:root {
-  --bg:            #030712;
-  --bg-2:          #0B0F19;
-  --surface:       rgba(17, 24, 39, 0.65);
-  --surface-2:     rgba(31, 41, 55, 0.65);
-  --border:        rgba(45, 212, 191, 0.25);
-  --border-soft:   rgba(255, 255, 255, 0.08);
+  body {
+    background:
+      radial-gradient(circle at top, #00ff9d22, transparent 60%),
+      radial-gradient(circle at bottom, #7b2cff22, transparent 60%),
+      #050505;
+    color: var(--main);
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    min-height: 100vh;
+    padding: 18px 18px 100px;
+  }
 
-  --ink:           #F9FAFB;
-  --ink-dim:       #9CA3AF;
-  --ink-faint:     #4B5563;
+  /* NEON TITLE */
+  h1.title {
+    text-align: center;
+    font-size: 28px;
+    font-weight: 900;
+    color: var(--main);
+    letter-spacing: 2px;
+    margin: 10px 0 22px;
+    line-height: 1.2;
+    text-transform: uppercase;
+    text-shadow:
+      0 0 8px var(--main),
+      0 0 18px var(--main),
+      0 0 35px var(--main);
+  }
 
-  --signal:        #2DD4BF;
-  --signal-dim:    #115E59;
-  --signal-glow:   rgba(45, 212, 191, 0.25);
+  /* THEME SWITCHER ROW */
+  .theme-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 18px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: var(--main);
+    opacity: 0.75;
+  }
+  .theme-row select {
+    background: #121212;
+    color: var(--main);
+    border: 1px solid var(--main);
+    border-radius: 20px;
+    padding: 4px 12px;
+    font-size: 12px;
+    cursor: pointer;
+    outline: none;
+    width: auto;
+    height: auto;
+    font-family: inherit;
+  }
 
-  --amber:         #FBBF24;
-  --amber-dim:     #92400E;
-  --amber-glow:    rgba(251, 191, 36, 0.2);
+  /* GLASSMORPHISM CARD */
+  .card {
+    position: relative;
+    background: rgba(18,18,18,.65);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    border: 1px solid rgba(0,255,157,.18);
+    border-radius: 18px;
+    padding: 16px;
+    margin-bottom: 14px;
+    box-shadow:
+      0 0 20px rgba(0,255,157,.08),
+      inset 0 0 10px rgba(255,255,255,.02);
+    transition: .35s;
+  }
+  .card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 0 30px rgba(0,255,157,.35);
+  }
 
-  --coral:         #F87171;
-  --coral-dim:     #991B1B;
-  --coral-glow:    rgba(248, 113, 113, 0.2);
+  /* RGB ANIMATED BORDER */
+  .card::before {
+    content: "";
+    position: absolute;
+    inset: -2px;
+    border-radius: 20px;
+    background: linear-gradient(
+      90deg,
+      #00ff9d, #00bfff, #8a2be2, #ff0099, #00ff9d
+    );
+    background-size: 400%;
+    animation: rgbBorder 6s linear infinite;
+    z-index: -1;
+    filter: blur(10px);
+    opacity: 0;
+    transition: opacity .35s;
+  }
+  .card:hover::before { opacity: 1; }
 
-  --violet:        #A78BFA;
-  --violet-dim:    #4C1D95;
-  --violet-glow:   rgba(167, 139, 250, 0.2);
+  @keyframes rgbBorder {
+    0%   { background-position: 0%; }
+    100% { background-position: 400%; }
+  }
 
-  --font-display:  'Inter', sans-serif;
-  --font-mono:     'JetBrains Mono', monospace;
+  .card-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--main);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
 
-  --r-sm: 8px; --r-md: 12px; --r-lg: 16px; --r-xl: 24px;
-}
+  input[type="text"], textarea, select {
+    width: 100%;
+    background: #0A0A0A;
+    color: var(--main);
+    border: none;
+    outline: none;
+    padding: 12px;
+    font-size: 13px;
+    border-radius: 8px;
+    font-family: 'Consolas', 'Courier New', monospace;
+  }
 
-body.light-theme {
-  --bg:            #F3F4F6;
-  --bg-2:          #E5E7EB;
-  --surface:       rgba(255, 255, 255, 0.8);
-  --surface-2:     rgba(243, 244, 246, 0.8);
-  --border:        #D1D5DB;
-  --border-soft:   #E5E7EB;
-  --ink:           #111827;
-  --ink-dim:       #4B5563;
-  --ink-faint:     #9CA3AF;
-  --signal:        #0D9488;
-  --signal-dim:    #99F6E4;
-  --signal-glow:   rgba(13, 148, 136, 0.15);
-  --amber:         #D97706;
-  --amber-dim:     #FDE68A;
-  --amber-glow:    rgba(217, 119, 6, 0.15);
-  --coral:         #DC2626;
-  --coral-dim:     #FECACA;
-  --coral-glow:    rgba(220, 38, 38, 0.15);
-  --violet:        #7C3AED;
-  --violet-dim:    #DDD6FE;
-  --violet-glow:   rgba(124, 58, 237, 0.15);
-}
+  input[type="text"]::placeholder,
+  textarea::placeholder { color: #444; }
 
-* { box-sizing: border-box; margin: 0; padding: 0; }
-html { -webkit-tap-highlight-color: transparent; }
-body {
-  background: var(--bg);
-  color: var(--ink);
-  font-family: var(--font-display);
-  min-height: 100vh;
-  position: relative;
-  overflow-x: hidden;
-  transition: background .3s ease, color .3s ease;
-  -webkit-font-smoothing: antialiased;
-}
+  select#modePicker {
+    cursor: pointer;
+    height: 44px;
+    font-size: 13px;
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2300FF9D' stroke-width='2' fill='none'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-color: #0A0A0A;
+    padding-right: 36px;
+  }
 
-/* ---------- ambient backdrop ---------- */
-.bg-field { position: fixed; inset: 0; z-index: -2; background: var(--bg); transition: background .3s ease; }
-.bg-field::before {
-  content: ''; position: absolute; inset: 0;
-  background-image:
-    linear-gradient(var(--border-soft) 1px, transparent 1px),
-    linear-gradient(90deg, var(--border-soft) 1px, transparent 1px);
-  background-size: 50px 50px;
-  -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, black 40%, transparent 80%);
-          mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, black 40%, transparent 80%);
-}
-.bg-sweep {
-  position: absolute; left: -10%; right: -10%; height: 150px; top: -200px;
-  background: linear-gradient(to bottom, transparent, var(--signal-glow), transparent);
-  animation: sweep 8s linear infinite;
-  opacity: 0.8;
-}
-@keyframes sweep { 0% { transform: translateY(0); } 100% { transform: translateY(120vh); } }
-@media (prefers-reduced-motion: reduce) { .bg-sweep { animation: none; display: none; } }
+  select option { background: #121212; color: #00FF9D; }
 
-/* ---------- motion primitives ---------- */
-@keyframes fadeUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
-@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-@keyframes popIn { 0% { transform: scale(1); } 35% { transform: scale(1.18); } 65% { transform: scale(.94); } 100% { transform: scale(1); } }
-@keyframes pulseDot { 0%, 100% { box-shadow: 0 0 0 0 var(--signal-glow); } 50% { box-shadow: 0 0 0 6px transparent; } }
-@keyframes spin { to { transform: rotate(360deg); } }
-@keyframes slideInRow { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: translateX(0); } }
-@keyframes toastIn { from { opacity: 0; transform: translateY(10px) scale(.97); } to { opacity: 1; transform: translateY(0) scale(1); } }
-@keyframes toastOut { from { opacity: 1; } to { opacity: 0; transform: translateY(10px) scale(.97); } }
-@keyframes modalIn { from { opacity: 0; transform: translateY(8px) scale(.96); } to { opacity: 1; transform: translateY(0) scale(1); } }
-@keyframes tickFlash { 0% { color: var(--signal); text-shadow: 0 0 10px var(--signal-glow); } 100% { color: inherit; } }
+  textarea { resize: vertical; min-height: 160px; line-height: 1.5; }
 
-::selection { background: var(--signal-glow); color: var(--ink); }
-::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-thumb { background: var(--border); border-radius: 6px; }
-::-webkit-scrollbar-thumb:hover { background: var(--signal); }
+  /* BUTTONS */
+  .btn {
+    display: inline-block;
+    padding: 0 16px;
+    height: 50px;
+    border: none;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    letter-spacing: 0.5px;
+    width: 100%;
+    transition: .3s;
+    overflow: hidden;
+    position: relative;
+  }
+  .btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 0 20px var(--main);
+  }
+  .btn:active { transform: scale(.96); }
 
-a { color: inherit; text-decoration: none; }
+  .btn-primary { background: var(--main); color: #000; margin-top: 12px; }
+  .btn-copy    { background: var(--main); color: #000; }
+  .btn-clear   { background: #222; color: #CCC; }
+  .btn-clear:hover { box-shadow: 0 0 16px #555; }
+  .btn-purple  { background: #9B59B6; color: #FFF; height: 44px; font-size: 13px; }
+  .btn-purple:hover { box-shadow: 0 0 16px #9B59B6; }
+  .btn-slate   { background: #34495E; color: #FFF; height: 44px; font-size: 13px; }
+  .btn-slate:hover  { box-shadow: 0 0 16px #34495E; }
+  .btn-dl      { background: #1a1a2e; color: var(--main); border: 1px solid var(--main); }
 
-/* ============================================================
-   Form controls (Glassmorphism)
-   ============================================================ */
-input, select, textarea {
-  font-family: var(--font-mono);
-  font-size: 13.5px;
-  padding: 12px 14px;
-  border-radius: var(--r-sm);
-  border: 1px solid var(--border-soft);
-  width: 100%;
-  background: rgba(0, 0, 0, 0.2);
-  color: var(--ink);
-  transition: all .2s ease;
-  backdrop-filter: blur(4px);
-}
-input::placeholder { color: var(--ink-faint); font-family: var(--font-display); }
-input:focus, select:focus, textarea:focus {
-  outline: none;
-  border-color: var(--signal);
-  background: rgba(0, 0, 0, 0.4);
-  box-shadow: 0 0 12px var(--signal-glow);
-}
-input[type="checkbox"] { width: auto; accent-color: var(--signal); cursor: pointer; }
-select { cursor: pointer; }
-input:disabled { opacity: .5; cursor: not-allowed; }
-select option { background: #0B0F19; }
+  .btn-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 12px;
+  }
+  .btn-row-3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 8px;
+    margin-top: 12px;
+  }
 
-button {
-  font-family: var(--font-display);
-  font-size: 13px;
-  font-weight: 600;
-  letter-spacing: .02em;
-  padding: 10px 16px;
-  border-radius: var(--r-sm);
-  border: 1px solid var(--border-soft);
-  background: var(--surface-2);
-  color: var(--ink);
-  cursor: pointer;
-  transition: all .2s ease;
-  backdrop-filter: blur(4px);
-}
-button:hover {
-  border-color: var(--signal);
-  background: rgba(255, 255, 255, 0.05);
-  box-shadow: 0 0 8px var(--signal-glow);
-}
-button:active { transform: scale(.96); }
-button:focus-visible { outline: 2px solid var(--signal); outline-offset: 1px; }
-button.working { opacity: .65; pointer-events: none; }
+  .counter-stats {
+    background: #0A0A0A;
+    padding: 10px;
+    border-radius: 8px;
+    font-size: 13px;
+    color: var(--main);
+    margin-top: 8px;
+    min-height: 36px;
+    font-family: monospace;
+  }
 
-.btn-primary {
-  background: var(--signal);
-  color: #000;
-  border-color: var(--signal);
-  box-shadow: 0 4px 15px var(--signal-glow);
-}
-.btn-primary:hover {
-  background: #4FD1C5;
-  box-shadow: 0 4px 20px rgba(79, 209, 197, 0.5);
-}
-.btn-ghost { background: transparent; border-color: transparent; }
-.btn-ghost:hover { background: rgba(255, 255, 255, 0.05); }
-.btn-danger { color: var(--coral); border-color: var(--coral-dim); }
-.btn-danger:hover { background: var(--coral-glow); border-color: var(--coral); box-shadow: 0 0 10px var(--coral-glow); }
-.btn-warn { color: var(--amber); border-color: var(--amber-dim); }
-.btn-warn:hover { background: var(--amber-glow); border-color: var(--amber); }
-.btn-info { color: var(--violet); border-color: var(--violet-dim); }
-.btn-info:hover { background: var(--violet-glow); border-color: var(--violet); }
-.btn-sm { padding: 6px 12px; font-size: 11px; }
-.btn-icon { width: 38px; padding: 8px; flex: none; }
+  .counter-output {
+    background: #0A0A0A;
+    padding: 10px;
+    border-radius: 8px;
+    font-size: 12px;
+    color: var(--main);
+    margin-top: 8px;
+    max-height: 180px;
+    overflow-y: auto;
+    font-family: 'Consolas', 'Courier New', monospace;
+    white-space: pre;
+    line-height: 1.5;
+    word-break: break-all;
+  }
 
-.row { display: flex; gap: 10px; flex-wrap: wrap; }
-.row > * { margin: 0; }
-.row.eq > button, .row.eq > input, .row.eq > select { flex: 1; min-width: 110px; }
+  /* PRESET BUTTONS */
+  .preset-btn {
+    width: 100%;
+    height: 42px;
+    border: none;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-bottom: 6px;
+    color: #FFF;
+    letter-spacing: 0.3px;
+    transition: .2s;
+    position: relative;
+    overflow: hidden;
+  }
+  .preset-btn:last-child { margin-bottom: 0; }
+  .preset-btn:active { opacity: 0.75; }
+  .preset-btn:hover { filter: brightness(1.2); transform: translateY(-2px); }
 
-.spinner { display: inline-block; width: 13px; height: 13px; border: 2px solid currentColor; border-right-color: transparent; border-radius: 50%; animation: spin .65s linear infinite; vertical-align: -2px; margin-right: 6px; }
+  .preset-green  { background: #16A085; }
+  .preset-orange { background: #E67E22; }
+  .preset-purple { background: #8E44AD; }
+  .preset-red    { background: #C0392B; }
+  .preset-blue   { background: #2980B9; }
 
-/* ============================================================
-   Surfaces: Glass Panels
-   ============================================================ */
-.panel {
-  background: var(--surface);
-  border: 1px solid var(--border-soft);
-  border-radius: var(--r-lg);
-  padding: 20px;
-  margin-bottom: 16px;
-  backdrop-filter: blur(12px);
-  animation: fadeUp .5s ease both;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-  transition: border-color .2s ease, background .3s ease;
-}
-.panel-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 18px; }
-.panel-eyebrow {
-  font-family: var(--font-mono); font-size: 12px; font-weight: 700;
-  letter-spacing: .1em; text-transform: uppercase; color: var(--signal);
-  display: flex; align-items: center; gap: 8px;
-  text-shadow: 0 0 8px var(--signal-glow);
-}
-.panel-eyebrow .ic { color: var(--signal); font-size: 14px; }
+  /* DROP ZONE */
+  .card.drag-over {
+    border-color: var(--main) !important;
+    box-shadow: 0 0 30px rgba(0,255,157,.5) !important;
+  }
+  .drop-hint {
+    font-size: 11px;
+    color: #555;
+    margin-top: 6px;
+    text-align: center;
+    letter-spacing: 0.5px;
+  }
 
-label.field-label { font-family: var(--font-mono); font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-dim); display: block; margin-bottom: 8px; }
+  /* TOAST */
+  #toast {
+    position: fixed;
+    bottom: 90px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: #1A1A1A;
+    border: 1px solid rgba(0,255,157,.3);
+    color: var(--main);
+    padding: 10px 22px;
+    border-radius: 24px;
+    font-size: 13px;
+    font-weight: 600;
+    opacity: 0;
+    transition: opacity .25s, transform .25s;
+    pointer-events: none;
+    z-index: 9999;
+    white-space: nowrap;
+    box-shadow: 0 0 20px rgba(0,255,157,.2);
+  }
+  #toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
 
-/* ============================================================
-   Pills / badges
-   ============================================================ */
-.pill {
-  display: inline-flex; align-items: center; gap: 4px;
-  font-family: var(--font-mono); font-size: 10.5px; font-weight: 600;
-  padding: 3px 8px; border-radius: 100px; border: 1px solid transparent;
-  white-space: nowrap;
-}
-.pill-signal { background: var(--signal-glow); color: var(--signal); border-color: var(--signal-dim); }
-.pill-amber { background: var(--amber-glow); color: var(--amber); border-color: var(--amber-dim); }
-.pill-coral { background: var(--coral-glow); color: var(--coral); border-color: var(--coral-dim); }
-.pill-violet { background: var(--violet-glow); color: var(--violet); border-color: var(--violet-dim); }
-.pill-neutral { background: var(--surface-2); color: var(--ink-dim); border-color: var(--border-soft); }
+  /* FLOATING COPY */
+  #floatingCopy {
+    position: fixed;
+    bottom: 24px;
+    right: 20px;
+    width: 56px;
+    height: 56px;
+    border: none;
+    border-radius: 50%;
+    background: var(--main);
+    font-size: 22px;
+    cursor: pointer;
+    box-shadow: 0 0 25px var(--main);
+    z-index: 999;
+    transition: .25s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  #floatingCopy:hover {
+    transform: scale(1.12);
+    box-shadow: 0 0 40px var(--main);
+  }
+  #floatingCopy:active { transform: scale(.95); }
 
-.role-badge { font-family: var(--font-mono); font-size: 9.5px; font-weight: 700; letter-spacing: .06em; padding: 3px 8px; border-radius: 6px; text-transform: uppercase; }
-.role-admin { background: var(--coral-glow); color: var(--coral); border: 1px solid var(--coral-dim); }
-.role-reseller { background: var(--violet-glow); color: var(--violet); border: 1px solid var(--violet-dim); }
-.role-user { background: var(--surface-2); color: var(--ink-dim); border: 1px solid var(--border-soft); }
+  /* RIPPLE */
+  .ripple-span {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255,255,255,.35);
+    transform: scale(0);
+    animation: rippleAnim .6s linear;
+    pointer-events: none;
+  }
+  @keyframes rippleAnim {
+    to { transform: scale(25); opacity: 0; }
+  }
 
-/* ============================================================
-   Metrics grid
-   ============================================================ */
-.metrics { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 20px; }
-@media(min-width: 480px) { .metrics { grid-template-columns: repeat(4, 1fr); } }
-.metric {
-  position: relative; overflow: hidden;
-  background: var(--surface);
-  border: 1px solid var(--border-soft);
-  border-radius: var(--r-md);
-  padding: 16px;
-  backdrop-filter: blur(10px);
-  animation: fadeUp .5s ease both;
-  transition: all .2s ease;
-}
-.metric:hover { border-color: var(--signal); transform: translateY(-2px); box-shadow: 0 4px 15px var(--signal-glow); }
-.metric-label {
-  font-family: var(--font-mono); font-size: 11px; font-weight: 600;
-  letter-spacing: .08em; text-transform: uppercase; color: var(--ink-dim);
-  display: flex; align-items: center; gap: 8px; margin-bottom: 10px;
-}
-.dot { width: 8px; height: 8px; border-radius: 50%; background: var(--ink-faint); flex: none; }
-.dot.live { background: var(--signal); animation: pulseDot 2s ease-in-out infinite; }
-.dot.warn { background: var(--amber); }
-.dot.danger { background: var(--coral); }
-.metric-value { font-family: var(--font-mono); font-size: 26px; font-weight: 700; line-height: 1; color: var(--ink); }
-.metric-value.tick { animation: tickFlash .5s ease; }
-
-/* ============================================================
-   Generate New Key card
-   ============================================================ */
-.gk-field { margin-bottom: 18px; }
-.gk-field:last-of-type { margin-bottom: 0; }
-.gk-id-toggle {
-  display: flex; gap: 4px; margin-bottom: 10px;
-  background: rgba(0, 0, 0, 0.2); border: 1px solid var(--border-soft);
-  border-radius: var(--r-sm); padding: 4px;
-}
-.gk-id-toggle button { flex: 1; border: none; background: transparent; padding: 8px; border-radius: 5px; font-size: 12px; color: var(--ink-dim); box-shadow: none; }
-.gk-id-toggle button.active { background: var(--surface); color: var(--signal); border: 1px solid var(--border); box-shadow: 0 0 8px var(--signal-glow); }
-.gk-auto-row { display: flex; gap: 8px; align-items: center; }
-.gk-auto-row input { flex: 1; }
-.gk-auto-row button { flex: none; }
-
-.stepper { display: flex; align-items: stretch; border: 1px solid var(--border-soft); border-radius: var(--r-sm); overflow: hidden; background: rgba(0, 0, 0, 0.2); }
-.stepper button { width: 40px; border: none; border-radius: 0; background: transparent; font-size: 18px; color: var(--ink); box-shadow: none; }
-.stepper button:hover { color: var(--signal); background: rgba(255, 255, 255, 0.05); }
-.stepper input { border: none; border-left: 1px solid var(--border-soft); border-right: 1px solid var(--border-soft); border-radius: 0; text-align: center; font-weight: 700; height: auto; }
-.chip-row { display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap; }
-.chip-row button { flex: 1; min-width: 32px; padding: 6px 0; font-size: 11px; font-family: var(--font-mono); border-color: var(--border-soft); background: transparent; }
-
-/* ============================================================
-   Toasts
-   ============================================================ */
-.toast { display: none; border-radius: var(--r-md); padding: 12px 16px; text-align: center; margin-top: 12px; font-size: 12.5px; font-weight: 600; border: 1px solid transparent; backdrop-filter: blur(8px); }
-.toast.visible { display: block; animation: toastIn .22s ease forwards; }
-.toast.hiding { display: block; animation: toastOut .22s ease forwards; }
-.toast.success { background: var(--signal-glow); color: var(--signal); border-color: var(--signal-dim); box-shadow: 0 0 10px var(--signal-glow); }
-.toast.error { background: var(--coral-glow); color: var(--coral); border-color: var(--coral-dim); box-shadow: 0 0 10px var(--coral-glow); }
-.toast.info { background: var(--violet-glow); color: var(--violet); border-color: var(--violet-dim); }
-
-/* ============================================================
-   Key / user row items
-   ============================================================ */
-.item {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid var(--border-soft);
-  border-radius: var(--r-md);
-  padding: 16px; margin-bottom: 12px;
-  animation: slideInRow .3s ease both;
-  transition: border-color .15s ease, opacity .25s ease, transform .25s ease;
-  backdrop-filter: blur(4px);
-}
-.item:hover { border-color: var(--border); background: rgba(255, 255, 255, 0.06); }
-.item.selected { border-color: var(--signal); background: var(--signal-glow); }
-.item.deleting { opacity: 0; transform: scale(.96) translateX(-6px); }
-.item-key { font-family: var(--font-mono); font-size: 15px; font-weight: 700; color: var(--signal); letter-spacing: .02em; word-break: break-all; margin-bottom: 8px; text-shadow: 0 0 8px var(--signal-glow); }
-.item-meta { display: flex; gap: 6px; flex-wrap: wrap; margin: 7px 0; }
-.item-actions { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 8px; }
-.item-actions button { padding: 5px 10px; font-size: 11px; }
-.device-toggle { font-family: var(--font-mono); font-size: 11px; color: var(--ink-faint); cursor: pointer; user-select: none; display: inline-block; margin-top: 6px; }
-.device-toggle:hover { color: var(--signal); }
-.device-list { margin-top: 6px; border-top: 1px dashed var(--border-soft); padding-top: 6px; display: flex; flex-direction: column; gap: 4px; }
-.device-row { display: flex; align-items: center; justify-content: space-between; background: rgba(0, 0, 0, 0.2); border-radius: 5px; padding: 5px 8px; font-family: var(--font-mono); font-size: 11px; color: var(--ink-dim); }
-.device-row button { width: 20px; height: 20px; padding: 0; border: none; background: transparent; color: var(--coral); font-size: 13px; }
-.device-empty { font-size: 11px; color: var(--ink-faint); text-align: center; padding: 8px 0; }
-
-/* ============================================================
-   Drawers (Glassmorphism)
-   ============================================================ */
-.drawer-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, .7); backdrop-filter: blur(4px); opacity: 0; pointer-events: none; transition: opacity .3s ease; z-index: 40; }
-.drawer-overlay.open { opacity: 1; pointer-events: auto; }
-.drawer {
-  position: fixed; top: 0; right: 0; height: 100%; width: min(450px, 100%);
-  background: rgba(11, 15, 25, 0.92);
-  backdrop-filter: blur(16px);
-  border-left: 1px solid var(--border);
-  box-shadow: -10px 0 30px rgba(0, 0, 0, 0.5);
-  transform: translateX(100%); transition: transform .3s cubic-bezier(.2, .8, .2, 1);
-  z-index: 41; display: flex; flex-direction: column;
-}
-.drawer.open { transform: translateX(0); }
-.drawer-header { display: flex; align-items: center; justify-content: space-between; padding: 20px; border-bottom: 1px solid var(--border-soft); flex-shrink: 0; }
-.drawer-title { font-weight: 700; font-size: 15px; display: flex; align-items: center; gap: 8px; }
-.drawer-title .count { font-family: var(--font-mono); color: var(--signal); background: var(--signal-glow); padding: 2px 8px; border-radius: 20px; font-size: 12px; box-shadow: 0 0 8px var(--signal-glow); }
-.drawer-body { flex: 1; overflow-y: auto; padding: 16px; }
-
-.filter-bar { display: flex; gap: 8px; padding: 12px 16px; border-bottom: 1px solid var(--border-soft); background: rgba(0, 0, 0, 0.2); flex-shrink: 0; }
-.filter-bar input { flex: 2; }
-.filter-bar select { flex: 1; min-width: 90px; }
-.bulk-bar { display: flex; align-items: center; gap: 10px; padding: 10px 16px; border-bottom: 1px solid var(--border-soft); font-family: var(--font-mono); font-size: 12px; color: var(--ink-dim); background: rgba(0, 0, 0, 0.1); flex-wrap: wrap; }
-.bulk-bar button { margin-left: auto; }
-
-/* ============================================================
-   Modals (Glass)
-   ============================================================ */
-.modal-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, .75); backdrop-filter: blur(6px); opacity: 0; pointer-events: none; transition: opacity .2s ease; z-index: 60; display: flex; align-items: center; justify-content: center; padding: 20px; }
-.modal-overlay.open { opacity: 1; pointer-events: auto; }
-.modal-box { background: rgba(17, 24, 39, 0.9); backdrop-filter: blur(20px); border: 1px solid var(--border); border-radius: var(--r-lg); padding: 24px; width: 100%; max-width: 360px; animation: modalIn .22s ease; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 0 1px var(--signal-glow); }
-.modal-title { font-weight: 700; font-size: 16px; margin-bottom: 10px; color: var(--signal); text-shadow: 0 0 8px var(--signal-glow); }
-.modal-msg { font-size: 13px; color: var(--ink-dim); margin-bottom: 18px; white-space: pre-line; line-height: 1.6; font-family: var(--font-mono); }
-
-/* ============================================================
-   Top bar & Auth screen
-   ============================================================ */
-.shell { max-width: 700px; margin: 0 auto; padding: 24px 20px 90px; position: relative; z-index: 1; }
-.topbar { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid var(--border-soft); }
-.who { font-size: 13px; color: var(--ink-dim); }
-.who b { color: var(--ink); font-weight: 700; }
-
-.brand-row { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; margin-bottom: 4px; }
-.brand { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
-.brand-mark { width: 42px; height: 42px; border-radius: 10px; background: linear-gradient(135deg, var(--signal), #0D9488); display: flex; align-items: center; justify-content: center; color: #000; font-weight: 800; font-family: var(--font-mono); font-size: 16px; box-shadow: 0 0 15px var(--signal-glow); flex: none; }
-.brand h1 { font-size: 20px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; }
-.brand .tag { font-family: var(--font-mono); font-size: 11px; color: var(--signal); letter-spacing: .1em; text-transform: uppercase; }
-.live-indicator { font-family: var(--font-mono); font-size: 10.5px; color: var(--ink-faint); display: flex; align-items: center; gap: 6px; }
-
-.auth-wrap { max-width: 400px; min-height: 100vh; margin: 0 auto; padding: 0 20px; display: flex; flex-direction: column; justify-content: center; z-index: 1; position: relative; }
-.auth-brand { text-align: center; margin-bottom: 32px; }
-.auth-brand .brand-mark { margin: 0 auto 16px; width: 56px; height: 56px; font-size: 22px; }
-.auth-brand h1 { font-size: 22px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 4px; }
-.auth-brand .tag { font-family: var(--font-mono); font-size: 11px; color: var(--signal); letter-spacing: .1em; text-transform: uppercase; }
-.auth-tabs { display: flex; gap: 6px; margin-bottom: 16px; background: rgba(0, 0, 0, 0.3); backdrop-filter: blur(10px); border: 1px solid var(--border-soft); border-radius: var(--r-sm); padding: 6px; }
-.auth-tabs button { flex: 1; border: none; background: transparent; padding: 10px; border-radius: 6px; color: var(--ink-dim); font-size: 14px; box-shadow: none; }
-.auth-tabs button.active { background: var(--signal); color: #000; font-weight: 700; box-shadow: 0 0 12px var(--signal-glow); }
-.auth-status { display: flex; align-items: center; justify-content: center; gap: 7px; font-family: var(--font-mono); font-size: 10.5px; color: var(--ink-faint); letter-spacing: .05em; margin-top: 22px; }
-.remember-row { display: flex; align-items: center; gap: 8px; font-size: 12.5px; color: var(--ink-dim); margin-bottom: 12px; cursor: pointer; }
-.locked-msg { display: none; font-size: 12px; color: var(--amber); background: var(--amber-glow); border: 1px solid var(--amber-dim); border-radius: var(--r-sm); padding: 10px 14px; margin-bottom: 12px; text-align: center; backdrop-filter: blur(8px); }
-
-.hidden { display: none !important; }
-
-/* ============================================================
-   Security tabs / logs
-   ============================================================ */
-.security-tabs { display: flex; gap: 4px; margin-bottom: 14px; background: rgba(0, 0, 0, 0.2); border: 1px solid var(--border-soft); border-radius: var(--r-sm); padding: 4px; }
-.security-tabs button { flex: 1; border: none; background: transparent; padding: 8px; border-radius: 5px; font-size: 12px; color: var(--ink-dim); box-shadow: none; }
-.security-tabs button.active { background: var(--surface); color: var(--signal); border: 1px solid var(--border); box-shadow: 0 0 8px var(--signal-glow); }
-.log-entry { font-family: var(--font-mono); font-size: 11.5px; padding: 9px 11px; border-radius: var(--r-sm); background: rgba(0, 0, 0, 0.2); border: 1px solid var(--border-soft); margin-bottom: 6px; line-height: 1.5; backdrop-filter: blur(4px); }
-.log-entry.danger { border-color: var(--coral-dim); background: var(--coral-glow); }
-.log-entry.login { border-color: var(--signal-dim); background: var(--signal-glow); }
-
-/* ============================================================
-   User keys drawer
-   ============================================================ */
-.user-keys-drawer {
-  position: fixed; top: 0; right: 0; height: 100%; width: min(380px, 100%);
-  background: rgba(11, 15, 25, 0.92); backdrop-filter: blur(16px);
-  border-left: 1px solid var(--border);
-  box-shadow: -10px 0 30px rgba(0, 0, 0, 0.5);
-  transform: translateX(100%); transition: transform .3s cubic-bezier(.2, .8, .2, 1);
-  z-index: 50; display: flex; flex-direction: column;
-}
-.user-keys-drawer.open { transform: translateX(0); }
-
-/* ============================================================
-   Inactivity bar
-   ============================================================ */
-.inactivity-bar { position: fixed; top: 0; left: 0; height: 3px; background: linear-gradient(90deg, var(--amber), var(--coral)); z-index: 70; transition: width 1s linear; box-shadow: 0 0 8px var(--amber-glow); }
-
-/* ============================================================
-   FAB
-   ============================================================ */
-.fab {
-  position: fixed; bottom: 30px; right: 30px; width: 56px; height: 56px; border-radius: 50%;
-  background: var(--signal); color: #000; display: flex; align-items: center; justify-content: center;
-  cursor: pointer; box-shadow: 0 8px 24px rgba(45, 212, 191, 0.4); z-index: 30;
-  transition: all .2s ease; font-size: 20px;
-}
-.fab:hover { transform: scale(1.1); background: #4FD1C5; box-shadow: 0 8px 30px rgba(79, 209, 197, 0.6); }
-.fab:active { transform: scale(.94); }
-.fab.pop { animation: popIn .35s ease; }
-.fab .badge { position: absolute; top: -4px; right: -4px; background: var(--coral); color: #fff; font-family: var(--font-mono); font-size: 10px; font-weight: 700; min-width: 18px; height: 18px; border-radius: 9px; display: flex; align-items: center; justify-content: center; padding: 0 4px; box-shadow: 0 0 6px var(--coral-glow); }
-
-/* ============================================================
-   Empty states
-   ============================================================ */
-.empty-state { text-align: center; padding: 3rem 1rem; color: var(--ink-faint); font-size: 14px; }
-.empty-state .ic { font-size: 32px; display: block; margin-bottom: 12px; opacity: .8; }
-
-@media(max-width: 380px) { .shell { padding: 14px 10px 90px; } }
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: #0A0A0A; }
+  ::-webkit-scrollbar-thumb { background: rgba(0,255,157,.3); border-radius: 3px; }
 </style>
 </head>
 <body>
-<div class="bg-field"><div class="bg-sweep"></div></div>
 
-<!-- ===================== AUTH SCREEN ===================== -->
-<div id="authScreen" class="auth-wrap">
-  <div class="auth-brand">
-    <div class="brand-mark">NC</div>
-    <h1>NPC Control</h1>
-    <div class="tag">Access &amp; Key Management</div>
-  </div>
+<h1 class="title">NPC OFFSET<br>CONVERTER</h1>
 
-  <div class="auth-tabs">
-    <button id="tabLoginBtn" class="active" onclick="switchAuthTab('login')">Log in</button>
-    <button id="tabRegisterBtn" onclick="switchAuthTab('register')">Register</button>
-  </div>
-
-  <div id="lockedMsg" class="locked-msg">Too many failed attempts. Wait <span id="lockCountdown">30</span>s.</div>
-
-  <div id="loginForm" class="panel">
-    <label class="field-label">Username</label>
-    <input type="text" id="loginUser" placeholder="your-username" autocomplete="username" />
-    <label class="field-label" style="margin-top:14px;">Password</label>
-    <input type="password" id="loginPass" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()" />
-    <div class="remember-row" style="margin-top:14px;">
-      <input type="checkbox" id="rememberMe" /><label for="rememberMe">Remember my login on this device</label>
-    </div>
-    <button class="btn-primary" style="width:100%; margin-top:4px; font-size:14px;" onclick="doLogin()" id="loginBtn">Authenticate</button>
-  </div>
-
-  <div id="registerForm" class="panel hidden">
-    <label class="field-label">Username</label>
-    <input type="text" id="regUser" placeholder="choose-a-username" autocomplete="username" />
-    <label class="field-label" style="margin-top:14px;">Password</label>
-    <input type="password" id="regPass" placeholder="min. 4 characters" autocomplete="new-password" />
-    <label class="field-label" style="margin-top:14px;">Confirm password</label>
-    <input type="password" id="regPass2" placeholder="repeat password" autocomplete="new-password" />
-    <button class="btn-primary" style="width:100%; margin-top:18px; font-size:14px;" onclick="doRegister()">Create account</button>
-  </div>
-
-  <div class="toast" id="authToast"></div>
-  <div class="auth-status"><span class="dot live"></span> NPC-667E4 · realtime link active</div>
+<!-- THEME SWITCHER -->
+<div class="theme-row">
+  THEME
+  <select id="themePicker">
+    <option value="green">🟢 Green</option>
+    <option value="purple">🟣 Purple</option>
+    <option value="red">🔴 Red</option>
+    <option value="blue">🔵 Blue</option>
+  </select>
 </div>
 
-<!-- ===================== MAIN APP ===================== -->
-<div id="mainApp" class="hidden shell">
-  <div class="topbar">
-    <span class="who">Operator: <b id="currentUserLabel">-</b> <span id="currentRoleBadge"></span></span>
-    <div class="row">
-      <button class="btn-ghost theme-toggle" onclick="toggleTheme()" title="Toggle Theme">🌓 Mode</button>
-      <button id="adminPanelBtn" class="hidden" onclick="openAdminDrawer()">Admin panel</button>
-      <button id="secLogsBtn" class="hidden btn-info" onclick="openSecDrawer()">🛡 Logs</button>
-      <button class="btn-ghost" onclick="doLogout()">Log out ⎋</button>
-    </div>
-  </div>
-
-  <div class="brand-row">
-    <div class="brand">
-      <div class="brand-mark">NC</div>
-      <div>
-        <h1>NPC Control</h1>
-        <div class="tag">Telemetry &amp; Access</div>
-      </div>
-    </div>
-    <span class="live-indicator"><span class="dot" id="arDot"></span> Auto-refresh: <span id="arLabel">Off</span></span>
-  </div>
-
-  <div class="metrics">
-    <div class="metric"><div class="metric-label"><span class="dot live"></span>Total Keys</div><div class="metric-value" id="totalCount">0</div></div>
-    <div class="metric"><div class="metric-label"><span class="dot live"></span>Valid</div><div class="metric-value" id="validCount">0</div></div>
-    <div class="metric"><div class="metric-label"><span class="dot danger"></span>Expired</div><div class="metric-value" id="expiredCount">0</div></div>
-    <div class="metric"><div class="metric-label"><span class="dot warn"></span>At Capacity</div><div class="metric-value" id="fullCount">0</div></div>
-    <div class="metric"><div class="metric-label"><span class="dot"></span>Total Users</div><div class="metric-value" id="totalUsers">0</div></div>
-    <div class="metric"><div class="metric-label"><span class="dot live"></span>Approved</div><div class="metric-value" id="approvedUsers">0</div></div>
-    <div class="metric"><div class="metric-label"><span class="dot warn"></span>Pending</div><div class="metric-value" id="pendingUsers">0</div></div>
-    <div class="metric"><div class="metric-label"><span class="dot"></span>Devices</div><div class="metric-value" id="totalDevices">0</div></div>
-  </div>
-
-  <div class="panel" id="adminOnlyCards">
-    <div class="panel-head"><div class="panel-eyebrow"><span class="ic">&gt;_</span>System Activity</div></div>
-    <div id="adminLogs"><div class="log-entry">System initialized</div></div>
-  </div>
-
-  <div class="panel">
-    <div class="panel-head"><div class="panel-eyebrow"><span class="ic">~</span>Key Usage Monitor</div></div>
-    <div id="usageMonitor"><div class="log-entry">No device activity detected</div></div>
-  </div>
-
-  <!-- Generate New Key Panel -->
-  <div class="panel">
-    <div class="panel-head"><div class="panel-eyebrow">✛ Generate New Key</div></div>
-
-    <div class="gk-field">
-      <label class="field-label">Key name / ID</label>
-      <div class="gk-id-toggle">
-        <button id="gkModeManualBtn" class="active" onclick="setGkIdMode('manual')">Manual Input</button>
-        <button id="gkModeAutoBtn" onclick="setGkIdMode('auto')">Auto-generate</button>
-      </div>
-      <div class="gk-auto-row">
-        <input type="text" id="gkKeyId" placeholder="e.g. NPC-A3KL-9QRZ" oninput="gkOnManualEdit()" />
-        <button class="btn-sm" id="gkRegenBtn" onclick="gkRegenerateId()" style="display:none;" title="Regenerate">⚡ Regen</button>
-      </div>
-    </div>
-
-    <div class="gk-field">
-      <label class="field-label">Expiry date</label>
-      <input type="date" id="gkExpiryDate" />
-    </div>
-
-    <div class="gk-field">
-      <label class="field-label">Max devices</label>
-      <div class="stepper">
-        <button onclick="gkChangeDevices(-1)" aria-label="Decrease">−</button>
-        <input type="number" id="gkMaxDevices" value="1" min="1" max="999" oninput="gkClampDevices()" />
-        <button onclick="gkChangeDevices(1)" aria-label="Increase">+</button>
-      </div>
-      <div class="chip-row">
-        <button onclick="gkSetDev(1)">1</button>
-        <button onclick="gkSetDev(2)">2</button>
-        <button onclick="gkSetDev(3)">3</button>
-        <button onclick="gkSetDev(5)">5</button>
-        <button onclick="gkSetDev(10)">10</button>
-        <button onclick="gkSetDev(999)">Unli</button>
-      </div>
-    </div>
-
-    <div class="gk-field">
-      <label class="field-label">Created by</label>
-      <input type="text" id="gkCreatedBy" disabled />
-    </div>
-
-    <button class="btn-primary" style="width:100%; font-size:14px;" id="gkGenBtn" onclick="gkGenerateKey()">Deploy Key</button>
-  </div>
-
-  <div class="row eq" style="margin-bottom:14px;">
-    <button onclick="loadKeys()">↻ Refresh</button>
-    <button onclick="copyAll()">⎘ Copy All</button>
-    <button onclick="exportTxt()">↓ Export</button>
-    <button onclick="toggleAutoRefresh()" id="autoRefreshBtn" class="btn-info">Auto: Off</button>
-  </div>
-
-  <div class="row eq" style="margin-bottom:12px;">
-    <button onclick="openDrawer()">📋 View All Keys</button>
-    <button class="btn-info" onclick="openSecDrawer()">🛡 Security Logs</button>
-  </div>
-
-  <div class="toast" id="toast"></div>
+<!-- LIBRARY NAME -->
+<div class="card">
+  <div class="card-label">Library Name</div>
+  <input type="text" id="etLib" value="libanogs.so" placeholder="e.g. libanogs.so">
 </div>
 
-<!-- KEYS DRAWER -->
-<div class="drawer-overlay" id="overlay" onclick="closeDrawer()"></div>
-<div class="drawer" id="drawer">
-  <div class="drawer-header">
-    <div class="drawer-title">Key Database <span class="count"><span id="drawerCount">0</span></span></div>
-    <div class="row">
-      <button class="btn-sm" onclick="exportTxt()">Export</button>
-      <button class="btn-sm btn-ghost" onclick="closeDrawer()" aria-label="Close">✕</button>
-    </div>
-  </div>
-  <div class="filter-bar">
-    <input type="text" id="searchInput" placeholder="Search key or label..." oninput="renderDrawer()" />
-    <select id="filterStatus" onchange="renderDrawer()">
-      <option value="all">Status: All</option>
-      <option value="valid">Valid</option>
-      <option value="expired">Expired</option>
-      <option value="full">Full</option>
-    </select>
-    <select id="sortMode" onchange="renderDrawer()">
-      <option value="none">Sort</option>
-      <option value="date_asc">Created ↑</option>
-      <option value="date_desc">Created ↓</option>
-      <option value="exp_asc">Expiry ↑</option>
-      <option value="exp_desc">Expiry ↓</option>
-      <option value="dev_asc">Devices ↑</option>
-      <option value="dev_desc">Devices ↓</option>
-      <option value="user_az">User A-Z</option>
-    </select>
-  </div>
-  <div class="bulk-bar" id="bulkBar">
-    <input type="checkbox" class="key-checkbox" id="selectAllChk" onchange="toggleSelectAll(this.checked)" title="Select all" />
-    <span id="selectedCount">0 selected</span>
-    <button class="btn-sm btn-danger" onclick="bulkDelete()">🗑 Delete selected</button>
-    <button class="btn-sm btn-warn" onclick="bulkResetDevices()">Reset devices</button>
-  </div>
-  <div class="drawer-body" id="drawerList">
-    <div class="empty-state"><span class="ic"><span class="spinner"></span></span>Loading...</div>
+<!-- CONVERSION MODE -->
+<div class="card">
+  <div class="card-label">Conversion Mode</div>
+  <select id="modePicker">
+    <option value="0">MemoryPatch → HexPatches</option>
+    <option value="1">HexPatches → MemoryPatch</option>
+    <option value="2">patchOffset → MemoryPatch</option>
+    <option value="3">patchOffset → HexPatches</option>
+    <option value="4">Offsets → MemoryPatch</option>
+    <option value="5">Offsets → HexPatches</option>
+    <option value="6">sub_xxxxx → MemoryPatch</option>
+    <option value="7">sub_xxxxx → HexPatches</option>
+    <option value="8">Offset → Only</option>
+    <option value="9">sub_xxxxx → Offset Only</option>
+    <option value="10">Align → Full Code</option>
+    <option value="11">KittyMemory → Hook</option>
+    <option value="12">Remove Duplicate Offsets</option>
+    <option value="13">Var → Offset Only</option>
+    <option value="14">Var → MemoryPatch</option>
+    <option value="15">Var → HexPatches</option>
+  </select>
+</div>
+
+<!-- INPUT OFFSETS -->
+<div class="card" id="inputCard">
+  <div class="card-label">Input Offsets</div>
+  <textarea id="inputCode" placeholder="Paste offsets, MemoryPatch, HexPatches, sub_xxxxx here..."></textarea>
+  <p class="drop-hint">📂 Or drag & drop a .txt file here</p>
+  <button class="btn btn-primary" onclick="doConvert()">CONVERT NOW</button>
+</div>
+
+<!-- OUTPUT RESULT -->
+<div class="card">
+  <div class="card-label">Output Result</div>
+  <textarea id="outputCode" placeholder="Converted code will appear here..." readonly></textarea>
+  <div class="btn-row-3">
+    <button class="btn btn-copy" onclick="doCopy()">COPY</button>
+    <button class="btn btn-dl"   onclick="downloadResult()">DOWNLOAD</button>
+    <button class="btn btn-clear" onclick="doClear()">CLEAR</button>
   </div>
 </div>
 
-<!-- ADMIN DRAWER -->
-<div class="drawer-overlay" id="adminOverlay" onclick="closeAdminDrawer()"></div>
-<div class="drawer" id="adminDrawer">
-  <div class="drawer-header">
-    <div class="drawer-title">Admin Panel <span class="count"><span id="pendingCount">0</span> pending</span></div>
-    <div class="row">
-      <button class="btn-sm btn-icon" onclick="loadPendingUsers()" aria-label="Refresh">↻</button>
-      <button class="btn-sm btn-ghost btn-icon" onclick="closeAdminDrawer()" aria-label="Close">✕</button>
-    </div>
+<!-- OFFSET COUNTER -->
+<div class="card">
+  <div class="card-label">Offset Counter</div>
+  <div class="btn-row">
+    <button class="btn btn-purple" onclick="doCount()">Count Lines</button>
+    <button class="btn btn-slate"  onclick="doView()">View + Numbers</button>
   </div>
-  <div class="filter-bar" style="flex-wrap:wrap;">
-    <input type="text" id="userSearch" placeholder="Search user..." style="flex:1 1 100%;" oninput="renderPendingUsers()" />
-    <select id="userFilter" onchange="renderPendingUsers()">
-      <option value="all">All</option>
-      <option value="pending">Pending</option>
-      <option value="approved">Approved</option>
-      <option value="rejected">Rejected</option>
-      <option value="disabled">Disabled</option>
-    </select>
-    <select id="userSort" onchange="renderPendingUsers()">
-      <option value="none">Sort</option>
-      <option value="date_asc">Date ↑</option>
-      <option value="date_desc">Date ↓</option>
-      <option value="name_az">Name A-Z</option>
-    </select>
-  </div>
-  <div class="drawer-body" id="pendingList">
-    <div class="empty-state"><span class="ic"><span class="spinner"></span></span>Loading...</div>
-  </div>
+  <div class="counter-stats" id="counterStats"></div>
+  <div class="counter-output" id="counterOutput"></div>
 </div>
 
-<!-- USER KEYS DRAWER -->
-<div class="user-keys-drawer" id="userKeysDrawer">
-  <div class="drawer-header">
-    <div class="drawer-title" style="color:var(--violet); text-shadow: 0 0 8px var(--violet-glow);">Keys of <span id="userKeysLabel">-</span></div>
-    <button class="btn-sm btn-ghost btn-icon" onclick="closeUserKeysDrawer()" aria-label="Close">✕</button>
-  </div>
-  <div class="drawer-body" id="userKeysList">
-    <div class="empty-state"><span class="ic"><span class="spinner"></span></span>Loading...</div>
-  </div>
+<!-- ARM HEX PRESETS -->
+<div class="card">
+  <div class="card-label">ARM Hex Presets</div>
+  <button class="preset-btn preset-green"  onclick="insertPreset('armTrue')">armTrue</button>
+  <button class="preset-btn preset-green"  onclick="insertPreset('armFalse')">armFalse</button>
+  <button class="preset-btn preset-green"  onclick="insertPreset('armReturn')">armReturn</button>
+  <button class="preset-btn preset-green"  onclick="insertPreset('armNop')">armNop</button>
+  <button class="preset-btn preset-orange" onclick="insertPreset('armAim1')">armAim1</button>
+  <button class="preset-btn preset-orange" onclick="insertPreset('armAim2')">armAim2</button>
+  <button class="preset-btn preset-purple" onclick="insertPreset('frames')">frames</button>
+  <button class="preset-btn preset-purple" onclick="insertPreset('frames1')">frames1</button>
+  <button class="preset-btn preset-purple" onclick="insertPreset('flh')">flh</button>
+  <button class="preset-btn preset-red"    onclick="insertPreset('ammos')">ammos</button>
+  <button class="preset-btn preset-red"    onclick="insertPreset('halfspeed')">halfspeed</button>
+  <button class="preset-btn preset-blue"   onclick="insertPreset('armLDR')">armLDR</button>
 </div>
 
-<!-- SECURITY DRAWER -->
-<div class="drawer-overlay" id="secOverlay" onclick="closeSecDrawer()"></div>
-<div class="drawer" id="secDrawer">
-  <div class="drawer-header">
-    <div class="drawer-title"><span style="color:var(--signal); text-shadow:0 0 8px var(--signal-glow);">🛡</span> Security Logs</div>
-    <div class="row">
-      <button class="btn-sm btn-icon" onclick="loadSecurityLogs()" aria-label="Refresh">↻</button>
-      <button class="btn-sm btn-ghost btn-icon" onclick="closeSecDrawer()" aria-label="Close">✕</button>
-    </div>
-  </div>
-  <div class="drawer-body">
-    <div class="security-tabs">
-      <button id="secTabAudit" class="active" onclick="switchSecTab('audit')">Audit logs</button>
-      <button id="secTabLogin" onclick="switchSecTab('login')">Login history</button>
-    </div>
-    <div id="auditLogPanel"></div>
-    <div id="loginHistoryPanel" style="display:none;"></div>
-  </div>
-</div>
+<!-- FLOATING COPY -->
+<button id="floatingCopy" onclick="doCopy()" title="Copy output">📋</button>
 
-<!-- FAB -->
-<div class="fab hidden" id="fab" onclick="openDrawer()">
-  🔑
-  <span class="badge" id="fabBadge" style="display:none;">0</span>
-</div>
+<div id="toast"></div>
 
-<!-- INACTIVITY BAR -->
-<div class="inactivity-bar" id="inactivityBar" style="display:none;"></div>
-
-<!-- CONFIRM MODAL -->
-<div class="modal-overlay" id="confirmModal">
-  <div class="modal-box">
-    <div class="modal-title" id="confirmTitle">Confirm action</div>
-    <div class="modal-msg" id="confirmMsg">Are you sure?</div>
-    <div class="row eq">
-      <button onclick="cancelConfirm()">Cancel</button>
-      <button class="btn-danger" id="confirmOkBtn" onclick="doConfirm()">Confirm</button>
-    </div>
-  </div>
-</div>
-
-<!-- EXTEND MODAL -->
-<div class="modal-overlay" id="extendModal">
-  <div class="modal-box">
-    <div class="modal-title">Extend Expiration</div>
-    <div class="modal-msg" id="extendKeyLabel">Key: -</div>
-    <div class="row eq" style="margin-bottom:12px;">
-      <button onclick="doExtend(7)">+7d</button>
-      <button onclick="doExtend(30)">+30d</button>
-      <button onclick="doExtend(90)">+90d</button>
-      <button onclick="doExtend(365)">+1yr</button>
-    </div>
-    <div class="row" style="margin-bottom:12px;">
-      <input type="number" id="extendCustomDays" placeholder="Custom days" style="flex:1;" min="1" />
-      <button class="btn-primary" onclick="doExtendCustom()">Apply</button>
-    </div>
-    <button style="width:100%;" onclick="closeExtendModal()">Cancel</button>
-  </div>
-</div>
-
-<!-- ===================== JAVASCRIPT ===================== -->
 <script>
-const DB_URL = "https://vxnpc-667e4-default-rtdb.firebaseio.com";
-const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-let allKeys = [];
-let pendingUsers = [];
+// ========================
+// THEME SWITCHER
+// ========================
+const root = document.documentElement;
+const themeColors = {
+  green:  "#00ff9d",
+  purple: "#bb66ff",
+  red:    "#ff4444",
+  blue:   "#33bbff"
+};
+document.getElementById("themePicker").onchange = e => {
+  const c = themeColors[e.target.value];
+  root.style.setProperty("--main", c);
+  // Update spinner SVG arrow color
+  const enc = encodeURIComponent(c);
+  document.getElementById("modePicker").style.backgroundImage =
+    `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='${enc}' stroke-width='2' fill='none'/%3E%3C/svg%3E")`;
+};
+
+// ========================
+// ARM PRESETS
+// ========================
+const armPresets = {
+  armTrue:   "20 00 80 D2 C0 03 5F D6",
+  armReturn: "C0 03 5F D6 C0 03 5F D6",
+  armFalse:  "00 00 80 D2 C0 03 5F D6",
+  armNop:    "1F 20 03 D5",
+  armAim1:   "40 00 00 1C",
+  armAim2:   "C0 03 5F D6",
+  frames:    "C0 00 80 D2 C0 03 5F D6",
+  frames1:   "00 24 80 D2 C0 03 5F D6",
+  flh:       "00 2C 40 BC C0 03 5F D6",
+  ammos:     "00 00 80 52 C0 03 5F D6",
+  halfspeed: "00 90 20 1E C0 03 5F D6",
+  armLDR:    "40 00 00 1C C0 03 5F D6"
+};
+
+// ========================
+// RIPPLE EFFECT
+// ========================
+document.querySelectorAll(".btn, .preset-btn").forEach(btn => {
+  btn.addEventListener("click", function(e) {
+    const ripple = document.createElement("span");
+    const rect = this.getBoundingClientRect();
+    const size = Math.max(rect.width, rect.height);
+    ripple.className = "ripple-span";
+    ripple.style.width  = size + "px";
+    ripple.style.height = size + "px";
+    ripple.style.left   = (e.clientX - rect.left - size / 2) + "px";
+    ripple.style.top    = (e.clientY - rect.top  - size / 2) + "px";
+    this.appendChild(ripple);
+    setTimeout(() => ripple.remove(), 600);
+  });
+});
+
+// ========================
+// DRAG & DROP
+// ========================
+const inputCard = document.getElementById("inputCard");
+
+inputCard.addEventListener("dragover", e => {
+  e.preventDefault();
+  inputCard.classList.add("drag-over");
+});
+inputCard.addEventListener("dragleave", () => inputCard.classList.remove("drag-over"));
+inputCard.addEventListener("drop", e => {
+  e.preventDefault();
+  inputCard.classList.remove("drag-over");
+  const file = e.dataTransfer.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = x => {
+    document.getElementById("inputCode").value = x.target.result;
+    showToast("File loaded: " + file.name);
+  };
+  reader.readAsText(file);
+});
+
+// ========================
+// HELPERS
+// ========================
+function fixXCase(str) {
+  return str.replace(/0[Xx]/g, "0x");
+}
+function getLib() {
+  const t = document.getElementById("etLib").value.trim();
+  return t === "" ? "libanogs.so" : t;
+}
+
 let toastTimer = null;
-let authToastTimer = null;
-let expandedDevices = {};
-let currentSession = null;
-let selectedKeys = new Set();
-let autoRefreshInterval = null;
-let extendTarget = null;
-let confirmCallback = null;
-let isDark = true;
+function showToast(msg) {
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  if (toastTimer) clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove("show"), 2200);
+}
 
-// =================== FIREBASE AUTH ===================
-const FIREBASE_API_KEY = "AIzaSyA37DP87axf_GCxLUyjQdCIyxfbiBH1rTo";
-const FB_REFRESH_KEY = "npc_fb_refresh_token";
-let dbToken = null;
-let dbTokenExpiry = 0;
-let dbTokenPromise = null;
+function insertPreset(name) {
+  document.getElementById("outputCode").value = armPresets[name];
+  showToast(name + " inserted");
+}
 
-async function getDbToken(){
-  if(dbToken && Date.now() < dbTokenExpiry) return dbToken;
-  if(dbTokenPromise) return dbTokenPromise;
-  dbTokenPromise = (async()=>{
-    try{
-      const refreshToken = localStorage.getItem(FB_REFRESH_KEY);
-      if(refreshToken){
-        const r = await fetch(`https://securetoken.googleapis.com/v1/token?key=${FIREBASE_API_KEY}`,{
-          method:'POST', headers:{'Content-Type':'application/x-www-form-urlencoded'},
-          body:`grant_type=refresh_token&refresh_token=${refreshToken}`
-        });
-        const data = await r.json();
-        if(data.id_token){
-          dbToken = data.id_token;
-          dbTokenExpiry = Date.now()+(parseInt(data.expires_in||'3600')-60)*1000;
-          if(data.refresh_token) localStorage.setItem(FB_REFRESH_KEY, data.refresh_token);
-          return dbToken;
+// ========================
+// DOWNLOAD RESULT
+// ========================
+function downloadResult() {
+  const text = document.getElementById("outputCode").value;
+  if (!text.trim()) { showToast("Nothing to download!"); return; }
+  const blob = new Blob([text], { type: "text/plain" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "npc_output.txt";
+  a.click();
+  showToast("Downloaded!");
+}
+
+// ========================
+// CONVERSION FUNCTIONS
+// ========================
+function convertMemToHex(src) {
+  let m = src.match(/MemoryPatch::createWithHex\("([^"]+)",\s*(0[xX][0-9a-fA-F]+),\s*"([0-9a-fA-F\s]+)"\)\.Modify\(\);/);
+  if (!m) m = src.match(/MemoryPatch::createWithHex\("([^"]+)",\s*(0[xX][0-9a-fA-F]+),\s*"([0-9a-fA-F]+)"\)\.Modify\(\)/);
+  if (!m) return src;
+  const [, lib, offset, hex] = m;
+  const cleanHex = hex.replace(/\s+/g, "");
+  let fmt = "h";
+  for (let i = 0; i < cleanHex.length; i += 2) {
+    if (i > 0) fmt += " ";
+    fmt += cleanHex.slice(i, i + 2);
+  }
+  return `HexPatches.MemoryPatch("${lib}", ${fixXCase(offset)}, "${fmt}", 32);`;
+}
+
+function convertHexToMem(src) {
+  let m = src.match(/HexPatches\.MemoryPatch\("([^"]+)",\s*(0[xX][0-9a-fA-F]+),\s*"h([0-9a-fA-F\s]+)",\s*\d+\);/);
+  if (!m) m = src.match(/HexPatches\.MemoryPatch\("([^"]+)",\s*(0[xX][0-9a-fA-F]+),\s*"([0-9a-fA-F\s]+)",\s*\d+\);/);
+  if (!m) return src;
+  const [, lib, offset, hex] = m;
+  const cleanHex = hex.replace(/\s+/g, "").replace(/^[hH]/, "").toUpperCase();
+  return `MemoryPatch::createWithHex("${lib}", ${fixXCase(offset)}, "${cleanHex}").Modify();`;
+}
+
+function patchOffsetToMem(src) {
+  const m = src.match(/patchOffset\("([^"]+)",\s*(0[xX][0-9a-fA-F]+),\s*"h([0-9a-fA-F\s]+)",\s*32\);/);
+  if (!m) return src;
+  const [, lib, offset, hex] = m;
+  const cleanHex = hex.replace(/\s+/g, "").replace(/^h/, "").toUpperCase();
+  return `MemoryPatch::createWithHex("${lib}", ${fixXCase(offset)}, "${cleanHex}").Modify();`;
+}
+
+function patchOffsetToHex(src) {
+  const m = src.match(/patchOffset\("([^"]+)",\s*(0[xX][0-9a-fA-F]+),\s*"h([0-9a-fA-F\s]+)",\s*32\);/);
+  if (!m) return src;
+  const [, lib, offset, hex] = m;
+  const hexPart = hex.replace(/\s+/g, "").replace(/^h/, "");
+  let fmt = "h";
+  for (let i = 0; i < hexPart.length; i += 2) {
+    if (i > 0) fmt += " ";
+    fmt += hexPart.slice(i, i + 2);
+  }
+  return `HexPatches.MemoryPatch("${lib}", ${fixXCase(offset)}, "${fmt}", 32);`;
+}
+
+function offsetToMem(src) {
+  const m = src.match(/0[xX][0-9a-fA-F]+/);
+  if (!m) return src;
+  return `MemoryPatch::createWithHex("${getLib()}", ${fixXCase(m[0])}, "00 00 80 D2 C0 03 5F D6").Modify();`;
+}
+
+function offsetToHex(src) {
+  const m = src.match(/0[xX][0-9a-fA-F]+/);
+  if (!m) return src;
+  return `HexPatches.MemoryPatch("${getLib()}", ${fixXCase(m[0])}, "h00 00 80 D2 C0 03 5F D6", 32);`;
+}
+
+function subToMem(src) {
+  const m = src.match(/sub_([0-9a-fA-F]+)/);
+  if (!m) return src;
+  return `MemoryPatch::createWithHex("${getLib()}", 0x${m[1]}, "00 00 80 D2 C0 03 5F D6").Modify();`;
+}
+
+function subToHex(src) {
+  const m = src.match(/sub_([0-9a-fA-F]+)/);
+  if (!m) return src;
+  return `HexPatches.MemoryPatch("${getLib()}", 0x${m[1]}, "h00 00 80 D2 C0 03 5F D6", 32);`;
+}
+
+function subToOffset(src) {
+  const s = src.match(/sub_([0-9a-fA-F]+)/);
+  if (s) return "0x" + s[1];
+  const o = src.match(/0[xX][0-9a-fA-F]+/);
+  if (o) return fixXCase(o[0]);
+  return src;
+}
+
+function kittyToHook(src) {
+  const m = src.match(/0[xX][0-9a-fA-F]+/);
+  if (!m) return src;
+  return `Tools::Hook((void*)KittyMemory::getAbsoluteAddress(OBFUSCATE("${getLib()}"), ${fixXCase(m[0])}), (void*)hook_bypass, (void**)&orig_bypass);`;
+}
+
+function extractOffsetFromVar(line) {
+  const m = line.match(/([0-9a-fA-F]+)\s*$/);
+  if (m && /^[0-9a-fA-F]+$/.test(m[1])) return "0x" + m[1].toLowerCase();
+  return null;
+}
+
+function extractLibFromVar(line) {
+  const m = line.match(/\|([^|]+\.so)/);
+  if (m) {
+    const n = m[1].match(/\/([^/]+\.so)$/);
+    if (n) return n[1];
+  }
+  return "libanogs.so";
+}
+
+function varToOffset(src) {
+  return src.split(/\r?\n/).map(line => extractOffsetFromVar(line) || line).join("\n");
+}
+
+function varToMemoryPatch(src) {
+  return src.split(/\r?\n/).map(line => {
+    const o = extractOffsetFromVar(line);
+    const lib = extractLibFromVar(line);
+    if (o) return `MemoryPatch::createWithHex("${lib}", ${o}, "00 00 80 D2 C0 03 5F D6").Modify();`;
+    return line;
+  }).join("\n");
+}
+
+function varToHexPatches(src) {
+  return src.split(/\r?\n/).map(line => {
+    const o = extractOffsetFromVar(line);
+    const lib = extractLibFromVar(line);
+    if (o) return `HexPatches.MemoryPatch("${lib}", ${o}, "h00 00 80 D2 C0 03 5F D6", 32);`;
+    return line;
+  }).join("\n");
+}
+
+function extractAllOffsets(src) {
+  const seen = {}, offsets = [];
+  for (const o of src.matchAll(/0[xX][0-9a-fA-F]+/g)) {
+    const f = fixXCase(o[0]);
+    if (!seen[f]) { seen[f] = true; offsets.push(f); }
+  }
+  for (const s of src.matchAll(/sub_([0-9a-fA-F]+)/g)) {
+    const o = "0x" + s[1];
+    if (!seen[o]) { seen[o] = true; offsets.push(o); }
+  }
+  offsets.sort((a, b) => parseInt(a.slice(2), 16) - parseInt(b.slice(2), 16));
+  return offsets.length > 0 ? offsets.join("\n") : "No offsets found!";
+}
+
+function removeDuplicateOffsets(src) {
+  const seen = {}, r = [];
+  for (const line of src.split(/\r?\n/)) {
+    const o = (line.match(/0[xX][0-9a-fA-F]+/) || line.match(/sub_[0-9a-fA-F]+/))?.[0];
+    if (o) {
+      const k = fixXCase(o);
+      if (!seen[k]) { seen[k] = true; r.push(line); }
+    } else {
+      r.push(line);
+    }
+  }
+  return r.join("\n");
+}
+
+// ========================
+// BUTTON HANDLERS
+// ========================
+function doConvert() {
+  const raw = document.getElementById("inputCode").value;
+  const outputEl = document.getElementById("outputCode");
+  const btnConvert = document.querySelector(".btn-primary");
+
+  if (!raw.trim()) { outputEl.value = "Please paste input first!"; return; }
+
+  const mode = parseInt(document.getElementById("modePicker").value);
+
+  // Disable button, show loading state
+  btnConvert.disabled = true;
+  btnConvert.textContent = "CONVERTING...";
+  outputEl.value = "";
+
+  // Defer heavy work so UI can repaint first (kills lag)
+  requestAnimationFrame(() => setTimeout(() => {
+    try {
+      const converters = {
+        0: convertMemToHex,  1: convertHexToMem,
+        2: patchOffsetToMem, 3: patchOffsetToHex,
+        4: offsetToMem,      5: offsetToHex,
+        6: subToMem,         7: subToHex,
+        9: subToOffset,      11: kittyToHook,
+        13: varToOffset,     14: varToMemoryPatch,
+        15: varToHexPatches
+      };
+
+      let result;
+
+      if (mode === 8 || mode === 10) {
+        result = extractAllOffsets(raw);
+      } else if (mode === 12) {
+        result = removeDuplicateOffsets(raw);
+      } else {
+        const fn = converters[mode];
+        if (!fn) { outputEl.value = "Unknown mode."; return; }
+
+        const lines = raw.split(/\r?\n/);
+        const converted = [];
+        for (const line of lines) {
+          const t = line.trim();
+          if (t !== "") {
+            const res = fn(t);
+            if (res && res.trim() !== "") converted.push(res);
+          }
+        }
+
+        if (converted.length > 0) {
+          result = converted.join("\n");
+          showToast(`Converted ${converted.length} line${converted.length !== 1 ? "s" : ""}`);
+        } else {
+          result = "No valid content found!";
         }
       }
-      const r2 = await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${FIREBASE_API_KEY}`,{
-        method:'POST', headers:{'Content-Type':'application/json'},
-        body: JSON.stringify({returnSecureToken:true})
-      });
-      const data2 = await r2.json();
-      if(data2.idToken){
-        dbToken = data2.idToken;
-        dbTokenExpiry = Date.now()+(parseInt(data2.expiresIn||'3600')-60)*1000;
-        localStorage.setItem(FB_REFRESH_KEY, data2.refreshToken);
-        return dbToken;
-      }
-      return null;
-    }catch(e){ console.error('DB auth error:',e); return null; }
-    finally{ dbTokenPromise = null; }
-  })();
-  return dbTokenPromise;
-}
 
-async function withAuth(url){
-  const token = await getDbToken();
-  if(!token) return url;
-  const sep = url.includes('?') ? '&' : '?';
-  return `${url}${sep}auth=${token}`;
-}
-
-// =================== RATE LIMITING ===================
-const RATE_KEY = 'npc_login_attempts';
-const MAX_ATTEMPTS = 5;
-const LOCK_DURATION = 30;
-
-function getRateData(){ try{ return JSON.parse(localStorage.getItem(RATE_KEY)||'{"count":0,"lockedUntil":0}'); }catch(e){ return {count:0,lockedUntil:0}; } }
-function setRateData(d){ localStorage.setItem(RATE_KEY, JSON.stringify(d)); }
-function isLocked(){ return getRateData().lockedUntil > Date.now(); }
-function recordFailedAttempt(){ const d=getRateData(); d.count=(d.count||0)+1; if(d.count>=MAX_ATTEMPTS){ d.lockedUntil=Date.now()+LOCK_DURATION*1000; d.count=0; } setRateData(d); }
-function clearAttempts(){ setRateData({count:0,lockedUntil:0}); }
-function startLockCountdown(){
-  const el=document.getElementById('lockedMsg');
-  const cd=document.getElementById('lockCountdown');
-  const loginBtn=document.getElementById('loginBtn');
-  el.style.display='block'; loginBtn.disabled=true; loginBtn.classList.add('working');
-  const iv=setInterval(()=>{
-    const d=getRateData(); const rem=Math.ceil((d.lockedUntil-Date.now())/1000);
-    if(rem<=0){ clearInterval(iv); el.style.display='none'; loginBtn.disabled=false; loginBtn.classList.remove('working'); cd.textContent=LOCK_DURATION; }
-    else { cd.textContent=rem; }
-  },500);
-}
-
-// =================== THEME ===================
-function toggleTheme(){
-  isDark=!isDark;
-  document.body.classList.toggle('light-theme',!isDark);
-  const btns=document.querySelectorAll('.theme-toggle');
-  btns.forEach(b=>b.textContent=isDark?'🌓 Mode':'☀ Mode');
-  localStorage.setItem('npc_theme',isDark?'dark':'light');
-}
-function initTheme(){
-  const saved=localStorage.getItem('npc_theme');
-  if(saved==='light'){ isDark=false; document.body.classList.add('light-theme'); document.querySelectorAll('.theme-toggle').forEach(b=>b.textContent='☀ Mode'); }
-}
-
-// =================== AUTO REFRESH ===================
-function toggleAutoRefresh(){
-  const btn=document.getElementById('autoRefreshBtn');
-  const dot=document.getElementById('arDot');
-  const lbl=document.getElementById('arLabel');
-  if(autoRefreshInterval){ clearInterval(autoRefreshInterval); autoRefreshInterval=null; btn.textContent='Auto: Off'; dot.classList.remove('live'); lbl.textContent='Off'; }
-  else { autoRefreshInterval=setInterval(()=>{ loadKeys(); loadUserStats(); },30000); btn.textContent='Auto: On (30s)'; dot.classList.add('live'); lbl.textContent='30s'; showToast('Auto refresh on — every 30s','info'); }
-}
-
-// =================== CONFIRM MODAL ===================
-function openConfirm(title,msg,okLabel,cb){ confirmCallback=cb; document.getElementById('confirmTitle').textContent=title; document.getElementById('confirmMsg').textContent=msg; document.getElementById('confirmOkBtn').textContent=okLabel||'Confirm'; document.getElementById('confirmModal').classList.add('open'); }
-function cancelConfirm(){ confirmCallback=null; document.getElementById('confirmModal').classList.remove('open'); }
-function doConfirm(){ document.getElementById('confirmModal').classList.remove('open'); if(confirmCallback){ confirmCallback(); confirmCallback=null; } }
-
-// =================== EXTEND MODAL ===================
-function openExtendModal(idx,key,currentExpire){ extendTarget={idx,key,currentExpire}; document.getElementById('extendKeyLabel').textContent='Key: '+key+'\nExpires: '+formatDate(currentExpire); document.getElementById('extendModal').classList.add('open'); }
-function closeExtendModal(){ extendTarget=null; document.getElementById('extendModal').classList.remove('open'); document.getElementById('extendCustomDays').value=''; }
-async function doExtend(days){ if(!extendTarget) return; await extendKeyExpiration(extendTarget.idx,extendTarget.key,extendTarget.currentExpire,days); closeExtendModal(); }
-async function doExtendCustom(){ if(!extendTarget) return; const d=parseInt(document.getElementById('extendCustomDays').value); if(!d||d<1) return showToast('Invalid days!','error'); await extendKeyExpiration(extendTarget.idx,extendTarget.key,extendTarget.currentExpire,d); closeExtendModal(); }
-async function extendKeyExpiration(idx,key,currentExpire,days){
-  const now=Math.floor(Date.now()/1000);
-  const base=Math.max(currentExpire,now);
-  const newExpire=base+days*86400;
-  try{
-    await fetch(await withAuth(`${DB_URL}/keys/${key}/expire.json`),{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(newExpire)});
-    allKeys[idx].expire=newExpire; renderDrawer(); updateCounts();
-    showToast('+'+days+' days extended!','success');
-  }catch(e){ showToast('Error extending!','error'); }
-}
-
-// =================== BULK OPERATIONS ===================
-function toggleSelectAll(checked){ const cbs=document.querySelectorAll('.key-checkbox[data-key]'); cbs.forEach(cb=>{ cb.checked=checked; if(checked) selectedKeys.add(cb.dataset.key); else selectedKeys.delete(cb.dataset.key); }); updateBulkBar(); }
-function toggleKeySelect(key,checked){ if(checked) selectedKeys.add(key); else selectedKeys.delete(key); document.getElementById('selectAllChk').checked=false; updateBulkBar(); }
-function updateBulkBar(){ document.getElementById('selectedCount').textContent=selectedKeys.size+' selected'; }
-
-function bulkDelete(){
-  if(!selectedKeys.size) return showToast('Nothing selected!','error');
-  openConfirm('Bulk Delete',`Delete ${selectedKeys.size} key(s)?`,'DELETE ALL',async()=>{
-    const toDelete=[...selectedKeys];
-    for(const key of toDelete){ await deleteKeyFromDb(key); const i=allKeys.findIndex(k=>k.key===key); if(i!==-1) allKeys.splice(i,1); }
-    selectedKeys.clear(); document.getElementById('selectAllChk').checked=false; updateBulkBar(); updateCounts(); renderDrawer();
-    showToast('Deleted '+toDelete.length+' keys!','success');
-  });
-}
-function bulkResetDevices(){
-  if(!selectedKeys.size) return showToast('Nothing selected!','error');
-  openConfirm('Bulk Reset Devices',`Reset devices of ${selectedKeys.size} key(s)?`,'RESET ALL',async()=>{
-    const keys=[...selectedKeys];
-    for(const key of keys){ try{ await fetch(await withAuth(`${DB_URL}/keys/${key}/devices.json`),{method:'PUT',headers:{'Content-Type':'application/json'},body:'null'}); const i=allKeys.findIndex(k=>k.key===key); if(i!==-1) allKeys[i].devices=[]; }catch(e){} }
-    selectedKeys.clear(); document.getElementById('selectAllChk').checked=false; updateBulkBar(); renderDrawer(); updateCounts();
-    showToast('Devices reset on '+keys.length+' keys!','success');
-  });
-}
-
-// =================== AUTH ===================
-const SESSION_KEY = "npc_session_user";
-
-async function hashPassword(password){
-  const enc=new TextEncoder().encode(password);
-  const buf=await crypto.subtle.digest('SHA-256',enc);
-  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
-}
-
-function switchAuthTab(tab){
-  document.getElementById('loginForm').classList.toggle('hidden',tab!=='login');
-  document.getElementById('registerForm').classList.toggle('hidden',tab!=='register');
-  document.getElementById('tabLoginBtn').classList.toggle('active',tab==='login');
-  document.getElementById('tabRegisterBtn').classList.toggle('active',tab==='register');
-}
-
-function showAuthToast(msg,type){
-  const t=document.getElementById('authToast');
-  if(authToastTimer) clearTimeout(authToastTimer);
-  t.textContent=msg; t.className='toast '+type+' visible';
-  authToastTimer=setTimeout(()=>{ t.classList.add('hiding'); setTimeout(()=>{ t.className='toast'; },250); },4000);
-}
-
-async function doRegister(){
-  const u=document.getElementById('regUser').value.trim();
-  const p=document.getElementById('regPass').value;
-  const p2=document.getElementById('regPass2').value;
-  if(!u||!p) return showAuthToast('Fill in all fields!','error');
-  if(p.length<4) return showAuthToast('Password must be 4+ characters!','error');
-  if(p!==p2) return showAuthToast('Passwords do not match!','error');
-  const safeKey=u.toLowerCase().replace(/[^a-z0-9_]/g,'');
-  if(!safeKey) return showAuthToast('Invalid username!','error');
-  try{
-    const r=await fetch(await withAuth(`${DB_URL}/users/${safeKey}.json`));
-    const existing=await r.json();
-    if(existing) return showAuthToast('Username already taken!','error');
-    const hashed=await hashPassword(p);
-    const body={username:u,password:hashed,status:"pending",role:"user",created_at:Math.floor(Date.now()/1000)};
-    const res=await fetch(await withAuth(`${DB_URL}/users/${safeKey}.json`),{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
-    if(res.ok){ showAuthToast('Registered! Waiting for admin approval.','success'); document.getElementById('regUser').value=''; document.getElementById('regPass').value=''; document.getElementById('regPass2').value=''; switchAuthTab('login'); }
-    else showAuthToast('Registration error!','error');
-  }catch(e){ showAuthToast('Connection error!','error'); }
-}
-
-async function doLogin(){
-  if(isLocked()){ startLockCountdown(); return showAuthToast('Account locked! Please wait.','error'); }
-  const u=document.getElementById('loginUser').value.trim();
-  const p=document.getElementById('loginPass').value;
-  if(!u||!p) return showAuthToast('Enter username and password!','error');
-  const safeKey=u.toLowerCase().replace(/[^a-z0-9_]/g,'');
-  try{
-    const r=await fetch(await withAuth(`${DB_URL}/users/${safeKey}.json`));
-    const data=await r.json();
-    if(!data){ recordFailedAttempt(); if(isLocked()) startLockCountdown(); await writeLoginHistory(u,false); return showAuthToast('Account not found!','error'); }
-    const hashed=await hashPassword(p);
-    if(data.password!==hashed){ recordFailedAttempt(); if(isLocked()) startLockCountdown(); await writeLoginHistory(u,false); return showAuthToast('Incorrect password!','error'); }
-    if(data.status==='pending') return showAuthToast('Account pending approval.','info');
-    if(data.status==='rejected') return showAuthToast('Account not approved.','error');
-    if(data.status==='disabled') return showAuthToast('Account is disabled.','error');
-    if(data.status!=='approved') return showAuthToast('Account not active.','error');
-    clearAttempts();
-    const role=data.role||'user';
-    const deviceFP=getDeviceFingerprint();
-    const sessionObj={username:data.username,role,safeKey,device:deviceFP,expiry:Date.now()+SESSION_EXPIRY_MS};
-    sessionStorage.setItem(SESSION_KEY,JSON.stringify(sessionObj));
-    if(document.getElementById('rememberMe')?.checked) saveRememberMe(safeKey,role,data.username);
-    else clearRememberMe();
-    try{ await fetch(await withAuth(`${DB_URL}/users/${safeKey}/devices/${deviceFP}.json`),{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(true)}); }catch(e){}
-    await writeLoginHistory(data.username,true);
-    enterApp();
-  }catch(e){ showAuthToast('Connection error!','error'); }
-}
-
-function doLogout(){
-  sessionStorage.removeItem(SESSION_KEY);
-  document.getElementById('mainApp').classList.add('hidden');
-  document.getElementById('fab').classList.add('hidden');
-  document.getElementById('authScreen').classList.remove('hidden');
-  document.getElementById('loginUser').value='';
-  document.getElementById('loginPass').value='';
-  if(autoRefreshInterval){ clearInterval(autoRefreshInterval); autoRefreshInterval=null; }
-  allKeys=[]; currentSession=null;
-}
-
-function enterApp(){
-  const session=JSON.parse(sessionStorage.getItem(SESSION_KEY)||'null');
-  if(!session) return;
-  if(session.expiry&&Date.now()>session.expiry){ sessionStorage.removeItem(SESSION_KEY); return; }
-  currentSession=session;
-  document.getElementById('authScreen').classList.add('hidden');
-  document.getElementById('mainApp').classList.remove('hidden');
-  document.getElementById('fab').classList.remove('hidden');
-  document.getElementById('currentUserLabel').textContent=sanitize(session.username);
-  const isAdmin=session.role==='admin';
-  const isReseller=session.role==='reseller';
-  document.getElementById('adminPanelBtn').classList.toggle('hidden',!isAdmin);
-  document.getElementById('secLogsBtn').classList.toggle('hidden',!isAdmin);
-  document.getElementById('adminOnlyCards').classList.toggle('hidden',!isAdmin);
-  const roleBadge=document.getElementById('currentRoleBadge');
-  if(isAdmin) roleBadge.innerHTML='<span class="role-badge role-admin">Admin</span>';
-  else if(isReseller) roleBadge.innerHTML='<span class="role-badge role-reseller">Reseller</span>';
-  else roleBadge.innerHTML='<span class="role-badge role-user">User</span>';
-  gkInit(); resetInactivity(); loadKeys(); loadUserStats();
-}
-
-function checkSession(){
-  const session=JSON.parse(sessionStorage.getItem(SESSION_KEY)||'null');
-  if(session) enterApp();
-}
-
-// =================== ADMIN PANEL ===================
-function openAdminDrawer(){ document.getElementById('adminDrawer').classList.add('open'); document.getElementById('adminOverlay').classList.add('open'); loadPendingUsers(); }
-function closeAdminDrawer(){ document.getElementById('adminDrawer').classList.remove('open'); document.getElementById('adminOverlay').classList.remove('open'); }
-
-function openUserKeysDrawer(username){
-  document.getElementById('userKeysLabel').textContent=username;
-  document.getElementById('userKeysDrawer').classList.add('open');
-  const userKeys=allKeys.filter(k=>k.created_by===username);
-  const el=document.getElementById('userKeysList');
-  if(!userKeys.length){ el.innerHTML='<div class="empty-state">No keys created by this user</div>'; return; }
-  el.innerHTML=userKeys.map(k=>`
-    <div class="item">
-      <span class="item-key">${k.key}</span>
-      <div class="item-meta">
-        <span class="pill ${isExpired(k.expire)?'pill-coral':'pill-signal'}">${isExpired(k.expire)?'Expired':'Valid'}: ${formatDate(k.expire)}</span>
-        <span class="pill pill-violet">${k.devices.length}/${k.max_devices>=999?'Unli':k.max_devices} devices</span>
-        ${k.label?'<span class="pill pill-amber">'+k.label+'</span>':''}
-      </div>
-    </div>`).join('');
-}
-function closeUserKeysDrawer(){ document.getElementById('userKeysDrawer').classList.remove('open'); }
-
-async function loadPendingUsers(){
-  document.getElementById('pendingList').innerHTML='<div class="empty-state"><span class="ic"><span class="spinner"></span></span>Loading...</div>';
-  try{
-    const r=await fetch(await withAuth(`${DB_URL}/users.json`));
-    const data=await r.json();
-    pendingUsers=[];
-    if(data) Object.keys(data).forEach(key=>{ pendingUsers.push({key,username:data[key].username,status:data[key].status||'pending',role:data[key].role||'user',created_at:data[key].created_at||0}); });
-    renderPendingUsers();
-  }catch(e){ document.getElementById('pendingList').innerHTML='<div class="empty-state" style="color:var(--coral);">Error loading!</div>'; }
-}
-
-function renderPendingUsers(){
-  const el=document.getElementById('pendingList');
-  const search=(document.getElementById('userSearch')?.value||'').toLowerCase();
-  const filterVal=document.getElementById('userFilter')?.value||'all';
-  const sortVal=document.getElementById('userSort')?.value||'none';
-  let list=[...pendingUsers];
-  if(search) list=list.filter(u=>u.username.toLowerCase().includes(search));
-  if(filterVal!=='all') list=list.filter(u=>u.status===filterVal);
-  if(sortVal==='date_asc') list.sort((a,b)=>a.created_at-b.created_at);
-  else if(sortVal==='date_desc') list.sort((a,b)=>b.created_at-a.created_at);
-  else if(sortVal==='name_az') list.sort((a,b)=>a.username.localeCompare(b.username));
-  else list.sort((a,b)=>(a.status==='pending'?-1:1)-(b.status==='pending'?-1:1));
-  document.getElementById('pendingCount').textContent=pendingUsers.filter(u=>u.status==='pending').length;
-  if(!list.length){ el.innerHTML='<div class="empty-state">No results</div>'; return; }
-  el.innerHTML=list.map(u=>{
-    const statusPill=u.status==='pending'?'<span class="pill pill-amber">Pending</span>':u.status==='approved'?'<span class="pill pill-signal">Approved</span>':u.status==='disabled'?'<span class="pill pill-violet">Disabled</span>':'<span class="pill pill-coral">Rejected</span>';
-    const rolePill=`<span class="pill pill-${u.role==='admin'?'coral':u.role==='reseller'?'violet':'neutral'}">${u.role||'user'}</span>`;
-    const userKeyCount=allKeys.filter(k=>k.created_by===u.username).length;
-    let actions=`<div class="item-actions">`;
-    if(u.status==='pending'){ actions+=`<button class="btn-sm" style="color:var(--signal);" onclick="approveUser('${u.key}')">Approve</button><button class="btn-sm btn-danger" onclick="rejectUser('${u.key}')">Reject</button>`; }
-    else if(u.status==='approved'){ actions+=`<button class="btn-sm btn-danger" onclick="rejectUser('${u.key}')">Revoke</button><button class="btn-sm btn-warn" onclick="disableUser('${u.key}')">Disable</button>`; }
-    else if(u.status==='disabled'){ actions+=`<button class="btn-sm" style="color:var(--signal);" onclick="approveUser('${u.key}')">Re-enable</button>`; }
-    else { actions+=`<button class="btn-sm" style="color:var(--signal);" onclick="approveUser('${u.key}')">Approve</button>`; }
-    if(u.role!=='admin') actions+=`<button class="btn-sm btn-info" onclick="setUserRole('${u.key}','${u.role==='reseller'?'user':'reseller'}')">${u.role==='reseller'?'→ User':'→ Reseller'}</button>`;
-    actions+=`<button class="btn-sm btn-info" onclick="openUserKeysDrawer('${u.username}')">Keys (${userKeyCount})</button>`;
-    actions+=`<button class="btn-sm" onclick="promptResetPassword('${u.key}','${u.username}')">Reset PW</button>`;
-    actions+=`<button class="btn-sm btn-danger" onclick="confirmDeleteUser('${u.key}')">Delete</button></div>`;
-    return `<div class="item"><span class="item-key">${u.username}</span><div class="item-meta">${statusPill}${rolePill}<span class="pill pill-neutral">${formatDate(u.created_at)}</span></div>${actions}</div>`;
-  }).join('');
-}
-
-async function approveUser(key){ try{ await fetch(await withAuth(`${DB_URL}/users/${key}/status.json`),{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify("approved")}); const u=pendingUsers.find(x=>x.key===key); if(u) u.status='approved'; renderPendingUsers(); loadUserStats(); showToast('Account approved!','success'); await writeAuditLog('approve_user',key); }catch(e){ showToast('Error!','error'); } }
-async function rejectUser(key){ try{ await fetch(await withAuth(`${DB_URL}/users/${key}/status.json`),{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify("rejected")}); const u=pendingUsers.find(x=>x.key===key); if(u) u.status='rejected'; renderPendingUsers(); loadUserStats(); showToast('Account rejected!','success'); await writeAuditLog('reject_user',key); }catch(e){ showToast('Error!','error'); } }
-async function disableUser(key){ try{ await fetch(await withAuth(`${DB_URL}/users/${key}/status.json`),{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify("disabled")}); const u=pendingUsers.find(x=>x.key===key); if(u) u.status='disabled'; renderPendingUsers(); loadUserStats(); showToast('Account disabled!','info'); await writeAuditLog('disable_user',key); }catch(e){ showToast('Error!','error'); } }
-async function setUserRole(key,newRole){ try{ await fetch(await withAuth(`${DB_URL}/users/${key}/role.json`),{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(newRole)}); const u=pendingUsers.find(x=>x.key===key); if(u) u.role=newRole; renderPendingUsers(); showToast('Role updated to '+newRole,'success'); await writeAuditLog('set_role:'+newRole,key); }catch(e){ showToast('Error!','error'); } }
-function confirmDeleteUser(key){ const u=pendingUsers.find(x=>x.key===key); openConfirm('Delete User',`Delete user "${u?u.username:key}"? This cannot be undone.`,'DELETE',()=>deleteUser(key)); }
-async function deleteUser(key){ try{ await fetch(await withAuth(`${DB_URL}/users/${key}.json`),{method:'DELETE'}); pendingUsers=pendingUsers.filter(x=>x.key!==key); renderPendingUsers(); loadUserStats(); showToast('Account deleted!','success'); await writeAuditLog('delete_user',key); }catch(e){ showToast('Error!','error'); } }
-
-// =================== GENERATE NEW KEY ===================
-let gkIdMode = 'manual';
-
-function gkInit(){
-  const el=document.getElementById('gkExpiryDate');
-  if(el&&!el.value){ const d=new Date(); d.setDate(d.getDate()+30); el.value=d.toISOString().slice(0,10); }
-  const cb=document.getElementById('gkCreatedBy');
-  if(cb) cb.value=currentSession?currentSession.username:'';
-  setGkIdMode('manual');
-}
-
-function setGkIdMode(mode){
-  gkIdMode=mode;
-  document.getElementById('gkModeManualBtn').classList.toggle('active',mode==='manual');
-  document.getElementById('gkModeAutoBtn').classList.toggle('active',mode==='auto');
-  const input=document.getElementById('gkKeyId');
-  const regenBtn=document.getElementById('gkRegenBtn');
-  if(mode==='auto'){ input.disabled=true; regenBtn.style.display='inline-flex'; gkRegenerateId(); }
-  else { input.disabled=false; regenBtn.style.display='none'; }
-}
-
-function gkOnManualEdit(){}
-function gkRegenerateId(){ const id='NPC-'+randKey(4)+'-'+randKey(4); document.getElementById('gkKeyId').value=id; }
-function gkChangeDevices(n){ const el=document.getElementById('gkMaxDevices'); el.value=Math.max(1,Math.min(999,parseInt(el.value||1)+n)); }
-function gkClampDevices(){ const el=document.getElementById('gkMaxDevices'); if(el.value<1)el.value=1; if(el.value>999)el.value=999; }
-function gkSetDev(n){ document.getElementById('gkMaxDevices').value=n; }
-
-async function gkGenerateKey(){
-  const btn=document.getElementById('gkGenBtn');
-  let keyId=document.getElementById('gkKeyId').value.trim();
-  if(gkIdMode==='auto'&&!keyId){ gkRegenerateId(); keyId=document.getElementById('gkKeyId').value.trim(); }
-  if(!keyId) return showToast('Enter a Key Name/ID!','error');
-  if(allKeys.find(k=>k.key===keyId)) return showToast('Duplicate key!','error');
-  const dateVal=document.getElementById('gkExpiryDate').value;
-  if(!dateVal) return showToast('Select expiry date!','error');
-  const expire=Math.floor(new Date(dateVal).getTime()/1000);
-  const maxDev=parseInt(document.getElementById('gkMaxDevices').value)||1;
-  const createdBy=currentSession?currentSession.username:'';
-  btn.classList.add('working');
-  btn.innerHTML='<span class="spinner"></span>Deploying...';
-  const saved=await saveKey(keyId,expire,'',maxDev);
-  btn.classList.remove('working');
-  btn.textContent='Deploy Key';
-  if(saved){
-    allKeys.push({key:keyId,expire,label:'',max_devices:maxDev,devices:[],created_by:createdBy});
-    updateCounts(); renderDrawer();
-    showToast('Key deployed: '+keyId,'success');
-    popFab(); await writeAuditLog('generate_key',keyId);
-    if(gkIdMode==='auto') gkRegenerateId(); else document.getElementById('gkKeyId').value='';
-  } else { showToast('Key could not be saved!','error'); }
-}
-
-// =================== KEY OPERATIONS ===================
-function randKey(len){ let r=''; for(let i=0;i<len;i++) r+=chars[Math.floor(Math.random()*chars.length)]; return r; }
-function isExpired(expire){ return expire<Math.floor(Date.now()/1000); }
-function formatDate(ts){ const d=new Date(ts*1000); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')+' '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0'); }
-
-function animateCount(id,target){ const el=document.getElementById(id); if(!el) return; el.classList.remove('tick'); void el.offsetWidth; el.classList.add('tick'); el.textContent=target; }
-
-async function loadKeys(){
-  document.getElementById('drawerList').innerHTML='<div class="empty-state"><span class="ic"><span class="spinner"></span></span>Loading...</div>';
-  try{
-    const r=await fetch(await withAuth(`${DB_URL}/keys.json`));
-    const data=await r.json();
-    allKeys=[];
-    const isAdmin=currentSession&&currentSession.role==='admin';
-    const isReseller=currentSession&&currentSession.role==='reseller';
-    if(data){
-      Object.keys(data).forEach(key=>{
-        const v=data[key];
-        let devices=[];
-        if(v.devices){ if(Array.isArray(v.devices)) devices=v.devices.filter(d=>d!==null&&d!==undefined&&d!==''); else if(typeof v.devices==='object') devices=Object.values(v.devices).filter(d=>d!==null&&d!==undefined&&d!==''); }
-        const createdBy=v.created_by||'';
-        if(!isAdmin&&!isReseller&&currentSession&&createdBy!==currentSession.username) return;
-        allKeys.push({key,expire:v.expire||0,label:v.label||'',max_devices:v.max_devices||1,devices,created_by:createdBy});
-      });
+      outputEl.value = result || "";
+    } finally {
+      btnConvert.disabled = false;
+      btnConvert.textContent = "CONVERT NOW";
     }
-    updateCounts(); renderDrawer();
-    showToast('Loaded '+allKeys.length+' keys!','success');
-    popFab();
-  }catch(e){ showToast('Error loading!','error'); }
+  }, 0));
 }
 
-async function saveKey(key,expire,label,maxDev){
-  const body={expire,label:label||'',max_devices:maxDev,devices:[],created_by:currentSession?currentSession.username:''};
-  try{ const r=await fetch(await withAuth(`${DB_URL}/keys/${key}.json`),{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}); return r.ok; }catch(e){ return false; }
-}
-
-async function deleteKeyFromDb(key){ try{ await fetch(await withAuth(`${DB_URL}/keys/${key}.json`),{method:'DELETE'}); }catch(e){} }
-
-async function resetDevices(i,key){ try{ await fetch(await withAuth(`${DB_URL}/keys/${key}/devices.json`),{method:'PUT',headers:{'Content-Type':'application/json'},body:'null'}); allKeys[i].devices=[]; renderDrawer(); showToast('Devices reset!','success'); }catch(e){ showToast('Error!','error'); } }
-
-async function removeOneDevice(i,key,deviceSerial){
-  const newDevices=allKeys[i].devices.filter(d=>d!==deviceSerial);
-  try{ await fetch(await withAuth(`${DB_URL}/keys/${key}/devices.json`),{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(newDevices.length?newDevices:null)}); allKeys[i].devices=newDevices; renderDrawer(); showToast('Device removed!','success'); }catch(e){ showToast('Error!','error'); }
-}
-
-function toggleDeviceList(key){ expandedDevices[key]=!expandedDevices[key]; renderDrawer(); }
-
-// =================== RENDER DRAWER ===================
-function renderDrawer(){
-  const el=document.getElementById('drawerList');
-  const search=(document.getElementById('searchInput')?.value||'').toLowerCase();
-  const filter=document.getElementById('filterStatus')?.value||'all';
-  const sort=document.getElementById('sortMode')?.value||'none';
-  let filtered=allKeys.filter(o=>{
-    if(search&&!o.key.toLowerCase().includes(search)&&!(o.label||'').toLowerCase().includes(search)) return false;
-    if(filter==='valid'&&isExpired(o.expire)) return false;
-    if(filter==='expired'&&!isExpired(o.expire)) return false;
-    if(filter==='full'&&o.devices.length<o.max_devices) return false;
-    return true;
+function doCopy() {
+  const text = document.getElementById("outputCode").value;
+  if (!text.trim()) { showToast("Nothing to copy!"); return; }
+  navigator.clipboard.writeText(text).then(() => showToast("Copied!")).catch(() => {
+    const ta = document.createElement("textarea");
+    ta.value = text;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand("copy");
+    document.body.removeChild(ta);
+    showToast("Copied!");
   });
-  if(sort==='date_asc') filtered.sort((a,b)=>a.expire-b.expire);
-  else if(sort==='date_desc') filtered.sort((a,b)=>b.expire-a.expire);
-  else if(sort==='exp_asc') filtered.sort((a,b)=>a.expire-b.expire);
-  else if(sort==='exp_desc') filtered.sort((a,b)=>b.expire-a.expire);
-  else if(sort==='dev_asc') filtered.sort((a,b)=>a.devices.length-b.devices.length);
-  else if(sort==='dev_desc') filtered.sort((a,b)=>b.devices.length-a.devices.length);
-  else if(sort==='user_az') filtered.sort((a,b)=>(a.created_by||'').localeCompare(b.created_by||''));
-  if(!filtered.length){ el.innerHTML='<div class="empty-state"><span class="ic">🔍</span>No results found</div>'; return; }
-  const isAdmin=currentSession&&currentSession.role==='admin';
-  el.innerHTML=filtered.map((obj,listIdx)=>{
-    const exp=isExpired(obj.expire);
-    const devCount=obj.devices.length;
-    const maxDev=obj.max_devices;
-    const isFull=devCount>=maxDev;
-    const isUnlimited=maxDev>=999;
-    const idx=allKeys.findIndex(k=>k.key===obj.key);
-    const devLabel=isUnlimited?devCount+'/Unli':(devCount+'/'+maxDev);
-    const expanded=!!expandedDevices[obj.key];
-    const isSelected=selectedKeys.has(obj.key);
-    let deviceListHtml='';
-    if(expanded){
-      if(devCount===0) deviceListHtml='<div class="device-list"><div class="device-empty">No devices connected</div></div>';
-      else { const rows=obj.devices.map(d=>`<div class="device-row"><span>${d}</span><button onclick="removeOneDevice(${idx},'${obj.key}','${d.replace(/'/g,"\\'")}')">✕</button></div>`).join(''); deviceListHtml=`<div class="device-list">${rows}</div>`; }
+}
+
+function doClear() {
+  document.getElementById("inputCode").value = "";
+  document.getElementById("outputCode").value = "";
+  document.getElementById("counterStats").textContent = "";
+  document.getElementById("counterOutput").textContent = "";
+  showToast("Cleared!");
+}
+
+function doCount() {
+  const src = document.getElementById("inputCode").value;
+  if (!src.trim()) { document.getElementById("counterStats").textContent = "No input!"; return; }
+  let total = 0, withO = 0;
+  const unique = {};
+  for (const line of src.split(/\r?\n/)) {
+    total++;
+    let has = false;
+    for (const o of line.matchAll(/0[xX][0-9a-fA-F]+/g)) { has = true; unique[fixXCase(o[0])] = true; }
+    for (const s of line.matchAll(/sub_([0-9a-fA-F]+)/g)) { has = true; unique["0x" + s[1]] = true; }
+    if (has) withO++;
+  }
+  const uc = Object.keys(unique).length;
+  document.getElementById("counterStats").textContent =
+    `Lines: ${total}  |  With Offsets: ${withO}  |  Unique: ${uc}`;
+  document.getElementById("counterOutput").textContent =
+    `Total Lines: ${total}\nLines with Offsets: ${withO}\nUnique Offsets: ${uc}`;
+}
+
+function doView() {
+  const src = document.getElementById("inputCode").value;
+  if (!src.trim()) { document.getElementById("counterStats").textContent = "No input!"; return; }
+  const lines = src.split(/\r?\n/);
+  const r = [];
+  let offsetCount = 0;
+  const unique = {};
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    let has = false;
+    for (const o of line.matchAll(/0[xX][0-9a-fA-F]+/g)) {
+      has = true; offsetCount++;
+      const k = fixXCase(o[0]);
+      unique[k] = (unique[k] || 0) + 1;
     }
-    return `<div class="item${isSelected?' selected':''}" id="ki-${obj.key.replace(/[^a-z0-9]/gi,'_')}" style="animation-delay:${listIdx*0.03}s">
-      <div style="display:flex;align-items:flex-start;gap:10px;">
-        <input type="checkbox" class="key-checkbox" data-key="${obj.key}" ${isSelected?'checked':''} onchange="toggleKeySelect('${obj.key}',this.checked)" style="margin-top:3px;" />
-        <div style="flex:1;min-width:0;">
-          <div class="item-key">${obj.key}</div>
-          <div class="item-meta">
-            ${obj.label?'<span class="pill pill-amber">'+obj.label+'</span>':''}
-            <span class="pill ${exp?'pill-coral':'pill-signal'}">${exp?'Expired':'Valid'}: ${formatDate(obj.expire)}</span>
-            <span class="pill ${isFull&&!isUnlimited?'pill-coral':'pill-violet'}">${isFull&&!isUnlimited?'FULL':devLabel} dev</span>
-            ${isAdmin?'<span class="pill pill-neutral">By: '+(obj.created_by||'?')+'</span>':''}
-          </div>
-          <div class="item-actions">
-            <button class="btn-sm" onclick="copyOne('${obj.key}')">Copy</button>
-            <button class="btn-sm btn-info" onclick="openExtendModal(${idx},'${obj.key}',${obj.expire})">Extend</button>
-            <button class="btn-sm btn-warn" onclick="resetDevices(${idx},'${obj.key}')">Reset</button>
-            <button class="btn-sm btn-danger" onclick="confirmDelKey(${idx},'${obj.key}')">Delete</button>
-          </div>
-          <span class="device-toggle" onclick="toggleDeviceList('${obj.key}')">${expanded?'▾ Hide devices':'▸ Show devices ('+devCount+')'}</span>
-          ${deviceListHtml}
-        </div>
-      </div>
-    </div>`;
-  }).join('');
+    r.push(`${String(i + 1).padStart(4)} | ${has ? "* " : "  "}${fixXCase(line)}`);
+  }
+  const uc = Object.keys(unique).length;
+  document.getElementById("counterStats").textContent =
+    `Lines: ${lines.length}  |  Offsets: ${offsetCount}  |  Unique: ${uc}`;
+  document.getElementById("counterOutput").textContent =
+    `OFFSET VIEWER\nTotal: ${lines.length} | Unique: ${uc}\n\n` + r.join("\n");
 }
 
-// =================== STATS ===================
-function updateDashboardStats(){
-  try{
-    const totalDevices=allKeys.reduce((a,b)=>a+(b.devices?b.devices.length:0),0);
-    const td=document.getElementById('totalDevices'); if(td) td.textContent=totalDevices;
-    const expiredKeys=allKeys.filter(k=>isExpired(k.expire)).length;
-    const fullKeys=allKeys.filter(k=>k.devices.length>=k.max_devices&&k.max_devices<999).length;
-    animateCount('expiredCount',expiredKeys); animateCount('fullCount',fullKeys);
-    const logs=document.getElementById('adminLogs');
-    if(logs) logs.innerHTML=`<div class="log-entry">LOAD_KEYS | ${new Date().toLocaleString()}</div><div class="log-entry">TOTAL KEYS: ${allKeys.length} | EXPIRED: ${expiredKeys} | FULL: ${fullKeys}</div>`;
-    const monitor=document.getElementById('usageMonitor');
-    if(monitor) monitor.innerHTML=allKeys.slice(0,10).map(k=>`<div class="log-entry">${k.key} | ${k.devices.length}/${k.max_devices>=999?'Unli':k.max_devices} devs | ${isExpired(k.expire)?'<span style="color:var(--coral)">EXP</span>':'<span style="color:var(--signal)">OK</span>'}</div>`).join('')||'<div class="log-entry">No keys available</div>';
-  }catch(e){}
-  loadUserStats();
-}
-
-async function loadUserStats(){
-  const totalEl=document.getElementById('totalUsers'); const approvedEl=document.getElementById('approvedUsers'); const pendingEl=document.getElementById('pendingUsers');
-  if(!totalEl&&!approvedEl&&!pendingEl) return;
-  try{
-    const r=await fetch(await withAuth(`${DB_URL}/users.json`));
-    const data=await r.json();
-    let total=0,approved=0,pending=0;
-    if(data) Object.values(data).forEach(u=>{ total++; if(u.status==='approved') approved++; else if(u.status==='pending') pending++; });
-    if(totalEl) totalEl.textContent=total; if(approvedEl) approvedEl.textContent=approved; if(pendingEl) pendingEl.textContent=pending;
-  }catch(e){}
-}
-
-function updateCounts(){
-  const total=allKeys.length; const valid=allKeys.filter(k=>!isExpired(k.expire)).length;
-  animateCount('totalCount',total); animateCount('validCount',valid);
-  const drawerCountEl=document.getElementById('drawerCount'); if(drawerCountEl) drawerCountEl.textContent=total;
-  updateDashboardStats();
-  const badge=document.getElementById('fabBadge'); badge.textContent=total; badge.style.display=total>0?'flex':'none';
-}
-
-function popFab(){ const fab=document.getElementById('fab'); fab.classList.remove('pop'); void fab.offsetWidth; fab.classList.add('pop'); }
-
-// =================== DELETE KEY ===================
-function confirmDelKey(i,key){ openConfirm('Delete Key',`Delete key:\n"${key}"?\n\nThis cannot be undone.`,'DELETE',()=>delKey(i,key)); }
-async function delKey(i,key){
-  const safeId=key.replace(/[^a-z0-9]/gi,'_');
-  const el=document.getElementById('ki-'+safeId);
-  if(el){ el.classList.add('deleting'); await new Promise(r=>setTimeout(r,250)); }
-  await deleteKeyFromDb(key);
-  allKeys.splice(i,1); selectedKeys.delete(key);
-  updateCounts(); renderDrawer();
-  showToast('Key deleted!','success');
-  await writeAuditLog('delete_key',key);
-}
-
-function copyOne(k){ navigator.clipboard.writeText(k).catch(()=>{}); showToast('Copied!','success'); }
-function copyAll(){ if(!allKeys.length) return showToast('No keys to copy!','error'); navigator.clipboard.writeText(allKeys.map(o=>o.key).join('\n')).catch(()=>{}); showToast('Copied '+allKeys.length+' keys!','success'); }
-function exportTxt(){
-  if(!allKeys.length) return showToast('No keys to export!','error');
-  const b=new Blob([allKeys.map(o=>o.key+' | '+(o.label||'no label')+' | Expires: '+formatDate(o.expire)+' | Max devices: '+o.max_devices+' | Devices: '+(o.devices.join(', ')||'none')).join('\n')],{type:'text/plain'});
-  const a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download='npc_keys_'+Date.now()+'.txt'; a.click();
-}
-
-function showToast(msg,type){
-  const t=document.getElementById('toast'); if(!t) return;
-  if(toastTimer) clearTimeout(toastTimer);
-  t.textContent=msg; t.className='toast '+type+' visible';
-  toastTimer=setTimeout(()=>{ t.classList.add('hiding'); setTimeout(()=>{ t.className='toast'; },250); },3000);
-}
-
-function openDrawer(){ document.getElementById('drawer').classList.add('open'); document.getElementById('overlay').classList.add('open'); }
-function closeDrawer(){ document.getElementById('drawer').classList.remove('open'); document.getElementById('overlay').classList.remove('open'); }
-
-// =================== XSS SANITIZE ===================
-function sanitize(str){ return String(str||'').replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#39;"); }
-
-// =================== DEVICE FINGERPRINT ===================
-function getDeviceFingerprint(){
-  const nav=window.navigator;
-  const raw=[nav.userAgent,nav.language,screen.width+'x'+screen.height,screen.colorDepth,new Date().getTimezoneOffset(),nav.hardwareConcurrency||''].join('|');
-  let hash=0; for(let i=0;i<raw.length;i++){ hash=((hash<<5)-hash)+raw.charCodeAt(i); hash|=0; }
-  return 'DEV-'+Math.abs(hash).toString(36).toUpperCase();
-}
-
-// =================== SESSION ===================
-const REMEMBER_KEY='npc_remember';
-const SESSION_EXPIRY_MS=8*60*60*1000;
-const REMEMBER_EXPIRY_MS=7*24*60*60*1000;
-const INACTIVITY_LIMIT=15*60*1000;
-let inactivityTimer=null; let inactivityBarTimer=null; let inactivityBarEl=null;
-
-function resetInactivity(){
-  if(!currentSession) return;
-  clearTimeout(inactivityTimer); clearInterval(inactivityBarTimer);
-  if(!inactivityBarEl) inactivityBarEl=document.getElementById('inactivityBar');
-  if(inactivityBarEl){ inactivityBarEl.style.display='none'; inactivityBarEl.style.width='100%'; }
-  inactivityTimer=setTimeout(()=>{
-    if(!inactivityBarEl) inactivityBarEl=document.getElementById('inactivityBar');
-    if(inactivityBarEl){ inactivityBarEl.style.display='block'; inactivityBarEl.style.width='100%'; }
-    let secs=60;
-    inactivityBarTimer=setInterval(()=>{
-      secs--; if(inactivityBarEl) inactivityBarEl.style.width=(secs/60*100)+'%';
-      if(secs<=0){ clearInterval(inactivityBarTimer); showToast('Auto-logout: inactive 15 min','info'); setTimeout(doLogout,800); }
-    },1000);
-  },INACTIVITY_LIMIT);
-}
-
-function saveRememberMe(safeKey,role,username){ localStorage.setItem(REMEMBER_KEY,JSON.stringify({safeKey,role,username,exp:Date.now()+REMEMBER_EXPIRY_MS})); }
-function clearRememberMe(){ localStorage.removeItem(REMEMBER_KEY); }
-function getRememberMe(){ try{ const d=JSON.parse(localStorage.getItem(REMEMBER_KEY)||'null'); if(d&&d.exp>Date.now()) return d; clearRememberMe(); return null; }catch(e){ return null; } }
-function checkSessionExpiry(){ const s=JSON.parse(sessionStorage.getItem(SESSION_KEY)||'null'); if(s&&s.expiry&&Date.now()>s.expiry){ showToast('Session expired. Logging out.','info'); setTimeout(doLogout,800); return false; } return true; }
-
-// =================== AUDIT / LOGIN HISTORY ===================
-async function writeAuditLog(action,target){ if(!currentSession) return; try{ const log={actor:sanitize(currentSession.username),action:sanitize(action),target:sanitize(target||''),time:Math.floor(Date.now()/1000),device:getDeviceFingerprint()}; await fetch(await withAuth(`${DB_URL}/audit_logs.json`),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(log)}); }catch(e){} }
-async function writeLoginHistory(username,success){ try{ const rec={username:sanitize(username),time:Math.floor(Date.now()/1000),device:getDeviceFingerprint(),userAgent:navigator.userAgent.slice(0,80),success}; await fetch(await withAuth(`${DB_URL}/login_history.json`),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(rec)}); }catch(e){} }
-
-// =================== SECURITY DRAWER ===================
-function openSecDrawer(){ document.getElementById('secDrawer').classList.add('open'); document.getElementById('secOverlay').classList.add('open'); loadSecurityLogs(); }
-function closeSecDrawer(){ document.getElementById('secDrawer').classList.remove('open'); document.getElementById('secOverlay').classList.remove('open'); }
-let secTab='audit';
-function switchSecTab(tab){
-  secTab=tab;
-  document.getElementById('secTabAudit').classList.toggle('active',tab==='audit');
-  document.getElementById('secTabLogin').classList.toggle('active',tab==='login');
-  document.getElementById('auditLogPanel').style.display=tab==='audit'?'':'none';
-  document.getElementById('loginHistoryPanel').style.display=tab==='login'?'':'none';
-}
-async function loadSecurityLogs(){
-  document.getElementById('auditLogPanel').innerHTML='<div class="empty-state"><span class="ic"><span class="spinner"></span></span>Loading...</div>';
-  document.getElementById('loginHistoryPanel').innerHTML='<div class="empty-state"><span class="ic"><span class="spinner"></span></span>Loading...</div>';
-  try{
-    const [ar,lr]=await Promise.all([fetch(await withAuth(`${DB_URL}/audit_logs.json`)),fetch(await withAuth(`${DB_URL}/login_history.json`))]);
-    const auditData=await ar.json(); const loginData=await lr.json();
-    const auditEl=document.getElementById('auditLogPanel');
-    if(auditData){ const entries=Object.values(auditData).sort((a,b)=>b.time-a.time).slice(0,80); auditEl.innerHTML=entries.map(e=>`<div class="log-entry">[${formatDate(e.time)}] <b>${sanitize(e.actor)}</b> → ${sanitize(e.action)} : <span style="opacity:0.8">${sanitize(e.target)}</span><div style="font-size:9px;opacity:0.55;margin-top:2px;">${sanitize(e.device||'')}</div></div>`).join('')||'<div class="empty-state">No audit logs</div>'; }
-    else auditEl.innerHTML='<div class="empty-state">No audit logs</div>';
-    const loginEl=document.getElementById('loginHistoryPanel');
-    if(loginData){ const entries=Object.values(loginData).sort((a,b)=>b.time-a.time).slice(0,80); loginEl.innerHTML=entries.map(e=>`<div class="log-entry ${e.success?'login':'danger'}">[${formatDate(e.time)}] <b>${sanitize(e.username)}</b> — ${e.success?'✅ Success':'❌ Failed'}<div style="font-size:9px;opacity:0.6;margin-top:2px;">${sanitize(e.device||'')} | ${sanitize((e.userAgent||'').slice(0,60))}</div></div>`).join('')||'<div class="empty-state">No login history</div>'; }
-    else loginEl.innerHTML='<div class="empty-state">No login history</div>';
-  }catch(e){ document.getElementById('auditLogPanel').innerHTML='<div class="empty-state" style="color:var(--coral);">Error loading logs!</div>'; document.getElementById('loginHistoryPanel').innerHTML='<div class="empty-state" style="color:var(--coral);">Error loading logs!</div>'; }
-}
-
-// =================== PASSWORD RESET ===================
-async function promptResetPassword(key,username){
-  const newPw=prompt(`Set new password for "${username}":\n(min. 4 characters)`);
-  if(!newPw||newPw.length<4){ showToast('Password too short / cancelled','error'); return; }
-  try{ const hashed=await hashPassword(newPw); await fetch(await withAuth(`${DB_URL}/users/${key}/password.json`),{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(hashed)}); showToast('Password reset for '+username,'success'); await writeAuditLog('reset_password',username); }catch(e){ showToast('Error resetting!','error'); }
-}
-
-// =================== INIT ===================
-initTheme();
-getDbToken();
-
-(function(){
-  const rem=getRememberMe();
-  if(rem&&!sessionStorage.getItem(SESSION_KEY)) sessionStorage.setItem(SESSION_KEY,JSON.stringify({username:rem.username,role:rem.role,safeKey:rem.safeKey,expiry:Date.now()+SESSION_EXPIRY_MS}));
-})();
-
-checkSession();
-
-['mousemove','keydown','touchstart','click','scroll'].forEach(ev=>document.addEventListener(ev,resetInactivity,{passive:true}));
-setInterval(()=>{ if(currentSession) checkSessionExpiry(); },2*60*1000);
+document.getElementById("inputCode").focus();
 </script>
 </body>
 </html>
