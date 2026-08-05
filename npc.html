@@ -3,447 +3,780 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NPC OFFSET CONVERTER</title>
+<title>NPC OFFSET CONVERTER // NIGHT CITY BUILD</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
 <style>
-  :root { --main: #00FF9D; }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+/* ===========================
+   TOKENS
+=========================== */
+:root {
+  --yellow:   #FFE600;
+  --magenta:  #FF2D78;
+  --teal:     #00C2C7;
+  --bg:       #070B14;
+  --bg2:      #0D1220;
+  --bg3:      #111827;
+  --panel:    #0A0F1C;
+  --border:   rgba(255,230,0,0.2);
+  --text:     #C8D6E5;
+  --dim:      #4A5568;
+  --accent:   var(--yellow);
+  --glow:     rgba(255,230,0,0.35);
+}
 
-  body {
-    background:
-      radial-gradient(circle at top, #00ff9d22, transparent 60%),
-      radial-gradient(circle at bottom, #7b2cff22, transparent 60%),
-      #050505;
-    color: var(--main);
-    font-family: 'Segoe UI', system-ui, sans-serif;
-    min-height: 100vh;
-    padding: 18px 18px 100px;
-  }
+/* ===========================
+   RESET + BASE
+=========================== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-  /* NEON TITLE */
-  h1.title {
-    text-align: center;
-    font-size: 28px;
-    font-weight: 900;
-    color: var(--main);
-    letter-spacing: 2px;
-    margin: 10px 0 22px;
-    line-height: 1.2;
-    text-transform: uppercase;
-    text-shadow:
-      0 0 8px var(--main),
-      0 0 18px var(--main),
-      0 0 35px var(--main);
-  }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Rajdhani', system-ui, sans-serif;
+  font-weight: 400;
+  min-height: 100vh;
+  padding: 0 0 100px;
+  position: relative;
+  overflow-x: hidden;
+}
 
-  /* THEME SWITCHER ROW */
-  .theme-row {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    margin-bottom: 18px;
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 1px;
-    color: var(--main);
-    opacity: 0.75;
-  }
-  .theme-row select {
-    background: #121212;
-    color: var(--main);
-    border: 1px solid var(--main);
-    border-radius: 20px;
-    padding: 4px 12px;
-    font-size: 12px;
-    cursor: pointer;
-    outline: none;
-    width: auto;
-    height: auto;
-    font-family: inherit;
-  }
+/* SCANLINE OVERLAY — signature element */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,0,0,0.18) 2px,
+    rgba(0,0,0,0.18) 4px
+  );
+  pointer-events: none;
+  z-index: 9000;
+  animation: scanMove 8s linear infinite;
+}
+@keyframes scanMove {
+  from { background-position: 0 0; }
+  to   { background-position: 0 80px; }
+}
 
-  /* GLASSMORPHISM CARD */
-  .card {
-    position: relative;
-    background: rgba(18,18,18,.65);
-    backdrop-filter: blur(18px);
-    -webkit-backdrop-filter: blur(18px);
-    border: 1px solid rgba(0,255,157,.18);
-    border-radius: 18px;
-    padding: 16px;
-    margin-bottom: 14px;
-    box-shadow:
-      0 0 20px rgba(0,255,157,.08),
-      inset 0 0 10px rgba(255,255,255,.02);
-    transition: .35s;
-  }
-  .card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 0 30px rgba(0,255,157,.35);
-  }
+/* CORNER GRID DECORATION */
+body::after {
+  content: "";
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background-image:
+    linear-gradient(rgba(255,230,0,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,230,0,0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+  z-index: 0;
+}
 
-  /* RGB ANIMATED BORDER */
-  .card::before {
-    content: "";
-    position: absolute;
-    inset: -2px;
-    border-radius: 20px;
-    background: linear-gradient(
-      90deg,
-      #00ff9d, #00bfff, #8a2be2, #ff0099, #00ff9d
-    );
-    background-size: 400%;
-    animation: rgbBorder 6s linear infinite;
-    z-index: -1;
-    filter: blur(10px);
-    opacity: 0;
-    transition: opacity .35s;
-  }
-  .card:hover::before { opacity: 1; }
+/* ===========================
+   HEADER
+=========================== */
+.header {
+  position: relative;
+  padding: 24px 18px 0;
+  margin-bottom: 6px;
+  z-index: 1;
+}
 
-  @keyframes rgbBorder {
-    0%   { background-position: 0%; }
-    100% { background-position: 400%; }
-  }
+.corp-tag {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 3px;
+  color: var(--magenta);
+  text-transform: uppercase;
+  display: block;
+  text-align: center;
+  margin-bottom: 4px;
+  opacity: 0.8;
+}
 
-  .card-label {
-    font-size: 11px;
-    font-weight: 700;
-    color: var(--main);
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    margin-bottom: 8px;
-  }
+/* GLITCH TITLE */
+.glitch-wrap {
+  text-align: center;
+  margin-bottom: 2px;
+  position: relative;
+}
 
-  input[type="text"], textarea, select {
-    width: 100%;
-    background: #0A0A0A;
-    color: var(--main);
-    border: none;
-    outline: none;
-    padding: 12px;
-    font-size: 13px;
-    border-radius: 8px;
-    font-family: 'Consolas', 'Courier New', monospace;
-  }
+h1.title {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--yellow);
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  line-height: 1.1;
+  position: relative;
+  display: inline-block;
+  text-shadow: 0 0 20px rgba(255,230,0,0.6);
+}
 
-  input[type="text"]::placeholder,
-  textarea::placeholder { color: #444; }
+h1.title::before,
+h1.title::after {
+  content: attr(data-text);
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
+}
+h1.title::before {
+  color: var(--magenta);
+  animation: glitch1 3.5s infinite;
+  clip-path: polygon(0 20%, 100% 20%, 100% 40%, 0 40%);
+  opacity: 0.7;
+}
+h1.title::after {
+  color: var(--teal);
+  animation: glitch2 3.5s infinite;
+  clip-path: polygon(0 60%, 100% 60%, 100% 80%, 0 80%);
+  opacity: 0.7;
+}
 
-  select#modePicker {
-    cursor: pointer;
-    height: 44px;
-    font-size: 13px;
-    appearance: none;
-    -webkit-appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2300FF9D' stroke-width='2' fill='none'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 12px center;
-    background-color: #0A0A0A;
-    padding-right: 36px;
-  }
+@keyframes glitch1 {
+  0%,90%,100% { transform: translate(0); }
+  92%          { transform: translate(-4px, 0); }
+  94%          { transform: translate(3px, 0); }
+  96%          { transform: translate(-2px, 0); }
+  98%          { transform: translate(2px, 0); }
+}
+@keyframes glitch2 {
+  0%,90%,100% { transform: translate(0); }
+  91%          { transform: translate(3px, 0); }
+  93%          { transform: translate(-3px, 0); }
+  95%          { transform: translate(4px, 0); }
+  97%          { transform: translate(-1px, 0); }
+}
 
-  select option { background: #121212; color: #00FF9D; }
+.sub-title {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  color: var(--dim);
+  letter-spacing: 2px;
+  text-align: center;
+  margin-bottom: 20px;
+}
 
-  textarea { resize: vertical; min-height: 160px; line-height: 1.5; }
+/* STATUS BAR */
+.status-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  background: rgba(255,45,120,0.08);
+  border-top: 1px solid rgba(255,45,120,0.3);
+  border-bottom: 1px solid rgba(255,45,120,0.3);
+  margin: 0 0 18px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 9px;
+  color: var(--magenta);
+  letter-spacing: 1.5px;
+  overflow: hidden;
+  position: relative;
+}
+.status-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--magenta);
+  flex-shrink: 0;
+  animation: pulse 1.4s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%,100% { opacity: 1; }
+  50%      { opacity: 0.2; }
+}
+.status-scroll {
+  white-space: nowrap;
+  animation: scrollText 18s linear infinite;
+}
+@keyframes scrollText {
+  0%   { transform: translateX(100vw); }
+  100% { transform: translateX(-100%); }
+}
 
-  /* BUTTONS */
-  .btn {
-    display: inline-block;
-    padding: 0 16px;
-    height: 50px;
-    border: none;
-    border-radius: 10px;
-    font-size: 14px;
-    font-weight: 700;
-    cursor: pointer;
-    letter-spacing: 0.5px;
-    width: 100%;
-    transition: .3s;
-    overflow: hidden;
-    position: relative;
-  }
-  .btn:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 0 20px var(--main);
-  }
-  .btn:active { transform: scale(.96); }
+/* ===========================
+   THEME ROW
+=========================== */
+.theme-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin: 0 18px 16px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: var(--dim);
+  z-index: 1;
+  position: relative;
+}
 
-  .btn-primary { background: var(--main); color: #000; margin-top: 12px; }
-  .btn-copy    { background: var(--main); color: #000; }
-  .btn-clear   { background: #222; color: #CCC; }
-  .btn-clear:hover { box-shadow: 0 0 16px #555; }
-  .btn-purple  { background: #9B59B6; color: #FFF; height: 44px; font-size: 13px; }
-  .btn-purple:hover { box-shadow: 0 0 16px #9B59B6; }
-  .btn-slate   { background: #34495E; color: #FFF; height: 44px; font-size: 13px; }
-  .btn-slate:hover  { box-shadow: 0 0 16px #34495E; }
-  .btn-dl      { background: #1a1a2e; color: var(--main); border: 1px solid var(--main); }
+.theme-row select {
+  background: var(--panel);
+  color: var(--yellow);
+  border: 1px solid rgba(255,230,0,0.3);
+  border-radius: 2px;
+  padding: 4px 28px 4px 10px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  cursor: pointer;
+  outline: none;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23FFE600'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  letter-spacing: 1px;
+}
+.theme-row select option { background: #0D1220; color: #FFE600; }
 
-  .btn-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-    margin-top: 12px;
-  }
-  .btn-row-3 {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 8px;
-    margin-top: 12px;
-  }
+/* ===========================
+   CARDS — cyberpunk panels
+=========================== */
+.wrap { padding: 0 14px; position: relative; z-index: 1; }
 
-  .counter-stats {
-    background: #0A0A0A;
-    padding: 10px;
-    border-radius: 8px;
-    font-size: 13px;
-    color: var(--main);
-    margin-top: 8px;
-    min-height: 36px;
-    font-family: monospace;
-  }
+.card {
+  position: relative;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  margin-bottom: 12px;
+  clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 14px 100%, 0 calc(100% - 14px));
+  padding: 14px 14px 14px 16px;
+  transition: border-color .25s, box-shadow .25s;
+}
+.card:hover {
+  border-color: rgba(255,230,0,0.5);
+  box-shadow: 0 0 24px rgba(255,230,0,0.1), inset 0 0 30px rgba(255,230,0,0.03);
+}
 
-  .counter-output {
-    background: #0A0A0A;
-    padding: 10px;
-    border-radius: 8px;
-    font-size: 12px;
-    color: var(--main);
-    margin-top: 8px;
-    max-height: 180px;
-    overflow-y: auto;
-    font-family: 'Consolas', 'Courier New', monospace;
-    white-space: pre;
-    line-height: 1.5;
-    word-break: break-all;
-  }
+/* top-right corner cut accent line */
+.card::after {
+  content: "";
+  position: absolute;
+  top: 0; right: 0;
+  width: 48px; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--yellow));
+  transform-origin: right top;
+  transform: rotate(0deg);
+}
 
-  /* PRESET BUTTONS */
-  .preset-btn {
-    width: 100%;
-    height: 42px;
-    border: none;
-    border-radius: 8px;
-    font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
-    margin-bottom: 6px;
-    color: #FFF;
-    letter-spacing: 0.3px;
-    transition: .2s;
-    position: relative;
-    overflow: hidden;
-  }
-  .preset-btn:last-child { margin-bottom: 0; }
-  .preset-btn:active { opacity: 0.75; }
-  .preset-btn:hover { filter: brightness(1.2); transform: translateY(-2px); }
+/* left yellow bar */
+.card::before {
+  content: "";
+  position: absolute;
+  left: 0; top: 20%; bottom: 20%;
+  width: 2px;
+  background: var(--yellow);
+  opacity: 0.5;
+  transition: opacity .25s, top .25s, bottom .25s;
+}
+.card:hover::before { top: 5%; bottom: 5%; opacity: 1; }
 
-  .preset-green  { background: #16A085; }
-  .preset-orange { background: #E67E22; }
-  .preset-purple { background: #8E44AD; }
-  .preset-red    { background: #C0392B; }
-  .preset-blue   { background: #2980B9; }
+.card-label {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 2.5px;
+  color: var(--yellow);
+  text-transform: uppercase;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  opacity: 0.9;
+}
+.card-label::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(255,230,0,0.3), transparent);
+}
 
-  /* DROP ZONE */
-  .card.drag-over {
-    border-color: var(--main) !important;
-    box-shadow: 0 0 30px rgba(0,255,157,.5) !important;
-  }
-  .drop-hint {
-    font-size: 11px;
-    color: #555;
-    margin-top: 6px;
-    text-align: center;
-    letter-spacing: 0.5px;
-  }
+/* ===========================
+   INPUTS
+=========================== */
+input[type="text"],
+textarea,
+select.mode-select {
+  width: 100%;
+  background: rgba(0,0,0,0.5);
+  color: var(--yellow);
+  border: 1px solid rgba(255,230,0,0.15);
+  outline: none;
+  padding: 10px 12px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 12px;
+  border-radius: 0;
+  transition: border-color .2s, box-shadow .2s;
+  letter-spacing: 0.5px;
+}
+input[type="text"]:focus,
+textarea:focus,
+select.mode-select:focus {
+  border-color: rgba(255,230,0,0.6);
+  box-shadow: 0 0 12px rgba(255,230,0,0.12);
+}
+input[type="text"]::placeholder,
+textarea::placeholder { color: #2A3548; }
 
-  /* TOAST */
-  #toast {
-    position: fixed;
-    bottom: 90px;
-    left: 50%;
-    transform: translateX(-50%) translateY(20px);
-    background: #1A1A1A;
-    border: 1px solid rgba(0,255,157,.3);
-    color: var(--main);
-    padding: 10px 22px;
-    border-radius: 24px;
-    font-size: 13px;
-    font-weight: 600;
-    opacity: 0;
-    transition: opacity .25s, transform .25s;
-    pointer-events: none;
-    z-index: 9999;
-    white-space: nowrap;
-    box-shadow: 0 0 20px rgba(0,255,157,.2);
-  }
-  #toast.show {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0);
-  }
+select.mode-select {
+  cursor: pointer;
+  height: 42px;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23FFE600'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-color: rgba(0,0,0,0.5);
+  padding-right: 36px;
+}
+select.mode-select option { background: #0D1220; color: #FFE600; }
 
-  /* FLOATING COPY */
-  #floatingCopy {
-    position: fixed;
-    bottom: 24px;
-    right: 20px;
-    width: 56px;
-    height: 56px;
-    border: none;
-    border-radius: 50%;
-    background: var(--main);
-    font-size: 22px;
-    cursor: pointer;
-    box-shadow: 0 0 25px var(--main);
-    z-index: 999;
-    transition: .25s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  #floatingCopy:hover {
-    transform: scale(1.12);
-    box-shadow: 0 0 40px var(--main);
-  }
-  #floatingCopy:active { transform: scale(.95); }
+textarea {
+  resize: vertical;
+  min-height: 150px;
+  line-height: 1.6;
+  color: #A8C4E0;
+}
+textarea[readonly] { color: var(--teal); }
 
-  /* RIPPLE */
-  .ripple-span {
-    position: absolute;
-    border-radius: 50%;
-    background: rgba(255,255,255,.35);
-    transform: scale(0);
-    animation: rippleAnim .6s linear;
-    pointer-events: none;
-  }
-  @keyframes rippleAnim {
-    to { transform: scale(25); opacity: 0; }
-  }
+/* ===========================
+   BUTTONS
+=========================== */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 46px;
+  border: none;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  cursor: pointer;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+  transition: .2s;
+  clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
+}
+.btn:active { transform: scale(.97); }
 
-  /* SCROLLBAR */
-  ::-webkit-scrollbar { width: 6px; height: 6px; }
-  ::-webkit-scrollbar-track { background: #0A0A0A; }
-  ::-webkit-scrollbar-thumb { background: rgba(0,255,157,.3); border-radius: 3px; }
+.btn-primary {
+  background: var(--yellow);
+  color: #000;
+  margin-top: 12px;
+}
+.btn-primary:hover {
+  background: #fff;
+  box-shadow: 0 0 28px rgba(255,230,0,0.6);
+}
+
+.btn-copy {
+  background: transparent;
+  color: var(--teal);
+  border: 1px solid var(--teal);
+}
+.btn-copy:hover { background: var(--teal); color: #000; box-shadow: 0 0 18px rgba(0,194,199,0.4); }
+
+.btn-dl {
+  background: transparent;
+  color: var(--yellow);
+  border: 1px solid rgba(255,230,0,0.4);
+}
+.btn-dl:hover { background: rgba(255,230,0,0.1); box-shadow: 0 0 14px rgba(255,230,0,0.2); }
+
+.btn-clear {
+  background: transparent;
+  color: var(--magenta);
+  border: 1px solid rgba(255,45,120,0.35);
+}
+.btn-clear:hover { background: rgba(255,45,120,0.1); box-shadow: 0 0 14px rgba(255,45,120,0.3); }
+
+.btn-purple {
+  background: transparent;
+  color: #B388FF;
+  border: 1px solid rgba(179,136,255,0.4);
+  height: 40px;
+  font-size: 11px;
+}
+.btn-purple:hover { background: rgba(179,136,255,0.1); box-shadow: 0 0 12px rgba(179,136,255,0.3); }
+
+.btn-slate {
+  background: transparent;
+  color: var(--dim);
+  border: 1px solid rgba(74,85,104,0.5);
+  height: 40px;
+  font-size: 11px;
+}
+.btn-slate:hover { background: rgba(74,85,104,0.15); box-shadow: 0 0 10px rgba(74,85,104,0.4); color: var(--text); }
+
+.btn-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 10px;
+}
+.btn-row-3 {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+/* BUTTON HOVER SCAN LINE */
+.btn::after {
+  content: "";
+  position: absolute;
+  top: -100%;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(transparent 0%, rgba(255,255,255,0.08) 50%, transparent 100%);
+  transition: top .35s ease;
+}
+.btn:hover::after { top: 100%; }
+
+/* ===========================
+   COUNTER OUTPUTS
+=========================== */
+.counter-stats {
+  background: rgba(0,0,0,0.4);
+  border: 1px solid rgba(255,230,0,0.1);
+  padding: 8px 12px;
+  margin-top: 8px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11px;
+  color: var(--teal);
+  min-height: 34px;
+  letter-spacing: 1px;
+}
+
+.counter-output {
+  background: rgba(0,0,0,0.4);
+  border: 1px solid rgba(255,230,0,0.1);
+  padding: 10px;
+  margin-top: 6px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11px;
+  color: #6B8CAE;
+  max-height: 170px;
+  overflow-y: auto;
+  white-space: pre;
+  line-height: 1.5;
+  word-break: break-all;
+}
+
+/* ===========================
+   PRESET BUTTONS
+=========================== */
+.preset-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+
+.preset-btn {
+  height: 38px;
+  border: none;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 1px;
+  cursor: pointer;
+  color: #000;
+  font-weight: 700;
+  transition: .18s;
+  position: relative;
+  overflow: hidden;
+  clip-path: polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 6px 100%, 0 calc(100% - 6px));
+}
+.preset-btn:hover { filter: brightness(1.25); transform: translateY(-2px); }
+.preset-btn:active { transform: scale(.96); }
+
+.preset-green  { background: #00C2C7; }
+.preset-orange { background: #FF6B35; }
+.preset-purple { background: #B388FF; }
+.preset-red    { background: var(--magenta); color: #fff; }
+.preset-blue   { background: #4FACFE; }
+
+/* ===========================
+   DROP ZONE
+=========================== */
+.drop-hint {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 9px;
+  color: var(--dim);
+  text-align: center;
+  margin-top: 6px;
+  letter-spacing: 1px;
+}
+.card.drag-over {
+  border-color: var(--yellow) !important;
+  box-shadow: 0 0 30px rgba(255,230,0,0.25) !important;
+}
+
+/* ===========================
+   FLOATING COPY
+=========================== */
+#floatingCopy {
+  position: fixed;
+  bottom: 24px;
+  right: 18px;
+  width: 52px;
+  height: 52px;
+  border: 2px solid var(--yellow);
+  background: var(--bg);
+  font-size: 20px;
+  cursor: pointer;
+  z-index: 9999;
+  transition: .2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
+  box-shadow: 0 0 20px rgba(255,230,0,0.2);
+}
+#floatingCopy:hover {
+  background: var(--yellow);
+  box-shadow: 0 0 36px rgba(255,230,0,0.6);
+  transform: scale(1.08);
+}
+
+/* ===========================
+   TOAST
+=========================== */
+#toast {
+  position: fixed;
+  bottom: 88px;
+  left: 50%;
+  transform: translateX(-50%) translateY(16px);
+  background: var(--panel);
+  border: 1px solid var(--yellow);
+  color: var(--yellow);
+  padding: 8px 20px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  opacity: 0;
+  transition: opacity .2s, transform .2s;
+  pointer-events: none;
+  z-index: 10000;
+  white-space: nowrap;
+  clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
+  box-shadow: 0 0 20px rgba(255,230,0,0.3);
+}
+#toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* ===========================
+   RIPPLE
+=========================== */
+.ripple-span {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255,230,0,0.2);
+  transform: scale(0);
+  animation: rippleAnim .5s linear;
+  pointer-events: none;
+}
+@keyframes rippleAnim { to { transform: scale(30); opacity: 0; } }
+
+/* ===========================
+   SCROLLBAR
+=========================== */
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: rgba(255,230,0,0.3); }
+
+/* ===========================
+   DIVIDER
+=========================== */
+.section-divider {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 4px 0 12px;
+  padding: 0 14px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 8px;
+  letter-spacing: 3px;
+  color: var(--dim);
+  position: relative;
+  z-index: 1;
+}
+.section-divider::before,
+.section-divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255,230,0,0.15), transparent);
+}
 </style>
 </head>
 <body>
 
-<h1 class="title">NPC OFFSET<br>CONVERTER</h1>
+<!-- STATUS TICKER -->
+<div class="status-bar">
+  <span class="status-dot"></span>
+  <span class="status-scroll">SYS ONLINE // NPC OFFSET CONVERTER v3.7 // NIGHT CITY BUILD // JACK IN AND RUN // PATCH THE NET // FLATLINE INCOMING // STAY FROSTY CHOOM //</span>
+</div>
 
-<!-- THEME SWITCHER -->
+<!-- HEADER -->
+<div class="header">
+  <span class="corp-tag">◈ ARASAKA MODDING DIVISION ◈</span>
+  <div class="glitch-wrap">
+    <h1 class="title" data-text="NPC OFFSET">NPC OFFSET</h1>
+  </div>
+  <div class="glitch-wrap" style="margin-top:2px">
+    <h1 class="title" data-text="CONVERTER" style="font-size:26px; letter-spacing:8px; opacity:.85;">CONVERTER</h1>
+  </div>
+  <div class="sub-title" style="margin-top:6px;">// ARM64 PATCH ENGINE // BUILD 2077 //</div>
+</div>
+
+<!-- THEME ROW -->
 <div class="theme-row">
-  THEME
+  <span>JACK IN</span>
   <select id="themePicker">
-    <option value="green">🟢 Green</option>
-    <option value="purple">🟣 Purple</option>
-    <option value="red">🔴 Red</option>
-    <option value="blue">🔵 Blue</option>
+    <option value="yellow">⚡ YELLOW CORP</option>
+    <option value="magenta">🩸 BLOOD RED</option>
+    <option value="teal">🌊 NET BLUE</option>
+    <option value="purple">💜 BRAINDANCE</option>
   </select>
 </div>
 
-<!-- LIBRARY NAME -->
-<div class="card">
-  <div class="card-label">Library Name</div>
-  <input type="text" id="etLib" value="libanogs.so" placeholder="e.g. libanogs.so">
-</div>
+<div class="wrap">
 
-<!-- CONVERSION MODE -->
-<div class="card">
-  <div class="card-label">Conversion Mode</div>
-  <select id="modePicker">
-    <option value="0">MemoryPatch → HexPatches</option>
-    <option value="1">HexPatches → MemoryPatch</option>
-    <option value="2">patchOffset → MemoryPatch</option>
-    <option value="3">patchOffset → HexPatches</option>
-    <option value="4">Offsets → MemoryPatch</option>
-    <option value="5">Offsets → HexPatches</option>
-    <option value="6">sub_xxxxx → MemoryPatch</option>
-    <option value="7">sub_xxxxx → HexPatches</option>
-    <option value="8">Offset → Only</option>
-    <option value="9">sub_xxxxx → Offset Only</option>
-    <option value="10">Align → Full Code</option>
-    <option value="11">KittyMemory → Hook</option>
-    <option value="12">Remove Duplicate Offsets</option>
-    <option value="13">Var → Offset Only</option>
-    <option value="14">Var → MemoryPatch</option>
-    <option value="15">Var → HexPatches</option>
-  </select>
-</div>
-
-<!-- INPUT OFFSETS -->
-<div class="card" id="inputCard">
-  <div class="card-label">Input Offsets</div>
-  <textarea id="inputCode" placeholder="Paste offsets, MemoryPatch, HexPatches, sub_xxxxx here..."></textarea>
-  <p class="drop-hint">📂 Or drag & drop a .txt file here</p>
-  <button class="btn btn-primary" onclick="doConvert()">CONVERT NOW</button>
-</div>
-
-<!-- OUTPUT RESULT -->
-<div class="card">
-  <div class="card-label">Output Result</div>
-  <textarea id="outputCode" placeholder="Converted code will appear here..." readonly></textarea>
-  <div class="btn-row-3">
-    <button class="btn btn-copy" onclick="doCopy()">COPY</button>
-    <button class="btn btn-dl"   onclick="downloadResult()">DOWNLOAD</button>
-    <button class="btn btn-clear" onclick="doClear()">CLEAR</button>
+  <!-- LIB NAME -->
+  <div class="card">
+    <div class="card-label">Target Library</div>
+    <input type="text" id="etLib" value="libanogs.so" placeholder="e.g. libanogs.so">
   </div>
-</div>
 
-<!-- OFFSET COUNTER -->
-<div class="card">
-  <div class="card-label">Offset Counter</div>
-  <div class="btn-row">
-    <button class="btn btn-purple" onclick="doCount()">Count Lines</button>
-    <button class="btn btn-slate"  onclick="doView()">View + Numbers</button>
+  <div class="section-divider">OPERATION SELECT</div>
+
+  <!-- MODE -->
+  <div class="card">
+    <div class="card-label">Conversion Protocol</div>
+    <select id="modePicker" class="mode-select">
+      <option value="0">MemoryPatch → HexPatches</option>
+      <option value="1">HexPatches → MemoryPatch</option>
+      <option value="2">patchOffset → MemoryPatch</option>
+      <option value="3">patchOffset → HexPatches</option>
+      <option value="4">Offsets → MemoryPatch</option>
+      <option value="5">Offsets → HexPatches</option>
+      <option value="6">sub_xxxxx → MemoryPatch</option>
+      <option value="7">sub_xxxxx → HexPatches</option>
+      <option value="8">Offset → Only</option>
+      <option value="9">sub_xxxxx → Offset Only</option>
+      <option value="10">Align → Full Code</option>
+      <option value="11">KittyMemory → Hook</option>
+      <option value="12">Remove Duplicate Offsets</option>
+      <option value="13">Var → Offset Only</option>
+      <option value="14">Var → MemoryPatch</option>
+      <option value="15">Var → HexPatches</option>
+    </select>
   </div>
-  <div class="counter-stats" id="counterStats"></div>
-  <div class="counter-output" id="counterOutput"></div>
-</div>
 
-<!-- ARM HEX PRESETS -->
-<div class="card">
-  <div class="card-label">ARM Hex Presets</div>
-  <button class="preset-btn preset-green"  onclick="insertPreset('armTrue')">armTrue</button>
-  <button class="preset-btn preset-green"  onclick="insertPreset('armFalse')">armFalse</button>
-  <button class="preset-btn preset-green"  onclick="insertPreset('armReturn')">armReturn</button>
-  <button class="preset-btn preset-green"  onclick="insertPreset('armNop')">armNop</button>
-  <button class="preset-btn preset-orange" onclick="insertPreset('armAim1')">armAim1</button>
-  <button class="preset-btn preset-orange" onclick="insertPreset('armAim2')">armAim2</button>
-  <button class="preset-btn preset-purple" onclick="insertPreset('frames')">frames</button>
-  <button class="preset-btn preset-purple" onclick="insertPreset('frames1')">frames1</button>
-  <button class="preset-btn preset-purple" onclick="insertPreset('flh')">flh</button>
-  <button class="preset-btn preset-red"    onclick="insertPreset('ammos')">ammos</button>
-  <button class="preset-btn preset-red"    onclick="insertPreset('halfspeed')">halfspeed</button>
-  <button class="preset-btn preset-blue"   onclick="insertPreset('armLDR')">armLDR</button>
-</div>
+  <div class="section-divider">DATA INPUT</div>
 
-<!-- FLOATING COPY -->
+  <!-- INPUT -->
+  <div class="card" id="inputCard">
+    <div class="card-label">Raw Payload</div>
+    <textarea id="inputCode" placeholder="JACK IN // paste offsets, MemoryPatch, HexPatches, sub_xxxxx..."></textarea>
+    <p class="drop-hint">◈ DROP .TXT FILE TO JACK IN ◈</p>
+    <button class="btn btn-primary" onclick="doConvert()">▶ EXECUTE PATCH</button>
+  </div>
+
+  <div class="section-divider">OUTPUT STREAM</div>
+
+  <!-- OUTPUT -->
+  <div class="card">
+    <div class="card-label">Compiled Output</div>
+    <textarea id="outputCode" placeholder="// AWAITING EXECUTION..." readonly></textarea>
+    <div class="btn-row-3">
+      <button class="btn btn-copy"  onclick="doCopy()">COPY</button>
+      <button class="btn btn-dl"    onclick="downloadResult()">DUMP</button>
+      <button class="btn btn-clear" onclick="doClear()">WIPE</button>
+    </div>
+  </div>
+
+  <div class="section-divider">ANALYSIS</div>
+
+  <!-- COUNTER -->
+  <div class="card">
+    <div class="card-label">Offset Scanner</div>
+    <div class="btn-row">
+      <button class="btn btn-purple" onclick="doCount()">COUNT LINES</button>
+      <button class="btn btn-slate"  onclick="doView()">VIEW + INDEX</button>
+    </div>
+    <div class="counter-stats" id="counterStats"></div>
+    <div class="counter-output" id="counterOutput"></div>
+  </div>
+
+  <div class="section-divider">ARM HEX ARSENAL</div>
+
+  <!-- PRESETS -->
+  <div class="card">
+    <div class="card-label">Quick Inject</div>
+    <div class="preset-grid">
+      <button class="preset-btn preset-green"  onclick="insertPreset('armTrue')">armTrue</button>
+      <button class="preset-btn preset-red"    onclick="insertPreset('armFalse')">armFalse</button>
+      <button class="preset-btn preset-green"  onclick="insertPreset('armReturn')">armReturn</button>
+      <button class="preset-btn preset-green"  onclick="insertPreset('armNop')">armNop</button>
+      <button class="preset-btn preset-orange" onclick="insertPreset('armAim1')">armAim1</button>
+      <button class="preset-btn preset-orange" onclick="insertPreset('armAim2')">armAim2</button>
+      <button class="preset-btn preset-purple" onclick="insertPreset('frames')">frames</button>
+      <button class="preset-btn preset-purple" onclick="insertPreset('frames1')">frames1</button>
+      <button class="preset-btn preset-purple" onclick="insertPreset('flh')">flh</button>
+      <button class="preset-btn preset-red"    onclick="insertPreset('ammos')">ammos</button>
+      <button class="preset-btn preset-red"    onclick="insertPreset('halfspeed')">halfspeed</button>
+      <button class="preset-btn preset-blue"   onclick="insertPreset('armLDR')">armLDR</button>
+    </div>
+  </div>
+
+</div><!-- /wrap -->
+
 <button id="floatingCopy" onclick="doCopy()" title="Copy output">📋</button>
-
 <div id="toast"></div>
 
 <script>
 // ========================
+// DEFAULT HEX (SPACED)
+// ========================
+const DEFAULT_HEX_MEM = "00 00 80 D2 C0 03 5F D6";
+const DEFAULT_HEX_HEX = "h00 00 80 D2 C0 03 5F D6";
+
+// ========================
 // THEME SWITCHER
 // ========================
-const root = document.documentElement;
-const themeColors = {
-  green:  "#00ff9d",
-  purple: "#bb66ff",
-  red:    "#ff4444",
-  blue:   "#33bbff"
+const themeMap = {
+  yellow:  { main: "#FFE600", glow: "rgba(255,230,0,0.35)",  rgb: "255,230,0"   },
+  magenta: { main: "#FF2D78", glow: "rgba(255,45,120,0.35)", rgb: "255,45,120"  },
+  teal:    { main: "#00C2C7", glow: "rgba(0,194,199,0.35)",  rgb: "0,194,199"   },
+  purple:  { main: "#B388FF", glow: "rgba(179,136,255,0.35)",rgb: "179,136,255" }
 };
 document.getElementById("themePicker").onchange = e => {
-  const c = themeColors[e.target.value];
-  root.style.setProperty("--main", c);
-  // Update spinner SVG arrow color
-  const enc = encodeURIComponent(c);
-  document.getElementById("modePicker").style.backgroundImage =
-    `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='${enc}' stroke-width='2' fill='none'/%3E%3C/svg%3E")`;
+  const t = themeMap[e.target.value];
+  if (!t) return;
+  const r = document.documentElement;
+  r.style.setProperty("--yellow", t.main);
+  r.style.setProperty("--glow", t.glow);
+  r.style.setProperty("--accent", t.main);
+  // Update SVG arrows
+  const enc = encodeURIComponent(t.main);
+  const svg = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='${enc}'/%3E%3C/svg%3E")`;
+  document.getElementById("modePicker").style.backgroundImage = svg;
+  document.querySelector(".theme-row select").style.backgroundImage = svg;
 };
 
 // ========================
-// ARM PRESETS
+// ARM PRESETS (SPACED)
 // ========================
 const armPresets = {
   armTrue:   "20 00 80 D2 C0 03 5F D6",
@@ -461,7 +794,7 @@ const armPresets = {
 };
 
 // ========================
-// RIPPLE EFFECT
+// RIPPLE
 // ========================
 document.querySelectorAll(".btn, .preset-btn").forEach(btn => {
   btn.addEventListener("click", function(e) {
@@ -469,12 +802,9 @@ document.querySelectorAll(".btn, .preset-btn").forEach(btn => {
     const rect = this.getBoundingClientRect();
     const size = Math.max(rect.width, rect.height);
     ripple.className = "ripple-span";
-    ripple.style.width  = size + "px";
-    ripple.style.height = size + "px";
-    ripple.style.left   = (e.clientX - rect.left - size / 2) + "px";
-    ripple.style.top    = (e.clientY - rect.top  - size / 2) + "px";
+    ripple.style.cssText = `width:${size}px;height:${size}px;left:${e.clientX-rect.left-size/2}px;top:${e.clientY-rect.top-size/2}px`;
     this.appendChild(ripple);
-    setTimeout(() => ripple.remove(), 600);
+    setTimeout(() => ripple.remove(), 500);
   });
 });
 
@@ -482,11 +812,7 @@ document.querySelectorAll(".btn, .preset-btn").forEach(btn => {
 // DRAG & DROP
 // ========================
 const inputCard = document.getElementById("inputCard");
-
-inputCard.addEventListener("dragover", e => {
-  e.preventDefault();
-  inputCard.classList.add("drag-over");
-});
+inputCard.addEventListener("dragover", e => { e.preventDefault(); inputCard.classList.add("drag-over"); });
 inputCard.addEventListener("dragleave", () => inputCard.classList.remove("drag-over"));
 inputCard.addEventListener("drop", e => {
   e.preventDefault();
@@ -496,7 +822,7 @@ inputCard.addEventListener("drop", e => {
   const reader = new FileReader();
   reader.onload = x => {
     document.getElementById("inputCode").value = x.target.result;
-    showToast("File loaded: " + file.name);
+    showToast("JACKED IN: " + file.name);
   };
   reader.readAsText(file);
 });
@@ -504,12 +830,19 @@ inputCard.addEventListener("drop", e => {
 // ========================
 // HELPERS
 // ========================
-function fixXCase(str) {
-  return str.replace(/0[Xx]/g, "0x");
-}
+function fixXCase(str) { return str.replace(/0[Xx]/g, "0x"); }
 function getLib() {
   const t = document.getElementById("etLib").value.trim();
-  return t === "" ? "libanogs.so" : t;
+  return t || "libanogs.so";
+}
+function spacedHex(raw) {
+  const clean = raw.replace(/\s+/g, "").replace(/^[hH]/, "").toUpperCase();
+  let out = "";
+  for (let i = 0; i < clean.length; i += 2) {
+    if (i > 0) out += " ";
+    out += clean.slice(i, i + 2);
+  }
+  return out;
 }
 
 let toastTimer = null;
@@ -520,97 +853,68 @@ function showToast(msg) {
   if (toastTimer) clearTimeout(toastTimer);
   toastTimer = setTimeout(() => t.classList.remove("show"), 2200);
 }
-
 function insertPreset(name) {
   document.getElementById("outputCode").value = armPresets[name];
-  showToast(name + " inserted");
+  showToast("INJECTED: " + name);
 }
 
 // ========================
-// DOWNLOAD RESULT
+// DOWNLOAD
 // ========================
 function downloadResult() {
   const text = document.getElementById("outputCode").value;
-  if (!text.trim()) { showToast("Nothing to download!"); return; }
+  if (!text.trim()) { showToast("NO DATA TO DUMP"); return; }
   const blob = new Blob([text], { type: "text/plain" });
   const a = document.createElement("a");
   a.href = URL.createObjectURL(blob);
   a.download = "npc_output.txt";
   a.click();
-  showToast("Downloaded!");
+  showToast("DATA DUMPED");
 }
 
 // ========================
-// CONVERSION FUNCTIONS
+// CONVERTERS
 // ========================
 function convertMemToHex(src) {
-  let m = src.match(/MemoryPatch::createWithHex\("([^"]+)",\s*(0[xX][0-9a-fA-F]+),\s*"([0-9a-fA-F\s]+)"\)\.Modify\(\);/);
-  if (!m) m = src.match(/MemoryPatch::createWithHex\("([^"]+)",\s*(0[xX][0-9a-fA-F]+),\s*"([0-9a-fA-F]+)"\)\.Modify\(\)/);
+  const m = src.match(/MemoryPatch::createWithHex\("([^"]+)",\s*(0[xX][0-9a-fA-F]+),\s*"([0-9a-fA-F\s]+)"\)\.Modify\(\);?/);
   if (!m) return src;
-  const [, lib, offset, hex] = m;
-  const cleanHex = hex.replace(/\s+/g, "");
-  let fmt = "h";
-  for (let i = 0; i < cleanHex.length; i += 2) {
-    if (i > 0) fmt += " ";
-    fmt += cleanHex.slice(i, i + 2);
-  }
-  return `HexPatches.MemoryPatch("${lib}", ${fixXCase(offset)}, "${fmt}", 32);`;
+  return `HexPatches.MemoryPatch("${m[1]}", ${fixXCase(m[2])}, "h${spacedHex(m[3])}", 32);`;
 }
-
 function convertHexToMem(src) {
-  let m = src.match(/HexPatches\.MemoryPatch\("([^"]+)",\s*(0[xX][0-9a-fA-F]+),\s*"h([0-9a-fA-F\s]+)",\s*\d+\);/);
-  if (!m) m = src.match(/HexPatches\.MemoryPatch\("([^"]+)",\s*(0[xX][0-9a-fA-F]+),\s*"([0-9a-fA-F\s]+)",\s*\d+\);/);
+  const m = src.match(/HexPatches\.MemoryPatch\("([^"]+)",\s*(0[xX][0-9a-fA-F]+),\s*"h?([0-9a-fA-F\s]+)",\s*\d+\);?/);
   if (!m) return src;
-  const [, lib, offset, hex] = m;
-  const cleanHex = hex.replace(/\s+/g, "").replace(/^[hH]/, "").toUpperCase();
-  return `MemoryPatch::createWithHex("${lib}", ${fixXCase(offset)}, "${cleanHex}").Modify();`;
+  return `MemoryPatch::createWithHex("${m[1]}", ${fixXCase(m[2])}, "${spacedHex(m[3])}").Modify();`;
 }
-
 function patchOffsetToMem(src) {
-  const m = src.match(/patchOffset\("([^"]+)",\s*(0[xX][0-9a-fA-F]+),\s*"h([0-9a-fA-F\s]+)",\s*32\);/);
+  const m = src.match(/patchOffset\("([^"]+)",\s*(0[xX][0-9a-fA-F]+),\s*"h?([0-9a-fA-F\s]+)",\s*32\);?/);
   if (!m) return src;
-  const [, lib, offset, hex] = m;
-  const cleanHex = hex.replace(/\s+/g, "").replace(/^h/, "").toUpperCase();
-  return `MemoryPatch::createWithHex("${lib}", ${fixXCase(offset)}, "${cleanHex}").Modify();`;
+  return `MemoryPatch::createWithHex("${m[1]}", ${fixXCase(m[2])}, "${spacedHex(m[3])}").Modify();`;
 }
-
 function patchOffsetToHex(src) {
-  const m = src.match(/patchOffset\("([^"]+)",\s*(0[xX][0-9a-fA-F]+),\s*"h([0-9a-fA-F\s]+)",\s*32\);/);
+  const m = src.match(/patchOffset\("([^"]+)",\s*(0[xX][0-9a-fA-F]+),\s*"h?([0-9a-fA-F\s]+)",\s*32\);?/);
   if (!m) return src;
-  const [, lib, offset, hex] = m;
-  const hexPart = hex.replace(/\s+/g, "").replace(/^h/, "");
-  let fmt = "h";
-  for (let i = 0; i < hexPart.length; i += 2) {
-    if (i > 0) fmt += " ";
-    fmt += hexPart.slice(i, i + 2);
-  }
-  return `HexPatches.MemoryPatch("${lib}", ${fixXCase(offset)}, "${fmt}", 32);`;
+  return `HexPatches.MemoryPatch("${m[1]}", ${fixXCase(m[2])}, "h${spacedHex(m[3])}", 32);`;
 }
-
 function offsetToMem(src) {
   const m = src.match(/0[xX][0-9a-fA-F]+/);
   if (!m) return src;
-  return `MemoryPatch::createWithHex("${getLib()}", ${fixXCase(m[0])}, "00 00 80 D2 C0 03 5F D6").Modify();`;
+  return `MemoryPatch::createWithHex("${getLib()}", ${fixXCase(m[0])}, "${DEFAULT_HEX_MEM}").Modify();`;
 }
-
 function offsetToHex(src) {
   const m = src.match(/0[xX][0-9a-fA-F]+/);
   if (!m) return src;
-  return `HexPatches.MemoryPatch("${getLib()}", ${fixXCase(m[0])}, "h00 00 80 D2 C0 03 5F D6", 32);`;
+  return `HexPatches.MemoryPatch("${getLib()}", ${fixXCase(m[0])}, "${DEFAULT_HEX_HEX}", 32);`;
 }
-
 function subToMem(src) {
   const m = src.match(/sub_([0-9a-fA-F]+)/);
   if (!m) return src;
-  return `MemoryPatch::createWithHex("${getLib()}", 0x${m[1]}, "00 00 80 D2 C0 03 5F D6").Modify();`;
+  return `MemoryPatch::createWithHex("${getLib()}", 0x${m[1]}, "${DEFAULT_HEX_MEM}").Modify();`;
 }
-
 function subToHex(src) {
   const m = src.match(/sub_([0-9a-fA-F]+)/);
   if (!m) return src;
-  return `HexPatches.MemoryPatch("${getLib()}", 0x${m[1]}, "h00 00 80 D2 C0 03 5F D6", 32);`;
+  return `HexPatches.MemoryPatch("${getLib()}", 0x${m[1]}, "${DEFAULT_HEX_HEX}", 32);`;
 }
-
 function subToOffset(src) {
   const s = src.match(/sub_([0-9a-fA-F]+)/);
   if (s) return "0x" + s[1];
@@ -618,207 +922,155 @@ function subToOffset(src) {
   if (o) return fixXCase(o[0]);
   return src;
 }
-
 function kittyToHook(src) {
   const m = src.match(/0[xX][0-9a-fA-F]+/);
   if (!m) return src;
   return `Tools::Hook((void*)KittyMemory::getAbsoluteAddress(OBFUSCATE("${getLib()}"), ${fixXCase(m[0])}), (void*)hook_bypass, (void**)&orig_bypass);`;
 }
-
 function extractOffsetFromVar(line) {
   const m = line.match(/([0-9a-fA-F]+)\s*$/);
   if (m && /^[0-9a-fA-F]+$/.test(m[1])) return "0x" + m[1].toLowerCase();
   return null;
 }
-
 function extractLibFromVar(line) {
   const m = line.match(/\|([^|]+\.so)/);
-  if (m) {
-    const n = m[1].match(/\/([^/]+\.so)$/);
-    if (n) return n[1];
-  }
+  if (m) { const n = m[1].match(/\/([^/]+\.so)$/); if (n) return n[1]; }
   return "libanogs.so";
 }
-
 function varToOffset(src) {
-  return src.split(/\r?\n/).map(line => extractOffsetFromVar(line) || line).join("\n");
+  return src.split(/\r?\n/).map(l => extractOffsetFromVar(l) || l).join("\n");
 }
-
 function varToMemoryPatch(src) {
   return src.split(/\r?\n/).map(line => {
-    const o = extractOffsetFromVar(line);
-    const lib = extractLibFromVar(line);
-    if (o) return `MemoryPatch::createWithHex("${lib}", ${o}, "00 00 80 D2 C0 03 5F D6").Modify();`;
-    return line;
+    const o = extractOffsetFromVar(line), lib = extractLibFromVar(line);
+    return o ? `MemoryPatch::createWithHex("${lib}", ${o}, "${DEFAULT_HEX_MEM}").Modify();` : line;
   }).join("\n");
 }
-
 function varToHexPatches(src) {
   return src.split(/\r?\n/).map(line => {
-    const o = extractOffsetFromVar(line);
-    const lib = extractLibFromVar(line);
-    if (o) return `HexPatches.MemoryPatch("${lib}", ${o}, "h00 00 80 D2 C0 03 5F D6", 32);`;
-    return line;
+    const o = extractOffsetFromVar(line), lib = extractLibFromVar(line);
+    return o ? `HexPatches.MemoryPatch("${lib}", ${o}, "${DEFAULT_HEX_HEX}", 32);` : line;
   }).join("\n");
 }
-
 function extractAllOffsets(src) {
   const seen = {}, offsets = [];
   for (const o of src.matchAll(/0[xX][0-9a-fA-F]+/g)) {
-    const f = fixXCase(o[0]);
-    if (!seen[f]) { seen[f] = true; offsets.push(f); }
+    const f = fixXCase(o[0]); if (!seen[f]) { seen[f]=true; offsets.push(f); }
   }
   for (const s of src.matchAll(/sub_([0-9a-fA-F]+)/g)) {
-    const o = "0x" + s[1];
-    if (!seen[o]) { seen[o] = true; offsets.push(o); }
+    const o = "0x"+s[1]; if (!seen[o]) { seen[o]=true; offsets.push(o); }
   }
-  offsets.sort((a, b) => parseInt(a.slice(2), 16) - parseInt(b.slice(2), 16));
-  return offsets.length > 0 ? offsets.join("\n") : "No offsets found!";
+  offsets.sort((a,b) => parseInt(a.slice(2),16)-parseInt(b.slice(2),16));
+  return offsets.length ? offsets.join("\n") : "NO OFFSETS FOUND";
 }
-
 function removeDuplicateOffsets(src) {
-  const seen = {}, r = [];
+  const seen={}, r=[];
   for (const line of src.split(/\r?\n/)) {
-    const o = (line.match(/0[xX][0-9a-fA-F]+/) || line.match(/sub_[0-9a-fA-F]+/))?.[0];
-    if (o) {
-      const k = fixXCase(o);
-      if (!seen[k]) { seen[k] = true; r.push(line); }
-    } else {
-      r.push(line);
-    }
+    const o=(line.match(/0[xX][0-9a-fA-F]+/)||line.match(/sub_[0-9a-fA-F]+/))?.[0];
+    if (o) { const k=fixXCase(o); if (!seen[k]) { seen[k]=true; r.push(line); } }
+    else r.push(line);
   }
   return r.join("\n");
 }
 
 // ========================
-// BUTTON HANDLERS
+// MAIN CONVERT
 // ========================
 function doConvert() {
   const raw = document.getElementById("inputCode").value;
   const outputEl = document.getElementById("outputCode");
-  const btnConvert = document.querySelector(".btn-primary");
-
-  if (!raw.trim()) { outputEl.value = "Please paste input first!"; return; }
-
+  const btn = document.querySelector(".btn-primary");
+  if (!raw.trim()) { outputEl.value = "// NO PAYLOAD DETECTED"; return; }
   const mode = parseInt(document.getElementById("modePicker").value);
-
-  // Disable button, show loading state
-  btnConvert.disabled = true;
-  btnConvert.textContent = "CONVERTING...";
+  btn.disabled = true; btn.textContent = "◈ PROCESSING...";
   outputEl.value = "";
-
-  // Defer heavy work so UI can repaint first (kills lag)
   requestAnimationFrame(() => setTimeout(() => {
     try {
       const converters = {
-        0: convertMemToHex,  1: convertHexToMem,
-        2: patchOffsetToMem, 3: patchOffsetToHex,
-        4: offsetToMem,      5: offsetToHex,
-        6: subToMem,         7: subToHex,
-        9: subToOffset,      11: kittyToHook,
-        13: varToOffset,     14: varToMemoryPatch,
-        15: varToHexPatches
+        0:convertMemToHex, 1:convertHexToMem,
+        2:patchOffsetToMem,3:patchOffsetToHex,
+        4:offsetToMem,     5:offsetToHex,
+        6:subToMem,        7:subToHex,
+        9:subToOffset,     11:kittyToHook,
+        13:varToOffset,    14:varToMemoryPatch,
+        15:varToHexPatches
       };
-
       let result;
-
-      if (mode === 8 || mode === 10) {
+      if (mode===8||mode===10) {
         result = extractAllOffsets(raw);
-      } else if (mode === 12) {
+      } else if (mode===12) {
         result = removeDuplicateOffsets(raw);
       } else {
         const fn = converters[mode];
-        if (!fn) { outputEl.value = "Unknown mode."; return; }
-
-        const lines = raw.split(/\r?\n/);
+        if (!fn) { outputEl.value="// UNKNOWN PROTOCOL"; return; }
         const converted = [];
-        for (const line of lines) {
-          const t = line.trim();
-          if (t !== "") {
-            const res = fn(t);
-            if (res && res.trim() !== "") converted.push(res);
-          }
+        for (const line of raw.split(/\r?\n/)) {
+          const t=line.trim();
+          if (t) { const r=fn(t); if (r&&r.trim()) converted.push(r); }
         }
-
-        if (converted.length > 0) {
-          result = converted.join("\n");
-          showToast(`Converted ${converted.length} line${converted.length !== 1 ? "s" : ""}`);
-        } else {
-          result = "No valid content found!";
-        }
+        result = converted.length
+          ? converted.join("\n")
+          : "// NO VALID PAYLOAD FOUND";
+        if (converted.length) showToast(`PATCHED ${converted.length} LINE${converted.length!==1?"S":""}`);
       }
-
-      outputEl.value = result || "";
+      outputEl.value = result||"";
     } finally {
-      btnConvert.disabled = false;
-      btnConvert.textContent = "CONVERT NOW";
+      btn.disabled=false; btn.textContent="▶ EXECUTE PATCH";
     }
-  }, 0));
+  },0));
 }
 
 function doCopy() {
   const text = document.getElementById("outputCode").value;
-  if (!text.trim()) { showToast("Nothing to copy!"); return; }
-  navigator.clipboard.writeText(text).then(() => showToast("Copied!")).catch(() => {
-    const ta = document.createElement("textarea");
-    ta.value = text;
-    document.body.appendChild(ta);
-    ta.select();
-    document.execCommand("copy");
-    document.body.removeChild(ta);
-    showToast("Copied!");
+  if (!text.trim()) { showToast("NO DATA TO COPY"); return; }
+  navigator.clipboard.writeText(text).then(()=>showToast("COPIED TO NET")).catch(()=>{
+    const ta=document.createElement("textarea");
+    ta.value=text; document.body.appendChild(ta); ta.select();
+    document.execCommand("copy"); document.body.removeChild(ta);
+    showToast("COPIED TO NET");
   });
 }
 
 function doClear() {
-  document.getElementById("inputCode").value = "";
-  document.getElementById("outputCode").value = "";
-  document.getElementById("counterStats").textContent = "";
-  document.getElementById("counterOutput").textContent = "";
-  showToast("Cleared!");
+  document.getElementById("inputCode").value="";
+  document.getElementById("outputCode").value="";
+  document.getElementById("counterStats").textContent="";
+  document.getElementById("counterOutput").textContent="";
+  showToast("MEMORY WIPED");
 }
 
 function doCount() {
-  const src = document.getElementById("inputCode").value;
-  if (!src.trim()) { document.getElementById("counterStats").textContent = "No input!"; return; }
-  let total = 0, withO = 0;
-  const unique = {};
+  const src=document.getElementById("inputCode").value;
+  if (!src.trim()) { document.getElementById("counterStats").textContent="// NO INPUT"; return; }
+  let total=0,withO=0; const unique={};
   for (const line of src.split(/\r?\n/)) {
     total++;
-    let has = false;
-    for (const o of line.matchAll(/0[xX][0-9a-fA-F]+/g)) { has = true; unique[fixXCase(o[0])] = true; }
-    for (const s of line.matchAll(/sub_([0-9a-fA-F]+)/g)) { has = true; unique["0x" + s[1]] = true; }
+    let has=false;
+    for (const o of line.matchAll(/0[xX][0-9a-fA-F]+/g)) { has=true; unique[fixXCase(o[0])]=true; }
+    for (const s of line.matchAll(/sub_([0-9a-fA-F]+)/g)) { has=true; unique["0x"+s[1]]=true; }
     if (has) withO++;
   }
-  const uc = Object.keys(unique).length;
-  document.getElementById("counterStats").textContent =
-    `Lines: ${total}  |  With Offsets: ${withO}  |  Unique: ${uc}`;
-  document.getElementById("counterOutput").textContent =
-    `Total Lines: ${total}\nLines with Offsets: ${withO}\nUnique Offsets: ${uc}`;
+  const uc=Object.keys(unique).length;
+  document.getElementById("counterStats").textContent=`LINES: ${total}  //  OFFSETS: ${withO}  //  UNIQUE: ${uc}`;
+  document.getElementById("counterOutput").textContent=`TOTAL LINES    : ${total}\nWITH OFFSETS   : ${withO}\nUNIQUE OFFSETS : ${uc}`;
 }
 
 function doView() {
-  const src = document.getElementById("inputCode").value;
-  if (!src.trim()) { document.getElementById("counterStats").textContent = "No input!"; return; }
-  const lines = src.split(/\r?\n/);
-  const r = [];
-  let offsetCount = 0;
-  const unique = {};
-  for (let i = 0; i < lines.length; i++) {
-    const line = lines[i];
-    let has = false;
+  const src=document.getElementById("inputCode").value;
+  if (!src.trim()) { document.getElementById("counterStats").textContent="// NO INPUT"; return; }
+  const lines=src.split(/\r?\n/), r=[];
+  let offsetCount=0; const unique={};
+  for (let i=0;i<lines.length;i++) {
+    const line=lines[i]; let has=false;
     for (const o of line.matchAll(/0[xX][0-9a-fA-F]+/g)) {
-      has = true; offsetCount++;
-      const k = fixXCase(o[0]);
-      unique[k] = (unique[k] || 0) + 1;
+      has=true; offsetCount++;
+      const k=fixXCase(o[0]); unique[k]=(unique[k]||0)+1;
     }
-    r.push(`${String(i + 1).padStart(4)} | ${has ? "* " : "  "}${fixXCase(line)}`);
+    r.push(`${String(i+1).padStart(4)} │ ${has?"◈ ":"  "}${fixXCase(line)}`);
   }
-  const uc = Object.keys(unique).length;
-  document.getElementById("counterStats").textContent =
-    `Lines: ${lines.length}  |  Offsets: ${offsetCount}  |  Unique: ${uc}`;
-  document.getElementById("counterOutput").textContent =
-    `OFFSET VIEWER\nTotal: ${lines.length} | Unique: ${uc}\n\n` + r.join("\n");
+  const uc=Object.keys(unique).length;
+  document.getElementById("counterStats").textContent=`LINES: ${lines.length}  //  OFFSETS: ${offsetCount}  //  UNIQUE: ${uc}`;
+  document.getElementById("counterOutput").textContent=`◈ OFFSET VIEWER // LINES:${lines.length} UNIQUE:${uc}\n${"─".repeat(40)}\n`+r.join("\n");
 }
 
 document.getElementById("inputCode").focus();
