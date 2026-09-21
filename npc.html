@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NPC OFFSET CONVERTER // NIGHT CITY BUILD</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>NPC // NIGHT CITY BUILD</title>
 <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -20,36 +20,50 @@
   --accent:   var(--yellow);
   --glow:     rgba(255,230,0,0.35);
 }
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html { overflow-x: hidden; }
 body {
   background: var(--bg);
   color: var(--text);
   font-family: 'Rajdhani', system-ui, sans-serif;
   font-weight: 400;
   min-height: 100vh;
-  padding: 0 0 100px;
+  padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 80px);
   position: relative;
   overflow-x: hidden;
 }
 body::before {
   content: "";
-  position: fixed;
-  inset: 0;
+  position: fixed; inset: 0;
   background: repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.18) 2px,rgba(0,0,0,0.18) 4px);
-  pointer-events: none;
-  z-index: 9000;
+  pointer-events: none; z-index: 9000;
   animation: scanMove 8s linear infinite;
 }
 @keyframes scanMove { from{background-position:0 0} to{background-position:0 80px} }
 body::after {
   content: "";
-  position: fixed;
-  top:0;left:0;width:100%;height:100%;
+  position: fixed; top:0;left:0;width:100%;height:100%;
   background-image:linear-gradient(rgba(255,230,0,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(255,230,0,0.03) 1px,transparent 1px);
   background-size:40px 40px;
   pointer-events:none;z-index:0;
 }
-.header { position:relative;padding:24px 18px 0;margin-bottom:6px;z-index:1; }
+
+/* ─── Status Bar ─── */
+.status-bar {
+  display:flex;align-items:center;gap:8px;padding:6px 12px;
+  background:rgba(255,45,120,0.08);
+  border-top:1px solid rgba(255,45,120,0.3);
+  border-bottom:1px solid rgba(255,45,120,0.3);
+  font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--magenta);
+  letter-spacing:1.5px;overflow:hidden;position:relative;z-index:10;
+}
+.status-dot { width:6px;height:6px;border-radius:50%;background:var(--magenta);flex-shrink:0;animation:pulse 1.4s ease-in-out infinite; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.2} }
+.status-scroll { white-space:nowrap;animation:scrollText 22s linear infinite; }
+@keyframes scrollText { 0%{transform:translateX(100vw)} 100%{transform:translateX(-100%)} }
+
+/* ─── Header ─── */
+.header { position:relative;padding:20px 18px 0;margin-bottom:6px;z-index:1; }
 .corp-tag { font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:3px;color:var(--magenta);text-transform:uppercase;display:block;text-align:center;margin-bottom:4px;opacity:0.8; }
 .glitch-wrap { text-align:center;margin-bottom:2px;position:relative; }
 h1.title { font-family:'Rajdhani',sans-serif;font-size:32px;font-weight:700;color:var(--yellow);letter-spacing:4px;text-transform:uppercase;line-height:1.1;position:relative;display:inline-block;text-shadow:0 0 20px rgba(255,230,0,0.6); }
@@ -58,34 +72,69 @@ h1.title::before { color:var(--magenta);animation:glitch1 3.5s infinite;clip-pat
 h1.title::after { color:var(--teal);animation:glitch2 3.5s infinite;clip-path:polygon(0 60%,100% 60%,100% 80%,0 80%);opacity:0.7; }
 @keyframes glitch1 { 0%,90%,100%{transform:translate(0)} 92%{transform:translate(-4px,0)} 94%{transform:translate(3px,0)} 96%{transform:translate(-2px,0)} 98%{transform:translate(2px,0)} }
 @keyframes glitch2 { 0%,90%,100%{transform:translate(0)} 91%{transform:translate(3px,0)} 93%{transform:translate(-3px,0)} 95%{transform:translate(4px,0)} 97%{transform:translate(-1px,0)} }
-.sub-title { font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--dim);letter-spacing:2px;text-align:center;margin-bottom:20px; }
-.status-bar { display:flex;align-items:center;gap:8px;padding:6px 12px;background:rgba(255,45,120,0.08);border-top:1px solid rgba(255,45,120,0.3);border-bottom:1px solid rgba(255,45,120,0.3);margin:0 0 18px;font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--magenta);letter-spacing:1.5px;overflow:hidden;position:relative; }
-.status-dot { width:6px;height:6px;border-radius:50%;background:var(--magenta);flex-shrink:0;animation:pulse 1.4s ease-in-out infinite; }
-@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.2} }
-.status-scroll { white-space:nowrap;animation:scrollText 18s linear infinite; }
-@keyframes scrollText { 0%{transform:translateX(100vw)} 100%{transform:translateX(-100%)} }
-.theme-row { display:flex;align-items:center;justify-content:center;gap:10px;margin:0 18px 16px;font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--dim);z-index:1;position:relative; }
+.sub-title { font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--dim);letter-spacing:2px;text-align:center;margin-bottom:16px; }
+
+/* ─── Nav Tabs ─── */
+.nav-tabs {
+  display:flex;gap:0;margin:0 14px 14px;
+  border:1px solid var(--border);
+  background:var(--panel);
+  position:relative;z-index:1;
+  clip-path:polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,10px 100%,0 calc(100% - 10px));
+}
+.nav-tab {
+  flex:1;padding:10px 6px;
+  font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:1.5px;
+  text-transform:uppercase;color:var(--dim);text-align:center;
+  cursor:pointer;border:none;background:transparent;
+  transition:color .2s,background .2s;border-right:1px solid var(--border);
+}
+.nav-tab:last-child { border-right:none; }
+.nav-tab.active { color:var(--yellow);background:rgba(255,230,0,0.06); }
+.nav-tab:hover:not(.active) { color:var(--text);background:rgba(255,255,255,0.02); }
+
+/* ─── Theme Row ─── */
+.theme-row { display:flex;align-items:center;justify-content:center;gap:10px;margin:0 18px 14px;font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--dim);z-index:1;position:relative; }
 .theme-row select { background:var(--panel);color:var(--yellow);border:1px solid rgba(255,230,0,0.3);border-radius:2px;padding:4px 28px 4px 10px;font-family:'Share Tech Mono',monospace;font-size:10px;cursor:pointer;outline:none;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23FFE600'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 8px center;letter-spacing:1px; }
 .theme-row select option { background:#0D1220;color:#FFE600; }
-.wrap { padding:0 14px;position:relative;z-index:1; }
-.card { position:relative;background:var(--panel);border:1px solid var(--border);margin-bottom:12px;clip-path:polygon(0 0,calc(100% - 14px) 0,100% 14px,100% 100%,14px 100%,0 calc(100% - 14px));padding:14px 14px 14px 16px;transition:border-color .25s,box-shadow .25s; }
+
+/* ─── Section wrapper ─── */
+.section { display:none;padding:0 14px; }
+.section.active { display:block; }
+
+/* ─── Card ─── */
+.card {
+  position:relative;background:var(--panel);border:1px solid var(--border);
+  margin-bottom:12px;
+  clip-path:polygon(0 0,calc(100% - 14px) 0,100% 14px,100% 100%,14px 100%,0 calc(100% - 14px));
+  padding:14px 14px 14px 16px;transition:border-color .25s,box-shadow .25s;
+}
 .card:hover { border-color:rgba(255,230,0,0.5);box-shadow:0 0 24px rgba(255,230,0,0.1),inset 0 0 30px rgba(255,230,0,0.03); }
 .card::after { content:"";position:absolute;top:0;right:0;width:48px;height:1px;background:linear-gradient(90deg,transparent,var(--yellow));transform-origin:right top; }
 .card::before { content:"";position:absolute;left:0;top:20%;bottom:20%;width:2px;background:var(--yellow);opacity:0.5;transition:opacity .25s,top .25s,bottom .25s; }
 .card:hover::before { top:5%;bottom:5%;opacity:1; }
 .card-label { font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:2.5px;color:var(--yellow);text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:8px;opacity:0.9; }
 .card-label::after { content:"";flex:1;height:1px;background:linear-gradient(90deg,rgba(255,230,0,0.3),transparent); }
-input[type="text"],textarea,select.mode-select { width:100%;background:rgba(0,0,0,0.5);color:var(--yellow);border:1px solid rgba(255,230,0,0.15);outline:none;padding:10px 12px;font-family:'Share Tech Mono',monospace;font-size:12px;border-radius:0;transition:border-color .2s,box-shadow .2s;letter-spacing:0.5px; }
-input[type="text"]:focus,textarea:focus,select.mode-select:focus { border-color:rgba(255,230,0,0.6);box-shadow:0 0 12px rgba(255,230,0,0.12); }
+
+/* ─── Inputs ─── */
+input[type="text"],input[type="number"],textarea,select.mode-select {
+  width:100%;background:rgba(0,0,0,0.5);color:var(--yellow);border:1px solid rgba(255,230,0,0.15);
+  outline:none;padding:10px 12px;font-family:'Share Tech Mono',monospace;font-size:12px;
+  border-radius:0;transition:border-color .2s,box-shadow .2s;letter-spacing:0.5px;
+}
+input[type="text"]:focus,input[type="number"]:focus,textarea:focus,select.mode-select:focus { border-color:rgba(255,230,0,0.6);box-shadow:0 0 12px rgba(255,230,0,0.12); }
 input[type="text"]::placeholder,textarea::placeholder { color:#2A3548; }
 select.mode-select { cursor:pointer;height:42px;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23FFE600'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;background-color:rgba(0,0,0,0.5);padding-right:36px; }
 select.mode-select option { background:#0D1220;color:#FFE600; }
-textarea { resize:vertical;min-height:150px;line-height:1.6;color:#A8C4E0; }
+textarea { resize:vertical;min-height:130px;line-height:1.6;color:#A8C4E0; }
 textarea[readonly] { color:var(--teal); }
+
+/* ─── Buttons ─── */
 .btn { display:inline-flex;align-items:center;justify-content:center;gap:6px;height:46px;border:none;font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;cursor:pointer;width:100%;position:relative;overflow:hidden;transition:.2s;clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,8px 100%,0 calc(100% - 8px)); }
 .btn:active { transform:scale(.97); }
+.btn:disabled { opacity:.45;cursor:not-allowed; }
 .btn-primary { background:var(--yellow);color:#000;margin-top:12px; }
-.btn-primary:hover { background:#fff;box-shadow:0 0 28px rgba(255,230,0,0.6); }
+.btn-primary:hover:not(:disabled) { background:#fff;box-shadow:0 0 28px rgba(255,230,0,0.6); }
 .btn-copy { background:transparent;color:var(--teal);border:1px solid var(--teal); }
 .btn-copy:hover { background:var(--teal);color:#000;box-shadow:0 0 18px rgba(0,194,199,0.4); }
 .btn-dl { background:transparent;color:var(--yellow);border:1px solid rgba(255,230,0,0.4); }
@@ -100,6 +149,8 @@ textarea[readonly] { color:var(--teal); }
 .btn-row-3 { display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:10px; }
 .btn::after { content:"";position:absolute;top:-100%;left:0;width:100%;height:100%;background:linear-gradient(transparent 0%,rgba(255,255,255,0.08) 50%,transparent 100%);transition:top .35s ease; }
 .btn:hover::after { top:100%; }
+
+/* ─── Converter output boxes ─── */
 .counter-stats { background:rgba(0,0,0,0.4);border:1px solid rgba(255,230,0,0.1);padding:8px 12px;margin-top:8px;font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--teal);min-height:34px;letter-spacing:1px; }
 .counter-output { background:rgba(0,0,0,0.4);border:1px solid rgba(255,230,0,0.1);padding:10px;margin-top:6px;font-family:'Share Tech Mono',monospace;font-size:11px;color:#6B8CAE;max-height:170px;overflow-y:auto;white-space:pre;line-height:1.5;word-break:break-all; }
 .hook-type-row { display:flex;gap:6px;margin-top:10px; }
@@ -108,6 +159,8 @@ textarea[readonly] { color:var(--teal); }
 .hook-type-btn:hover:not(.active) { background:rgba(255,230,0,0.05);border-color:rgba(255,230,0,0.4);color:var(--text); }
 .hook-preview { background:rgba(0,0,0,0.5);border:1px solid rgba(0,194,199,0.2);border-left:2px solid var(--teal);padding:8px 10px;margin-top:8px;font-family:'Share Tech Mono',monospace;font-size:9px;color:rgba(0,194,199,0.7);line-height:1.6;letter-spacing:0.3px;word-break:break-all; }
 .hook-preview-label { font-size:8px;letter-spacing:2px;color:var(--dim);margin-bottom:4px;display:block; }
+
+/* ─── Presets ─── */
 .preset-grid { display:grid;grid-template-columns:1fr 1fr;gap:6px; }
 .preset-btn { height:38px;border:none;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:1px;cursor:pointer;color:#000;font-weight:700;transition:.18s;position:relative;overflow:hidden;clip-path:polygon(0 0,calc(100% - 6px) 0,100% 6px,100% 100%,6px 100%,0 calc(100% - 6px)); }
 .preset-btn:hover { filter:brightness(1.25);transform:translateY(-2px); }
@@ -119,17 +172,77 @@ textarea[readonly] { color:var(--teal); }
 .preset-blue   { background:#4FACFE; }
 .drop-hint { font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--dim);text-align:center;margin-top:6px;letter-spacing:1px; }
 .card.drag-over { border-color:var(--yellow)!important;box-shadow:0 0 30px rgba(255,230,0,0.25)!important; }
+
+/* ─── Floating copy ─── */
 #floatingCopy { position:fixed;bottom:24px;right:18px;width:52px;height:52px;border:2px solid var(--yellow);background:var(--bg);font-size:20px;cursor:pointer;z-index:9999;transition:.2s;display:flex;align-items:center;justify-content:center;clip-path:polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,10px 100%,0 calc(100% - 10px));box-shadow:0 0 20px rgba(255,230,0,0.2); }
 #floatingCopy:hover { background:var(--yellow);box-shadow:0 0 36px rgba(255,230,0,0.6);transform:scale(1.08); }
+
+/* ─── Toast ─── */
 #toast { position:fixed;bottom:88px;left:50%;transform:translateX(-50%) translateY(16px);background:var(--panel);border:1px solid var(--yellow);color:var(--yellow);padding:8px 20px;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:2px;text-transform:uppercase;opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;z-index:10000;white-space:nowrap;clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,8px 100%,0 calc(100% - 8px));box-shadow:0 0 20px rgba(255,230,0,0.3); }
 #toast.show { opacity:1;transform:translateX(-50%) translateY(0); }
+
+/* ─── Ripple ─── */
 .ripple-span { position:absolute;border-radius:50%;background:rgba(255,230,0,0.2);transform:scale(0);animation:rippleAnim .5s linear;pointer-events:none; }
 @keyframes rippleAnim { to{transform:scale(30);opacity:0} }
+
+/* ─── Scrollbar ─── */
 ::-webkit-scrollbar { width:4px;height:4px; }
 ::-webkit-scrollbar-track { background:var(--bg); }
 ::-webkit-scrollbar-thumb { background:rgba(255,230,0,0.3); }
-.section-divider { display:flex;align-items:center;gap:10px;margin:4px 0 12px;padding:0 14px;font-family:'Share Tech Mono',monospace;font-size:8px;letter-spacing:3px;color:var(--dim);position:relative;z-index:1; }
+
+/* ─── Section divider ─── */
+.section-divider { display:flex;align-items:center;gap:10px;margin:4px 0 12px;font-family:'Share Tech Mono',monospace;font-size:8px;letter-spacing:3px;color:var(--dim);position:relative;z-index:1; }
 .section-divider::before,.section-divider::after { content:"";flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(255,230,0,0.15),transparent); }
+
+/* ─── Hunter: file inputs ─── */
+.file-group { margin-bottom:12px; }
+.file-group label { display:flex;align-items:center;gap:5px;font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:2px;color:var(--dim);margin-bottom:6px;text-transform:uppercase; }
+input[type="file"] { display:block;width:100%;padding:10px 12px;background:rgba(0,0,0,0.4);border:1.5px dashed rgba(255,230,0,0.2);color:var(--dim);font-size:0.8rem;font-family:'Rajdhani',sans-serif;cursor:pointer;transition:border-color .2s,background .2s; }
+input[type="file"]:hover { border-color:rgba(255,230,0,0.5);background:rgba(255,230,0,0.03); }
+input[type="file"]::file-selector-button { background:rgba(255,230,0,0.15);color:var(--yellow);border:1px solid rgba(255,230,0,0.3);padding:5px 10px;margin-right:10px;font-weight:700;font-size:0.72rem;font-family:'Rajdhani',sans-serif;cursor:pointer;letter-spacing:1px; }
+.file-status { font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--dim);margin-top:5px;letter-spacing:1px;word-break:break-all; }
+.file-status.ok { color:var(--teal); }
+.file-status.loading { color:var(--yellow);animation:blink 1.2s ease infinite; }
+@keyframes blink { 0%,100%{opacity:1}50%{opacity:0.45} }
+
+/* ─── Hunter: search ─── */
+.search-row { display:flex;gap:8px; }
+.search-row input { flex:1;min-width:0; }
+.search-row .btn { width:auto;padding:0 18px;margin-top:0;height:42px;font-size:11px; }
+.hint { font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--dim);margin-top:8px;letter-spacing:1px;line-height:1.7; }
+.hint code { font-family:'Share Tech Mono',monospace;font-size:9px;background:rgba(255,230,0,0.06);border:1px solid rgba(255,230,0,0.15);padding:1px 5px;color:var(--teal); }
+
+/* ─── Hunter: filters ─── */
+.filter-grid { display:grid;grid-template-columns:repeat(2,1fr);gap:6px; }
+.filter-btn { padding:9px 6px;background:rgba(0,0,0,0.3);border:1px solid rgba(255,230,0,0.15);color:var(--dim);font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:1px;cursor:pointer;text-align:center;transition:all .15s;clip-path:polygon(0 0,calc(100% - 5px) 0,100% 5px,100% 100%,5px 100%,0 calc(100% - 5px)); }
+.filter-btn:hover { background:rgba(255,230,0,0.07);border-color:rgba(255,230,0,0.4);color:var(--text); }
+.filter-btn.active { background:rgba(255,230,0,0.12);border-color:var(--yellow);color:var(--yellow);box-shadow:0 0 10px rgba(255,230,0,0.15); }
+
+/* ─── Hunter: results ─── */
+.results-bar { display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;gap:8px;flex-wrap:wrap; }
+.results-heading { font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:700;color:var(--text);letter-spacing:1px; }
+.results-heading .hl { color:var(--yellow);font-family:'Share Tech Mono',monospace; }
+.result-item { background:rgba(0,0,0,0.3);border:1px solid rgba(255,230,0,0.1);border-left:2px solid var(--teal);padding:12px;margin-bottom:7px;transition:border-color .15s; }
+.result-item.zero { border-left-color:var(--dim);opacity:0.6; }
+.result-item.hex-type { border-left-color:var(--magenta); }
+.result-meta { display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:5px;flex-wrap:wrap; }
+.result-offset { font-family:'Share Tech Mono',monospace;font-size:13px;font-weight:700;color:var(--teal); }
+.result-badge { font-family:'Share Tech Mono',monospace;font-size:9px;font-weight:700;padding:2px 8px;background:rgba(0,194,199,0.1);border:1px solid rgba(0,194,199,0.25);color:var(--teal);white-space:nowrap; }
+.result-badge.zero-badge { background:rgba(74,85,104,0.1);border-color:rgba(74,85,104,0.2);color:var(--dim); }
+.result-fn { font-family:'Share Tech Mono',monospace;font-size:11px;font-weight:600;color:var(--text);margin-bottom:4px; }
+.result-desc { font-family:'Rajdhani',sans-serif;font-size:13px;color:var(--dim);line-height:1.5; }
+.summary-row { text-align:center;padding:8px;font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--dim);letter-spacing:1px; }
+.no-result { text-align:center;padding:28px 16px;color:var(--dim);font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px; }
+.show-more { width:100%;margin-top:8px;padding:10px;background:rgba(255,230,0,0.05);border:1px solid rgba(255,230,0,0.2);color:var(--yellow);font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:2px;cursor:pointer;transition:background .15s; }
+.show-more:hover { background:rgba(255,230,0,0.1); }
+.export-btn { background:transparent;color:var(--dim);border:1px solid rgba(74,85,104,0.4);font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:1px;padding:6px 10px;cursor:pointer;transition:.15s; }
+.export-btn:hover { color:var(--teal);border-color:var(--teal); }
+.loader-wrap { display:flex;flex-direction:column;align-items:center;padding:32px 16px;gap:12px; }
+.loader { width:28px;height:28px;border:2px solid rgba(255,230,0,0.15);border-top-color:var(--yellow);border-radius:50%;animation:spin 0.75s linear infinite; }
+@keyframes spin { to{transform:rotate(360deg)} }
+.loader-label { font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--dim);letter-spacing:2px; }
+
+
 </style>
 </head>
 <body>
@@ -137,19 +250,16 @@ textarea[readonly] { color:var(--teal); }
 <!-- STATUS TICKER -->
 <div class="status-bar">
   <span class="status-dot"></span>
-  <span class="status-scroll">SYS ONLINE // NPC OFFSET CONVERTER v3.9 // NIGHT CITY BUILD // JACK IN AND RUN // PATCH THE NET // FLATLINE INCOMING // STAY FROSTY CHOOM // getAbsoluteAddress HOOK ENGINE ONLINE //</span>
+  <span class="status-scroll">SYS ONLINE // NPC v4.0 // NIGHT CITY BUILD // OFFSET CONVERTER // BYPASS HUNTER // BYPASS CONVERTER // JACK IN AND RUN // PATCH THE NET // FLATLINE INCOMING // STAY FROSTY CHOOM // getAbsoluteAddress HOOK ENGINE ONLINE //</span>
 </div>
 
 <!-- HEADER -->
 <div class="header">
   <span class="corp-tag">◈ ARASAKA MODDING DIVISION ◈</span>
   <div class="glitch-wrap">
-    <h1 class="title" data-text="NPC OFFSET">NPC OFFSET</h1>
+    <h1 class="title" data-text="NPC">NPC</h1>
   </div>
-  <div class="glitch-wrap" style="margin-top:2px">
-    <h1 class="title" data-text="CONVERTER" style="font-size:26px;letter-spacing:8px;opacity:.85;">CONVERTER</h1>
-  </div>
-  <div class="sub-title" style="margin-top:6px;">// ARM64 PATCH ENGINE // BUILD 2077 //</div>
+  <div class="sub-title">// ARM64 PATCH ENGINE // BUILD 2077 //</div>
 </div>
 
 <!-- THEME ROW -->
@@ -163,7 +273,16 @@ textarea[readonly] { color:var(--teal); }
   </select>
 </div>
 
-<div class="wrap">
+<!-- NAV TABS -->
+<div class="nav-tabs">
+  <button class="nav-tab active" data-tab="converter">⚙ Offset Converter</button>
+  <button class="nav-tab" data-tab="hunter">🔍 Bypass Hunter</button>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     TAB 1: OFFSET CONVERTER
+     ═══════════════════════════════════════════════════════ -->
+<div class="section active" id="tab-converter">
 
   <!-- LIB NAME -->
   <div class="card">
@@ -280,68 +399,89 @@ textarea[readonly] { color:var(--teal); }
     </div>
   </div>
 
-</div><!-- /wrap -->
+</div><!-- /tab-converter -->
+
+
+<!-- ═══════════════════════════════════════════════════════
+     TAB 2: BYPASS HUNTER
+     ═══════════════════════════════════════════════════════ -->
+<div class="section" id="tab-hunter">
+
+  <div class="card">
+    <div class="card-label">Load Files</div>
+    <div class="file-group">
+      <label>Reference File <span style="color:var(--dim);">(bypass.txt)</span></label>
+      <input type="file" id="refFile" accept=".txt,.c,.h,.log">
+      <div class="file-status" id="refStatus">No file loaded</div>
+    </div>
+    <div class="file-group">
+      <label>Source File <span style="color:var(--dim);">(libanogs.so.c)</span></label>
+      <input type="file" id="srcFile" accept=".txt,.c,.h,.log">
+      <div class="file-status" id="srcStatus">No file loaded</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">Search</div>
+    <div class="search-row">
+      <input type="text" id="keyword" placeholder="keyword or 0x4444">
+      <button class="btn btn-primary" id="searchBtn" disabled style="margin-top:0;width:auto;padding:0 16px;height:42px;font-size:11px;">SCAN</button>
+    </div>
+    <div class="hint">Keywords: <code>crash</code> <code>detect</code> <code>10yr</code> &nbsp;·&nbsp; Hex: <code>0x4444</code> → <code>sub_4444</code></div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">Quick Filters</div>
+    <div class="filter-grid" id="filterGrid"></div>
+  </div>
+
+  <div class="card" id="resultsCard" style="display:none;">
+    <div class="results-bar">
+      <div class="results-heading" id="resultsHeading">Results</div>
+      <button class="export-btn" id="exportBtn">💾 EXPORT</button>
+    </div>
+    <div id="resultsList"></div>
+    <div id="moreWrap"></div>
+    <div class="summary-row" id="summaryRow"></div>
+  </div>
+
+</div><!-- /tab-hunter -->
+
+
+
 
 <button id="floatingCopy" onclick="doCopy()" title="Copy output">📋</button>
 <div id="toast"></div>
 
 <script>
+// ══════════════════════════════════════════════════════════
+// GLOBALS & NAV
+// ══════════════════════════════════════════════════════════
 const DEFAULT_HEX_MEM = "00 00 80 D2 C0 03 5F D6";
 const DEFAULT_HEX_HEX = "h00 00 80 D2 C0 03 5F D6";
-
 let currentHookStyle = "A";
+let toastTimer = null;
 
-// FIX: uppercase hex digits after 0x
-// e.g. 0x4987a8 → 0x4987A8
-function fixXCase(str) {
-  return str.replace(/0[Xx][0-9a-fA-F]+/g, function(match) {
-    return "0x" + match.slice(2).toUpperCase();
+// Tab switching
+document.querySelectorAll('.nav-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById('tab-' + tab.dataset.tab).classList.add('active');
   });
-}
-
-function setHookStyle(style) {
-  currentHookStyle = style;
-  document.getElementById("hookStyleA").classList.toggle("active", style === "A");
-  document.getElementById("hookStyleB").classList.toggle("active", style === "B");
-  updateHookPreview();
-}
-
-function buildHookLine(lib, offset) {
-  const hookFn = document.getElementById("hookFuncName").value.trim() || "hook_bypass";
-  const origFn = document.getElementById("hookOrigName").value.trim() || "orig_bypass";
-  const addrExpr = currentHookStyle === "A"
-    ? `getAbsoluteAddress("${lib}", ${offset})`
-    : `getAbsoluteAddress(OBFUSCATE("${lib}"), ${offset})`;
-  return `Tools::Hook((void*)${addrExpr}, (void*)${hookFn}, (void**)&${origFn});`;
-}
-
-function updateHookPreview() {
-  const lib = getLib();
-  const preview = buildHookLine(lib, "0x204218");
-  document.getElementById("hookPreviewText").textContent = preview;
-}
-
-function updateHookConfig() {
-  const mode = parseInt(document.getElementById("modePicker").value);
-  const hookModes = [11, 16, 17, 18];
-  const cfg = document.getElementById("hookConfig");
-  if (hookModes.includes(mode)) {
-    cfg.style.display = "block";
-    updateHookPreview();
-  } else {
-    cfg.style.display = "none";
-  }
-}
-
-document.getElementById("modePicker").addEventListener("change", updateHookConfig);
-document.getElementById("etLib").addEventListener("input", () => {
-  const mode = parseInt(document.getElementById("modePicker").value);
-  if ([11,16,17,18].includes(mode)) updateHookPreview();
-});
-["hookFuncName","hookOrigName"].forEach(id => {
-  document.getElementById(id).addEventListener("input", updateHookPreview);
 });
 
+// Toast
+function showToast(msg) {
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  if (toastTimer) clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove("show"), 2200);
+}
+
+// Theme
 const themeMap = {
   yellow:  { main: "#FFE600", glow: "rgba(255,230,0,0.35)" },
   magenta: { main: "#FF2D78", glow: "rgba(255,45,120,0.35)" },
@@ -355,27 +495,9 @@ document.getElementById("themePicker").onchange = e => {
   r.style.setProperty("--yellow", t.main);
   r.style.setProperty("--glow", t.glow);
   r.style.setProperty("--accent", t.main);
-  const enc = encodeURIComponent(t.main);
-  const svg = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='${enc}'/%3E%3C/svg%3E")`;
-  document.getElementById("modePicker").style.backgroundImage = svg;
-  document.querySelector(".theme-row select").style.backgroundImage = svg;
 };
 
-const armPresets = {
-  armTrue:   "20 00 80 D2 C0 03 5F D6",
-  armReturn: "C0 03 5F D6 C0 03 5F D6",
-  armFalse:  "00 00 80 D2 C0 03 5F D6",
-  armNop:    "1F 20 03 D5",
-  armAim1:   "40 00 00 1C",
-  armAim2:   "C0 03 5F D6",
-  frames:    "C0 00 80 D2 C0 03 5F D6",
-  frames1:   "00 24 80 D2 C0 03 5F D6",
-  flh:       "00 2C 40 BC C0 03 5F D6",
-  ammos:     "00 00 80 52 C0 03 5F D6",
-  halfspeed: "00 90 20 1E C0 03 5F D6",
-  armLDR:    "40 00 00 1C C0 03 5F D6"
-};
-
+// Ripple
 document.querySelectorAll(".btn, .preset-btn").forEach(btn => {
   btn.addEventListener("click", function(e) {
     const ripple = document.createElement("span");
@@ -388,27 +510,12 @@ document.querySelectorAll(".btn, .preset-btn").forEach(btn => {
   });
 });
 
-const inputCard = document.getElementById("inputCard");
-inputCard.addEventListener("dragover", e => { e.preventDefault(); inputCard.classList.add("drag-over"); });
-inputCard.addEventListener("dragleave", () => inputCard.classList.remove("drag-over"));
-inputCard.addEventListener("drop", e => {
-  e.preventDefault();
-  inputCard.classList.remove("drag-over");
-  const file = e.dataTransfer.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = x => {
-    document.getElementById("inputCode").value = x.target.result;
-    showToast("JACKED IN: " + file.name);
-  };
-  reader.readAsText(file);
-});
-
-function getLib() {
-  const t = document.getElementById("etLib").value.trim();
-  return t || "libanogs.so";
+// ══════════════════════════════════════════════════════════
+// TAB 1: OFFSET CONVERTER
+// ══════════════════════════════════════════════════════════
+function fixXCase(str) {
+  return str.replace(/0[Xx][0-9a-fA-F]+/g, m => "0x" + m.slice(2).toUpperCase());
 }
-
 function spacedHex(raw) {
   const clean = raw.replace(/\s+/g, "").replace(/^[hH]/, "").toUpperCase();
   let out = "";
@@ -418,30 +525,54 @@ function spacedHex(raw) {
   }
   return out;
 }
+function getLib() {
+  return document.getElementById("etLib").value.trim() || "libanogs.so";
+}
+function setHookStyle(style) {
+  currentHookStyle = style;
+  document.getElementById("hookStyleA").classList.toggle("active", style === "A");
+  document.getElementById("hookStyleB").classList.toggle("active", style === "B");
+  updateHookPreview();
+}
+function buildHookLine(lib, offset) {
+  const hookFn = document.getElementById("hookFuncName").value.trim() || "hook_bypass";
+  const origFn = document.getElementById("hookOrigName").value.trim() || "orig_bypass";
+  const addrExpr = currentHookStyle === "A"
+    ? `getAbsoluteAddress("${lib}", ${offset})`
+    : `getAbsoluteAddress(OBFUSCATE("${lib}"), ${offset})`;
+  return `Tools::Hook((void*)${addrExpr}, (void*)${hookFn}, (void**)&${origFn});`;
+}
+function updateHookPreview() {
+  document.getElementById("hookPreviewText").textContent = buildHookLine(getLib(), "0x204218");
+}
+function updateHookConfig() {
+  const mode = parseInt(document.getElementById("modePicker").value);
+  const hookModes = [11, 16, 17, 18];
+  const cfg = document.getElementById("hookConfig");
+  if (hookModes.includes(mode)) { cfg.style.display = "block"; updateHookPreview(); }
+  else cfg.style.display = "none";
+}
+document.getElementById("modePicker").addEventListener("change", updateHookConfig);
+document.getElementById("etLib").addEventListener("input", () => {
+  if ([11,16,17,18].includes(parseInt(document.getElementById("modePicker").value))) updateHookPreview();
+});
+["hookFuncName","hookOrigName"].forEach(id => {
+  document.getElementById(id).addEventListener("input", updateHookPreview);
+});
 
-let toastTimer = null;
-function showToast(msg) {
-  const t = document.getElementById("toast");
-  t.textContent = msg;
-  t.classList.add("show");
-  if (toastTimer) clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => t.classList.remove("show"), 2200);
-}
-function insertPreset(name) {
-  document.getElementById("outputCode").value = armPresets[name];
-  showToast("INJECTED: " + name);
-}
-function downloadResult() {
-  const text = document.getElementById("outputCode").value;
-  if (!text.trim()) { showToast("NO DATA TO DUMP"); return; }
-  const blob = new Blob([text], { type: "text/plain" });
-  const a = document.createElement("a");
-  a.href = URL.createObjectURL(blob);
-  a.download = "npc_output.txt";
-  a.click();
-  showToast("DATA DUMPED");
-}
+// Drag-drop
+const inputCard = document.getElementById("inputCard");
+inputCard.addEventListener("dragover", e => { e.preventDefault(); inputCard.classList.add("drag-over"); });
+inputCard.addEventListener("dragleave", () => inputCard.classList.remove("drag-over"));
+inputCard.addEventListener("drop", e => {
+  e.preventDefault(); inputCard.classList.remove("drag-over");
+  const file = e.dataTransfer.files[0]; if (!file) return;
+  const reader = new FileReader();
+  reader.onload = x => { document.getElementById("inputCode").value = x.target.result; showToast("JACKED IN: " + file.name); };
+  reader.readAsText(file);
+});
 
+// Converters
 function convertMemToHex(src) {
   const m = src.match(/MemoryPatch::createWithHex\("([^"]+)",\s*(0[xX][0-9a-fA-F]+),\s*"([0-9a-fA-F\s]+)"\)\.Modify\(\);?/);
   if (!m) return src;
@@ -562,11 +693,10 @@ function removeDuplicateOffsets(src) {
   }
   return r.join("\n");
 }
-
 function doConvert() {
   const raw = document.getElementById("inputCode").value;
   const outputEl = document.getElementById("outputCode");
-  const btn = document.querySelector(".btn-primary");
+  const btn = document.querySelector("#tab-converter .btn-primary");
   if (!raw.trim()) { outputEl.value = "// NO PAYLOAD DETECTED"; return; }
   const mode = parseInt(document.getElementById("modePicker").value);
   btn.disabled = true; btn.textContent = "◈ PROCESSING...";
@@ -574,18 +704,15 @@ function doConvert() {
   requestAnimationFrame(() => setTimeout(() => {
     try {
       const converters = {
-        0: convertMemToHex, 1: convertHexToMem, 2: patchOffsetToMem,
-        3: patchOffsetToHex, 4: offsetToMem, 5: offsetToHex,
-        6: subToMem, 7: subToHex, 9: subToOffset, 11: kittyToHook,
-        16: offsetToHookAbs, 17: subToHookAbs, 18: memPatchToHookAbs,
-        13: varToOffset, 14: varToMemoryPatch, 15: varToHexPatches
+        0:convertMemToHex,1:convertHexToMem,2:patchOffsetToMem,3:patchOffsetToHex,
+        4:offsetToMem,5:offsetToHex,6:subToMem,7:subToHex,9:subToOffset,
+        11:kittyToHook,16:offsetToHookAbs,17:subToHookAbs,18:memPatchToHookAbs,
+        13:varToOffset,14:varToMemoryPatch,15:varToHexPatches
       };
       let result;
-      if (mode===8||mode===10) {
-        result = extractAllOffsets(raw);
-      } else if (mode===12) {
-        result = removeDuplicateOffsets(raw);
-      } else {
+      if (mode===8||mode===10) { result = extractAllOffsets(raw); }
+      else if (mode===12) { result = removeDuplicateOffsets(raw); }
+      else {
         const fn = converters[mode];
         if (!fn) { outputEl.value="// UNKNOWN PROTOCOL"; return; }
         const converted = [];
@@ -602,18 +729,16 @@ function doConvert() {
     }
   },0));
 }
-
 function doCopy() {
   const text = document.getElementById("outputCode").value;
   if (!text.trim()) { showToast("NO DATA TO COPY"); return; }
   navigator.clipboard.writeText(text).then(()=>showToast("COPIED TO NET")).catch(()=>{
-    const ta=document.createElement("textarea");
-    ta.value=text; document.body.appendChild(ta); ta.select();
+    const ta=document.createElement("textarea"); ta.value=text;
+    document.body.appendChild(ta); ta.select();
     document.execCommand("copy"); document.body.removeChild(ta);
     showToast("COPIED TO NET");
   });
 }
-
 function doClear() {
   document.getElementById("inputCode").value="";
   document.getElementById("outputCode").value="";
@@ -621,14 +746,20 @@ function doClear() {
   document.getElementById("counterOutput").textContent="";
   showToast("MEMORY WIPED");
 }
-
+function downloadResult() {
+  const text = document.getElementById("outputCode").value;
+  if (!text.trim()) { showToast("NO DATA TO DUMP"); return; }
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([text],{type:"text/plain"}));
+  a.download = "npc_output.txt"; a.click();
+  showToast("DATA DUMPED");
+}
 function doCount() {
   const src=document.getElementById("inputCode").value;
   if (!src.trim()) { document.getElementById("counterStats").textContent="// NO INPUT"; return; }
   let total=0,withO=0; const unique={};
   for (const line of src.split(/\r?\n/)) {
-    total++;
-    let has=false;
+    total++; let has=false;
     for (const o of line.matchAll(/0[xX][0-9a-fA-F]+/g)) { has=true; unique[fixXCase(o[0])]=true; }
     for (const s of line.matchAll(/sub_([0-9a-fA-F]+)/g)) { has=true; unique["0x"+s[1].toUpperCase()]=true; }
     if (has) withO++;
@@ -637,7 +768,6 @@ function doCount() {
   document.getElementById("counterStats").textContent=`LINES: ${total}  //  OFFSETS: ${withO}  //  UNIQUE: ${uc}`;
   document.getElementById("counterOutput").textContent=`TOTAL LINES    : ${total}\nWITH OFFSETS   : ${withO}\nUNIQUE OFFSETS : ${uc}`;
 }
-
 function doView() {
   const src=document.getElementById("inputCode").value;
   if (!src.trim()) { document.getElementById("counterStats").textContent="// NO INPUT"; return; }
@@ -646,8 +776,7 @@ function doView() {
   for (let i=0;i<lines.length;i++) {
     const line=lines[i]; let has=false;
     for (const o of line.matchAll(/0[xX][0-9a-fA-F]+/g)) {
-      has=true; offsetCount++;
-      const k=fixXCase(o[0]); unique[k]=(unique[k]||0)+1;
+      has=true; offsetCount++; const k=fixXCase(o[0]); unique[k]=(unique[k]||0)+1;
     }
     r.push(`${String(i+1).padStart(4)} │ ${has?"◈ ":"  "}${fixXCase(line)}`);
   }
@@ -656,7 +785,228 @@ function doView() {
   document.getElementById("counterOutput").textContent=`◈ OFFSET VIEWER // LINES:${lines.length} UNIQUE:${uc}\n${"─".repeat(40)}\n`+r.join("\n");
 }
 
+const armPresets = {
+  armTrue:"20 00 80 D2 C0 03 5F D6",armReturn:"C0 03 5F D6 C0 03 5F D6",
+  armFalse:"00 00 80 D2 C0 03 5F D6",armNop:"1F 20 03 D5",
+  armAim1:"40 00 00 1C",armAim2:"C0 03 5F D6",
+  frames:"C0 00 80 D2 C0 03 5F D6",frames1:"00 24 80 D2 C0 03 5F D6",
+  flh:"00 2C 40 BC C0 03 5F D6",ammos:"00 00 80 52 C0 03 5F D6",
+  halfspeed:"00 90 20 1E C0 03 5F D6",armLDR:"40 00 00 1C C0 03 5F D6"
+};
+function insertPreset(name) {
+  document.getElementById("outputCode").value = armPresets[name];
+  showToast("INJECTED: " + name);
+}
 document.getElementById("inputCode").focus();
+
+// ══════════════════════════════════════════════════════════
+// TAB 2: BYPASS HUNTER
+// ══════════════════════════════════════════════════════════
+const FILTERS = [
+  { label: '💥 Fix Crash',       regex: /crash/i },
+  { label: '⏰ 10 Years',        regex: /\b10\s*(yr|y|year|years)\b/i },
+  { label: '📅 30 Days',         regex: /\b30\s*(d|day|days)\b/i },
+  { label: '🚫 Auto Ban',        regex: /(auto\s*ban|fix\s*auto)/i },
+  { label: '⏱️ 10 Min Ban',     regex: /\b10\s*(min|minute|minutes)\b/i },
+  { label: '🛡️ Anti-Patch',     regex: /(anti-?patch|anti-?tamper)/i },
+  { label: '📋 Hold Report',     regex: /(hold\s*report|report\s*hold|report\s*nullify|report\s*skip)/i },
+  { label: '🚨 Detect',          regex: /detect/i },
+  { label: '🌀 Obfuscation',     regex: /obfuscation/i },
+  { label: '👁️ Anti-Debug',     regex: /anti-?debug/i },
+  { label: '🔒 Mutex / Lock',    regex: /(mutex|lock)/i },
+  { label: '🌐 Socket / Packet', regex: /(socket|packet)/i },
+  { label: '💾 Memory Bypass',   regex: /(memory\s*copy|memory\s*move)/i },
+  { label: '🚩 Flags / Checks',  regex: /(flag|hardcoded\s*return)/i },
+  { label: '🩹 Heap Corruption', regex: /heap\s*(corruption|integrity)/i },
+  { label: '⚡ Kernel Bypass',   regex: /kernel\s*bypass/i },
+  { label: '📁 File Access',     regex: /(file\s*access|file\s*stat)/i },
+  { label: '🔧 Zero-Init',       regex: /zero-?init/i }
+];
+
+let refLines = [], srcFreq = new Map();
+let curResults = [], curKeyword = '', curMode = '';
+let searchId = 0;
+const PAGE_SIZE = 60;
+
+const refFile    = document.getElementById('refFile');
+const srcFile    = document.getElementById('srcFile');
+const refStatus  = document.getElementById('refStatus');
+const srcStatus  = document.getElementById('srcStatus');
+const searchBtn  = document.getElementById('searchBtn');
+const kwInput    = document.getElementById('keyword');
+const filterGrid = document.getElementById('filterGrid');
+const resultsCard = document.getElementById('resultsCard');
+const resultsList = document.getElementById('resultsList');
+const resultsHeading = document.getElementById('resultsHeading');
+const moreWrap   = document.getElementById('moreWrap');
+const summaryRow = document.getElementById('summaryRow');
+const exportBtn  = document.getElementById('exportBtn');
+
+const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const yield_ = () => new Promise(r => setTimeout(r, 0));
+const readText = f => new Promise((res,rej) => {
+  const r = new FileReader();
+  r.onload = e => res(e.target.result);
+  r.onerror = () => rej(new Error('Read failed'));
+  r.readAsText(f, 'utf-8');
+});
+
+refFile.addEventListener('change', async e => {
+  const f = e.target.files[0]; if(!f) return;
+  refStatus.textContent='Loading…'; refStatus.className='file-status loading';
+  try {
+    const text = await readText(f);
+    refLines = text.split(/\r?\n/);
+    refStatus.textContent = `✓ ${f.name} · ${refLines.length.toLocaleString()} lines`;
+    refStatus.className = 'file-status ok';
+    checkReady();
+  } catch(err) { refStatus.textContent = 'Error: '+err.message; refStatus.className='file-status'; }
+});
+srcFile.addEventListener('change', async e => {
+  const f = e.target.files[0]; if(!f) return;
+  srcStatus.textContent='Loading…'; srcStatus.className='file-status loading';
+  try {
+    const text = await readText(f);
+    const lines = text.split(/\r?\n/);
+    srcStatus.textContent = `Indexing ${lines.length.toLocaleString()} lines…`;
+    await yield_();
+    srcFreq = await buildFreq(lines);
+    srcStatus.textContent = `✓ ${f.name} · ${srcFreq.size.toLocaleString()} functions`;
+    srcStatus.className = 'file-status ok';
+    checkReady();
+  } catch(err) { srcStatus.textContent='Error: '+err.message; srcStatus.className='file-status'; }
+});
+async function buildFreq(lines) {
+  const map = new Map(), re = /\bsub_[0-9a-f]+\b/gi, CHUNK = 30000;
+  for(let i=0; i<lines.length; i++) {
+    re.lastIndex=0; let m;
+    while((m=re.exec(lines[i]))!==null) { const k=m[0].toLowerCase(); map.set(k,(map.get(k)||0)+1); }
+    if(i>0 && i%CHUNK===0) { srcStatus.textContent=`Indexing… ${Math.round(i/lines.length*100)}%`; await yield_(); }
+  }
+  return map;
+}
+function checkReady() { searchBtn.disabled = !(refLines.length && srcFreq.size); }
+function parseLine(line) {
+  let offset='N/A'; const om=line.match(/\b0x[0-9A-Fa-f]+\b/); if(om) offset=om[0];
+  let funcName='N/A';
+  const fm=line.match(/Function:\s*([^\s|]+)/i);
+  if(fm) funcName=fm[1];
+  else if(offset!=='N/A') funcName='sub_'+offset.replace(/^0x/i,'');
+  let desc='N/A'; const si=line.indexOf('//');
+  if(si!==-1) { let after=line.slice(si+2); const fi=after.search(/\|\s*Function:/i); desc=(fi!==-1?after.slice(0,fi):after).trim().replace(/\|/g,' • '); }
+  return {offset,funcName,desc};
+}
+function lookupCount(fn) { if(!fn||fn==='N/A') return 0; return srcFreq.get(fn.toLowerCase())||0; }
+function showLoading(label) {
+  resultsCard.style.display='block'; moreWrap.innerHTML=''; summaryRow.textContent='';
+  resultsHeading.innerHTML=`Searching <span class="hl">${esc(label)}</span>`;
+  resultsList.innerHTML=`<div class="loader-wrap"><div class="loader"></div><div class="loader-label">SCANNING...</div></div>`;
+}
+async function doKeywordSearch(regex, displayLabel) {
+  if(!refLines.length||!srcFreq.size){ showToast("LOAD BOTH FILES FIRST"); return; }
+  const myId=++searchId; curMode='keyword'; curKeyword=displayLabel; curResults=[];
+  showLoading(curKeyword); await yield_();
+  const seen=new Set(), CHUNK=3000;
+  for(let i=0;i<refLines.length;i++) {
+    if(myId!==searchId) return;
+    const line=refLines[i];
+    if(regex.test(line)) {
+      const p=parseLine(line); const key=p.funcName.toLowerCase();
+      if(p.funcName!=='N/A'&&seen.has(key)) continue;
+      if(p.funcName!=='N/A') seen.add(key);
+      curResults.push({offset:p.offset,funcName:p.funcName,desc:p.desc,count:lookupCount(p.funcName)});
+    }
+    if(i>0&&i%CHUNK===0){ if(myId!==searchId) return; await yield_(); }
+  }
+  if(myId!==searchId) return;
+  curResults.sort((a,b)=>b.count-a.count);
+  renderKeyword();
+}
+function isHex(str){ return /^0x[0-9a-fA-F]+$/.test(str.trim()); }
+async function doHexSearch(hex) {
+  const myId=++searchId; const cleanHex=hex.trim().replace(/^0x/i,'').toLowerCase();
+  const funcName='sub_'+cleanHex; const offset='0x'+cleanHex.toUpperCase();
+  curMode='hex'; curKeyword=offset; curResults=[];
+  showLoading(offset); await yield_();
+  if(myId!==searchId) return;
+  const count=srcFreq.get(funcName)||0;
+  let desc='No description found in reference file';
+  if(refLines.length) {
+    const re=new RegExp('\\b0x'+cleanHex+'\\b','i');
+    for(let i=0;i<refLines.length;i++) { if(re.test(refLines[i])){ desc=parseLine(refLines[i]).desc; break; } }
+  }
+  curResults=[{isHex:true,offset,funcName,desc,count}];
+  renderHex();
+}
+function renderKeyword(all) {
+  resultsList.innerHTML=''; moreWrap.innerHTML='';
+  if(!curResults.length) {
+    resultsHeading.innerHTML=`Results for <span class="hl">${esc(curKeyword)}</span>`;
+    resultsList.innerHTML=`<div class="no-result">◈ NO MATCHES FOR "${esc(curKeyword)}"</div>`;
+    summaryRow.textContent=''; return;
+  }
+  const list=all?curResults:curResults.slice(0,PAGE_SIZE);
+  resultsHeading.innerHTML=`${esc(curKeyword)} <span style="color:var(--dim);font-size:11px;">(${curResults.length})</span>`;
+  const frag=document.createDocumentFragment();
+  for(const r of list) {
+    const div=document.createElement('div');
+    div.className='result-item'+(r.count===0?' zero':'');
+    div.innerHTML=`<div class="result-meta"><span class="result-offset">${esc(r.offset)}</span><span class="result-badge${r.count===0?' zero-badge':''}">${r.count} match${r.count===1?'':'es'}</span></div><div class="result-fn">${esc(r.funcName)}</div><div class="result-desc">${esc(r.desc)}</div>`;
+    frag.appendChild(div);
+  }
+  resultsList.appendChild(frag);
+  const total=curResults.reduce((s,r)=>s+r.count,0);
+  summaryRow.textContent=`Showing ${list.length} of ${curResults.length} · ${total} total matches`;
+  if(!all&&curResults.length>PAGE_SIZE) {
+    const btn=document.createElement('button'); btn.className='show-more';
+    btn.textContent=`⬇ SHOW ALL ${curResults.length} RESULTS`;
+    btn.addEventListener('click',()=>renderKeyword(true));
+    moreWrap.appendChild(btn);
+  }
+}
+function renderHex() {
+  resultsList.innerHTML=''; moreWrap.innerHTML='';
+  const r=curResults[0];
+  resultsHeading.innerHTML=`Hex Patch <span class="hl">${esc(r.offset)}</span>`;
+  const div=document.createElement('div');
+  div.className='result-item hex-type'+(r.count===0?' zero':'');
+  div.innerHTML=`<div class="result-meta"><span class="result-offset">${esc(r.offset)}</span><span class="result-badge${r.count===0?' zero-badge':''}">${r.count} match${r.count===1?'':'es'}</span></div><div class="result-fn">${esc(r.funcName)}</div><div class="result-desc">${esc(r.desc)}</div>`;
+  resultsList.appendChild(div);
+  summaryRow.textContent=r.count===0?`"${r.funcName}" not found in source file`:`"${r.funcName}" appears ${r.count} time(s)`;
+}
+searchBtn.addEventListener('click', () => {
+  const v=kwInput.value.trim(); if(!v) return;
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  if(isHex(v)) doHexSearch(v);
+  else doKeywordSearch(new RegExp(v.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),'i'),v);
+});
+kwInput.addEventListener('keypress', e => { if(e.key==='Enter') searchBtn.click(); });
+exportBtn.addEventListener('click', () => {
+  if(!curResults.length) return;
+  let out=`NPC TOOLS · SEARCH RESULTS\nQuery: ${curKeyword}\nMode: ${curMode}\nDate: ${new Date().toLocaleString()}\n${'─'.repeat(60)}\n\n`;
+  curResults.forEach(r=>{ out+=`[${r.count}] ${r.offset}\n     Function: ${r.funcName}\n     Desc: ${r.desc}\n\n`; });
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([out],{type:'text/plain;charset=utf-8'}));
+  a.download=`npc_results_${curKeyword.replace(/[^\w]+/g,'_').slice(0,40)}.txt`;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+});
+(function(){
+  const frag=document.createDocumentFragment();
+  FILTERS.forEach((f,i)=>{
+    const btn=document.createElement('button'); btn.className='filter-btn'; btn.dataset.i=i; btn.textContent=f.label;
+    frag.appendChild(btn);
+  });
+  filterGrid.appendChild(frag);
+  filterGrid.addEventListener('click', e=>{
+    const btn=e.target.closest('.filter-btn'); if(!btn) return;
+    document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    const f=FILTERS[+btn.dataset.i]; kwInput.value='';
+    doKeywordSearch(f.regex,f.label);
+  });
+})();
+
+
 </script>
 </body>
 </html>
